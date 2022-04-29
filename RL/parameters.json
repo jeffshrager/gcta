@@ -1,0 +1,39 @@
+{
+  "run-label": "test",
+  "sim-output": "sim-mrhlog.xls",
+  "classifier-output": "classifier-results.json",
+  "num-loops": 5, "note": "7/14/17 demonstrated 5 is enough",
+  "learner":{
+    "training-mode": "constant", "note": "scikit does not use",
+    "normal-training-divisor": 20.0, "note": "scikit does not use",
+    "stretch-training-shift": 20.0, "note": "scikit does not use",
+    "stretch-training-divisor": 40.0, "note": "scikit does not use",
+    "training-constant-positive": 1.0, "note": "scikit does not use",
+    "training-constant-negative": -1.0, "note": "scikit does not use",
+    "random-training-multiplier": 2.0, "note": "scikit does not use",
+    "random-training-shift": 1.0, "note": "scikit does not use",
+    "background-mode": "constant", "note": "scikit does not use",
+    "background-constant": 0.0, "note": "scikit does not use",
+    "random-background-multiplier": 0.5, "note": "scikit does not use",
+    "gd-step-size" : 0.5, "note": "scikit does by itself",
+    "trial-n" : 1, "note": "scikit does not change behavior with n != 1",
+    "delta-k-std-multiplier-threshold": 0, "note": "7/14/17 demonstrated this does not matter for scikit", 
+    "num-training-cycles": 100, "note": "scikit does by itself",
+    "test-fraction" : 0.2, "note": "scikit does by itself",
+    "num-data-to-learn": 20000, "note": "obsolete in tf, not used by scikit"
+  },
+  "simulator":{
+    "n-patients": 500, 
+    "p-mutation": 0.166666667,
+    "nmonths": 30,
+    "txrules": ["random-monotherapy", "untried-monotherapy", "random-binary-cocktail", "binary-cocktail-changing-1-at-a-time", "untried-binary-cocktail", "targeted-therapy", "hypotheses-sampled", "sanity-check", "hypotheses-top-2", "test"],
+    "txrule": "hypotheses-sampled",
+    "scoring-function": "parametric",
+    "possible-scoring-functions": ["parametric", "non-parametric"],
+    "k-score-decr-per-mutation": 5,
+    "k-score-incr-per-drug-mutation-overlap": 10,
+    "p-mutational-escape": 0.25, "note": "tested this - lower p mutational escape correlates with better avg k score",
+    "markers": ["MGMT-PROMOTER", "HLA-A2", "HLA-A1", "IDH2", "IDH1", "EGFR"],
+    "drugs": {"bevacizumab": {"markers": ["EGFR", "IDH1"], "adversity": 1, "index": 0}, "temozolomide": {"markers": ["EGFR", "IDH2"], "adversity": 2, "index": 1}, "cabazitaxel": {"markers": ["EGFR", "HLA-A1"], "adversity": 3, "index": 2}, "tcar": {"markers": ["EGFR",  "HLA-A2"], "adversity": 4, "index": 3}, "disatinib": {"markers": ["EGFR", "MGMT-PROMOTER"], "adversity": 5, "index": 4}, "nivolumab": {"markers": ["IDH1", "HLA-A1"], "adversity": 5, "index": 5}, "doxorubicin": {"markers": ["IDH1", "HLA-A2"], "adversity": 4, "index": 6}, "durvalumab": {"markers": ["IDH1", "MGMT-PROMOTER"], "adversity": 3, "index": 7}, "pembrolizumab": {"markers": ["IDH2", "HLA-A1"], "adversity": 2, "index": 8}, "varlilumab": {"markers": ["IDH2", "MGMT-PROMOTER"], "adversity": 6, "index": 9},  "sorafenib": {"markers": ["HLA-A1", "MGMT-PROMOTER"], "adversity": 1, "index": 10}}
+  }
+}

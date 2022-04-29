@@ -1,0 +1,33 @@
+{
+  "learner":{
+    "training_mode": ["constant"],
+    "normal_training_divisor": [20.0],
+    "stretch_training_shift": [20.0],
+    "stretch_training_divisor": [40.0],
+    "training_constant_positive": [1.0],
+    "training_constant_negative": [-1.0],
+    "random_training_multiplier": [2.0],
+    "random_training_shift": [1.0],
+    "background_mode": ["constant"],
+    "background_constant": [0.0],
+    "random_background_multiplier": [0.5],
+    "GD_step_size" : [0.3],
+    "trial_n" : [5],
+    "test_fraction" : [0.1], 
+    "delta_k_training_inclusion_abs_threshold": [15], 
+    "delta_k_testing_inclusion_abs_threshold": [15],
+    "num_training_cycles": [1000],
+    "num_training_samples": [100]
+  },
+  "simulator":{
+    "p-mutation": 0.25,
+    "nmonths": 30,
+    "txrules": [":random-monotherapy", ":untried-monotherapy", ":random-binary-cocktail", ":binary-cocktail-changing-1-at-a-time", ":untried-binary-cocktail", ":targeted-therapy"],
+    "txrule": ":targeted-therapy",
+    "k-score-decr-per-mutation": 5,
+    "k-score-incr-per-drug-mutation-overlap": 10,
+    "p-mutational-escape": 0.25,
+    "markers": {"EGFR": [0, 0, 0, 0, 0, 1], "IDH1": [0, 0, 0, 0, 1, 0], "IDH2": [0, 0, 0, 1, 0, 0], "HLA-A1": [0, 0, 1, 0, 0, 0], "HLA-A2": [0, 1, 0, 0, 0, 0], "MGMT-Promoter": [1, 0, 0, 0, 0, 0]},
+    "drugs": {"Bevacizumab": {":markers": "(:EGFR :IDH1)", ":adversity": 1}, "Temozolomide": {":markers": "(:EGFR :IDH2)", ":adversity": 2}, "Cabazitaxel": {":markers": "(:EGFR :HLA-A1)", ":adversity": 3}, "TCAR": {":markers": "(:EGFR  :HLA-A2)", ":adversity": 4}, "Disatinib": {":markers": "(:EGFR :MGMT-Promoter)", ":adversity": 5}, "Nivolumab": {":markers": "(:IDH1 :HLA-A1)", ":adversity": 5}, "Doxorubicin": {":markers": "(:IDH1 :HLA-A2)", ":adversity": 4}, "Durvalumab": {":markers": "(:IDH1 :MGMT-Promoter)", ":adversity": 3}, "Pembrolizumab": {":markers": "(:IDH2 :HLA-A1)", ":adversity": 2}, "Varlilumab": {":markers": "(:IDH2 :MGMT-Promoter)", ":adversity": 6},  "Sorafenib": {":markers": "(:HLA-A1 :MGMT-Promoter)", ":adversity": 1}}
+  }
+}

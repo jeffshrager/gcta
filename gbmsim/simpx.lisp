@@ -1,0 +1,723 @@
+;; To-Dos
+;; 		Add in costs (add drug costs as an adversity to subtract from our k)
+;;		DONE -- Fix gen-code
+;;		?? Use untried treatment pairs, with replacement (i.e. all combos) ??
+;;		DONE -- Add in function to read in hypotheses for drug treatment combos
+;; 		Apply those hypotheses as a treatment paradigm
+;;		Create a script to randomly create priors for each tumor type and drug combos
+;;		make escape mutations adverse
+
+;; !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+;; !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! NOTE - CHECK NRUNS IN THE RUN FUNCTION CALL AT THE END !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+;; !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! Set it to 1000 for simple, rapid tests 				 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+;; !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! Set it to 10000 to generate actual data (or a big #)	 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+;; !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! 
+
+;; (load (compile-file "simpx.lisp"))
+
+(eval-when (:compile-toplevel :load-toplevel :execute)
+	   (unless (find-package :statistics) (load "lhstats"))
+           (ql:quickload "cl-json")
+           )
+
+;;; Simulating patients for Musella "Virtual Trials" application. When
+;;; someone is diagnosed they start out with a karnofsky (k) score of
+;;; 70-90, and then, dependings on treatment and tumor aggressiveness,
+;;; either reach 0, and are dead, or reach 100, and just stay there.
+
+;;; =======================================================
+;;; Object definitions
+
+;;; The patient history is in rev. chron order so that the first thing is the 
+(defstruct (patient (:print-function
+		     (lambda (p s k)
+		       (format s "((stype . patient) (id . ~a) (birthyear . ~a) (gender . ~a) (mdx . ~a) (k . ~a) (tumor . ~a) (diagnosisdate . ~a) (drugs . ~a) (history  ~a))"
+			       (patient-id p) (patient-birth-year p) (patient-gender p) 
+			       (patient-mbdx p) (patient-k p) (patient-tumor p)
+			       (patient-dx-utime p)
+			       (patient-drugs p) (patient-history p)))))
+  id
+  birth-year
+  gender
+  mbdx ;; mbdx = months beyond dx (starts at 0)
+  k ;; k = karnofsky score
+  tumor 
+  dx-utime
+  drugs
+  history
+  hypotheses 
+  )
+
+(defstruct (drug (:print-function
+		  (lambda (d s k)
+		    (format s "((stype . drug) (name . ~a) (markers . ~b) (adversity . ~a) (mrh . ~a))"
+			    (drug-name d) (drug-markers d) (drug-adversity d) (drug-mrh d)))))
+  name markers adversity mrh) ;; mrh ==  molecular-response-history
+
+(defun name->drug (name)
+	(loop for drug in *confounded-drugs* 
+		when (equal (drug-name drug) name)
+		do (return drug)))
+
+;;; =======================================================
+;;; Globals
+
+(defparameter *sim-version* (get-universal-time))
+(defparameter *patient-id-counter* 0) ;; Super global reset on each load
+(defparameter *fcounter* 1000) ;; File differentiator -- start here and incf'ed for each file in a run
+
+(defvar *mrhlog* nil)
+(defvar *dump-pxs-in-json?* nil)
+
+;; The genetic dictionary assigns a gensym to each combination in
+;; order that they have names in the mrh log file. III ***
+;; Importantly, the keys are UNORDERED! In order (so to speak) to make
+;; that happen, we do a numberical encoding trick on them and sort
+;; it. UUU) The only reason we need this is because not all
+;; combinations are actually seen. In fact, very few of the actual
+;; combinations are seen since most genetics are combos of just 2 or 3
+;; mutations. So this saves us from having to list all gazillion
+;; combinations of up to (length *markers*) markers, when we only see
+;; a fraction of those.
+
+(defvar *genetics* (make-hash-table :test #'equal))
+
+;; Probability for each mutation that it will appear in the tumor
+;; (Note: I use 'marker' and 'mutation' interchangably.)
+(defparameter *p-mutation* 0.25) ;; @0.25 you tend to get two markers
+(defvar *param-header* nil)
+(defvar *log* t)
+
+(defparameter *txrules* 
+  '(:random-binary-cocktail :random-monotherapy :untried-monotherapy :binary-cocktail-changing-1-at-a-time :untried-binary-cocktail))
+(defvar *txrule* nil) ;; Has the current rule (Careful of the difference btwn the singular and plural here!)
+
+;;; Tumor aggresiveness is correlated with the number of
+;;; mutations. You get *k-score-decr-per-mutation-per-month* points
+;;; for each mutation substracted from your k score per month.
+(defparameter *k-score-decr-per-mutation* 5)
+(defparameter *k-score-incr-per-drug-mutation-overlap* 10)
+(defparameter *p-mutational-escape* 0.0)
+
+(defvar *pxs* nil)
+(defvar *nmonths* 30)
+(defvar *p* nil) ;; global for debugging, will contain the last patient record
+
+(defvar *date* 0) ;; Everyone starts at 0 and every cycle is a virtual month.
+
+(defvar *hypotheses* nil) ;; Holds the initial hypotheses ("priors") generated by ML algorithm
+
+;;; =======================================================
+;;; Drugs, trials, and other contextual parameters
+
+;; Mutation is really simple; if you have the key in the markers list,
+;; then the tumor has that mutation. WWW The order of these is used to
+;; create genetic codes later in the ... code ... this usually won't
+;; matter, unless you're trying to make comparisons between runs.
+
+(defparameter *markers* '(:EGFR :IDH1 :IDH2 :HLA-A1 :HLA-A2 :MGMT-Promoter))
+
+;;; Treatments are each assigned pairs of markers that they work well
+;;; with. If the patient's tumor has both markers, then you get
+;;; maximum effect from the drug, otherwise, you get progressively
+;;; less benefit. Each drug also has an adversity score, which gets
+;;; SUBTRACTED each time the drug is used.
+
+(defparameter *confounded-drugs*
+  (list
+   ;; All combinations of markers except allomeric pairs (e.g., no IHD1 and IDH2)
+   (make-drug :name :Bevacizumab :markers '(:EGFR :IDH1) :adversity 1)
+   (make-drug :name :Temozolomide :markers '(:EGFR :IDH2) :adversity 2)
+   (make-drug :name :Cabazitaxel :markers '(:EGFR :HLA-A1) :adversity 3)
+   (make-drug :name :TCAR :markers '(:EGFR  :HLA-A2) :adversity 4)
+   (make-drug :name :Disatinib :markers '(:EGFR :MGMT-Promoter) :adversity 5)
+   (make-drug :name :Nivolumab :markers '(:IDH1 :HLA-A1) :adversity 5)
+   (make-drug :name :Doxorubicin :markers '(:IDH1 :HLA-A2) :adversity 4)
+   (make-drug :name :Durvalumab :markers '(:IDH1 :MGMT-Promoter) :adversity 3)
+   (make-drug :name :Pembrolizumab :markers '(:IDH2 :HLA-A1) :adversity 2)
+   (make-drug :name :varlilumab :markers '(:IDH2 :MGMT-Promoter) :adversity 6) 
+   (make-drug :name :Sorafenib :markers '(:HLA-A1 :MGMT-Promoter) :adversity 1)
+   ))
+
+(defparameter *less-confounded-drugs*
+  (list
+   ;; All combinations of markers except allomeric pairs (e.g., no IHD1 and IDH2)
+   (make-drug :name :Bevacizumab :markers '(:EGFR :IDH1) :adversity 1)
+   (make-drug :name :Temozolomide :markers '(:IDH1 :IDH2) :adversity 1)
+   (make-drug :name :Cabazitaxel :markers '(:IDH2 :HLA-A1) :adversity 1)
+   (make-drug :name :TCAR :markers '(:HLA-A1 :HLA-A2) :adversity 1)
+   (make-drug :name :Disatinib :markers '(:HLA-A2 :MGMT-Promoter) :adversity 1)
+   (make-drug :name :Nivolumab :markers '(:EGFR) :adversity 1)
+   (make-drug :name :Doxorubicin :markers '(:IDH1) :adversity 1)
+   (make-drug :name :varlilumab :markers '(:IDH2) :adversity 1) 
+   (make-drug :name :Durvalumab :markers '(:MGMT-Promoter) :adversity 1)
+   (make-drug :name :Sorafenib :markers '(:HLA-A1) :adversity 1)
+   (make-drug :name :Pembrolizumab :markers '(:HLA-A2) :adversity 1)
+   ))
+
+(defparameter *trials*
+  '(("NCT01109095" "TCAR")
+    ("NCT02758366" "Doxorubicin")
+    ("NCT01588769" "good immune markers" "ALECSAT")
+    ("NCT02458508" "Melanocortin Receptor 4" "Radio-chemotherapy with temozolomide")
+    ("NCT01280552" "HLA-A1 or HLA-A2 positive" "ICT-107 Immunotherapy")
+    ("NCT02546102" "HLA-A2 positive" "ICT-107 Immunotherapy")
+    ("NCT02664363" "EGFRvIII (del exons2-7) EGFRvIII" "CAR T cells")
+    ("NCT01269424" "good immune markers" "O6-Benzylguanine and Temozolomide With MGMTP140K Genetically Modified Blood Stem Cells")
+    ("NCT02977780" "IDH1 R132H negative,  MGMT promoter is unmethylated" "Temozolomide, Neratinib,CC-115,Abemaciclib")
+    ("NCT03018288" "IDH wild type and MGMT promoter is unmethylated" "pembrolizumab + vaccine HSPPC-96")
+    ("NCT02667587" "MGMT methylated or indeterminate tumor subtype" "Nivolumab")
+    ("NCT02617589" "Unmethylated MGMT" "Nivolumab + TMZ")
+    ("NCT02658981" "MGMT methylation status" "Anti-LAG-3  or Anti-CD137 Alone or with Anti-PD-1")
+    ("NCT02327078" "EGFR and ALK status" "Nivolumab + Epacadostat")
+    ("NCT02152982" "MGMT hypermethylation status" "Veliparib + TMZ")
+    ("NCT01480479" "EGFRvIII positive" "Rindopepimut/GM-CSF (virus)")
+    ("NCT02573324" "EGFR amplification" "ABT-414")
+    ("NCT02414165" "IDH mutation status" "Toca 511, a Retroviral Replicating Vector +  Toca FC")
+    ("NCT01491893" "MGMT status" "PVSRIPO")
+    ))
+
+;;; =======================================================
+;;; Create patients and their tumors
+
+(defun genpx ()
+  (make-patient 
+   :id (incf *patient-id-counter*)
+   :birth-year (- 2017 (if (zerop (random 2)) 
+			   (+ (random 10))
+			 (+ (random 20) 50)))
+   :gender (if (zerop (random 2)) :m :f)
+   :tumor (gentumor)
+   :k (+ 70 (random 20)) ;; Patients always present between 70 and 90
+   :mbdx 0
+   ;; After Jan 1 2015 == 3629091661
+   :dx-utime (+ 3629091661 (random 76414218)) ;; Should go two years or so into the future
+   :drugs nil ;; Keeps track of what drugs the px is on NOW
+   :history `(((:action . :dx) (:date . 0))))) ;; Every history entry starts with an action key.
+
+;; Tumor load translates to karnofsky score.
+
+(defun gentumor ()
+  (loop as ms = (loop for marker in *markers*
+		      if (< (/ (random 100) 100.0) *p-mutation*)
+		      collect marker) ;; Can't be nil
+	until ms
+	finally (progn (gene-code ms)
+		       (return ms))))
+
+;;; =======================================================
+;;; Updating disease status
+
+;;; Tumor aggresiveness is correlated with the number of
+;;; mutations. You get *k-score-decr-per-mutation-per-month* points
+;;; for each mutation substracted from your k score per month.
+
+(defun update-k (px)
+  ;; Decr k for disease load, then incr for treatments
+  (loop for mutation in (patient-tumor px)
+	do (decf (patient-k px) *k-score-decr-per-mutation*))
+  ;; Now incr for overlapping treatments
+  (loop for tx in (patient-drugs px)
+	as dms = (drug-markers tx)
+	do (loop for m in (patient-tumor px)
+		 when (member m dms)
+		 do (incf (patient-k px) *k-score-incr-per-drug-mutation-overlap*))
+	;; While were here, do adversity
+	(decf (patient-k px) (drug-adversity tx)))
+  ;; Now chop the ceiling and floor
+  (setf (patient-k px) (max (min (patient-k px) 100) 0))
+  ;; Finally, stochastically mutate the tumor
+  (if (> *p-mutational-escape* (/ (random 100) 100.0))
+      (setf (patient-tumor px) (gentumor)))
+  )
+
+;;; =======================================================
+;;; Drug decision making
+
+;;; This extremely unhygenic macro is used to compute drug
+;;; updates. You get a bunch of vars that you can (unhygenically) use,
+;;; and you have to leave the new drugs list in DRUGS. Whatever DRUGS
+;;; is at the end will get reset back into the px record. However, if
+;;; you don't change DRUGS (that is, if it ends up being the same as
+;;; the current px drugs) then no change is recorded.  Note that the
+;;; "only change on decline" is built in to this; perhaps some day it
+;;; should be conditionalized.
+
+(eval-when 
+ (:compile-toplevel :load-toplevel :execute)
+ (defmacro redrug (px ninitdrugs &body new-drugs-body)
+   ;; Sets up some unhygenic vars that can be used in the body: ks, ds, cds, well as drugs (which should be changed)
+   `(let* ((ks (histscan :scan ,px #'cdar)) ;; the reverse chron of k scores
+	  (ds (reduce #'append (histscan :changed-tx ,px #'(lambda (l) (cdr (assoc :result l)))))) ;; all previously used drugs
+	  (cds (patient-drugs ,px)) ;; and cds -- current drugs
+	  (drugs (patient-drugs ,px)) ;; If this isn't reset by the body, we don't record a change.
+	  (histlen (length ks))
+	  )
+      (if (= 1 histlen)
+	  ;; First time -- just choose n random drugs
+	  	(setf drugs (n-random ,ninitdrugs *confounded-drugs*))
+	;; Change when the patient is declining Pretty simple test for the
+	;; moment -- just looks at the first two!
+	(progn
+	  ;; In the molecular response history of each drug in the
+	  ;; current set record how the px's k changed for these
+	  ;; drugs. Confusingly, we do this twice, once with the
+	  ;; cocktail elements separated, and once together. This is
+	  ;; somewhat confusing and needs to be sorted out on the back
+	  ;; end. First the separate drugs in the cocktail:
+	  (loop for drug in drugs
+		as dn from 1 by 1 ;; Cocktail counter
+		do 
+		;; FFF This first thing is just an incidental
+		;; recording for "rapid" learning. Probably we'll
+		;; eventually do away with it. We could do something
+		;; more interesting by putting a pointer to the ks,
+		;; instead of just including the first and
+		;; second. That would allow us to do more subtle
+		;; computations.
+		;; push stmt records the drugs history for a specific tumor type, regardless of cocktail-status
+		(push (list (patient-tumor ,px) (first ks) (second ks)) (drug-mrh drug)) ;; [1]
+		(format *mrhlog* "~a	~a	~a	~a	~a	~a	~a	~a	~a~%" 
+			(patient-id ,px)
+			histlen
+			(gene-code (patient-tumor ,px))
+			dn
+			(drug-name drug)
+			(gene-code (drug-markers drug))
+			(first ks)
+			(second ks)
+			(- (first ks) (second ks))
+			)
+		)
+	  ;; Now together
+	  #+nil ;; Skipped for now
+	  (let ((combo-markers (loop for drug in drugs append (drug-markers drug))))
+	    (format *mrhlog* "~a	~a	~a	~a	~a	~a	~a	~a~%" 
+		    (patient-id ,px)
+		    (gene-code (patient-tumor ,px))
+		    'combo
+		    combo-markers ;; Note that this is the actual combo -- the gene code won't have dups
+		    (gene-code combo-markers)
+		    (first ks)
+		    (second ks)
+		    (- (first ks) (second ks))
+		    ))
+	  	  ;; Now redrug is things are going south!
+	  (if (< (first ks) (second ks))
+	      (progn ,@new-drugs-body)))
+	)
+      ;; Here DRUGS should be either changed by the body, or not. If
+      ;; it turns out to be the same as what's already there, then we
+      ;; record a :NO-CHANGE
+      (unless (set-equal drugs (patient-drugs ,px)) ;; Wasn't changed!
+	(record ,px :changed-tx (cons :rule *txrule*) (cons :result drugs))
+	(setf (patient-drugs ,px) drugs))
+      )))
+
+(defun assess-and-treat (px)
+;; Scan (so to speak) the patient ... basically just read off their k score
+	(record px :scan `(:k= . ,(patient-k px)))
+;; Treat according to the rule
+	(case *txrule*
+		(:random-binary-cocktail (redrug px 2 :random-binary-cocktail (setf drugs (n-random 2 *confounded-drugs*))))
+		(:random-monotherapy
+			  (redrug px 1 :random-monotherapy (setf drugs (list (nth (random (length *confounded-drugs*)) *confounded-drugs*)))))
+		(:untried-monotherapy
+		 ;; Change to a drug that isn't in the ds list.
+		   (redrug px 1 :untried-monotherapy
+			 (let* ((possible-drugs (set-difference *confounded-drugs* ds))
+				(new-drug (when possible-drugs (nth (random (length possible-drugs)) possible-drugs))))
+			   		(if new-drug (setf drugs (list new-drug))))))
+		(:binary-cocktail-changing-1-at-a-time
+		 ;; Maintain 2 at all times, randomly changing out one of the pair (on decline).
+		 	(redrug px 2 :binary-cocktail-changing-1-at-a-time (setf drugs (binary-cocktail-changing-1-at-a-time drugs ds cds))))
+		(:untried-binary-cocktail
+			(redrug px 2 :untried-binary-cocktail (setf drugs (untried-binary-cocktail drugs ds cds))))
+		(:targeted-therapy 
+			(redrug px 2 :targeted-therapy (setf drugs (choose-drugs (patient-tumor px))))) ;; currently starting on binary cocktail
+		(t (error "Bad txrule in assess-and-treat ~a" *txrule*))
+	)
+;; Stop if they're dead
+	(when (zerop (patient-k px)) (throw 'done px))
+)
+
+(defun binary-cocktail-changing-1-at-a-time (drugs ds cds)
+  (let* ((possible-drugs (set-difference *less-confounded-drugs* ds)))
+    (if possible-drugs ;; If there's nothing else we can do, just leave things as is.
+	(let ((random-new-drug (nth (random (length possible-drugs)) possible-drugs)))
+	  (if (< (length cds) 2) ;; Early on there won't be 2 in the binary-cocktail -- just add one randomly
+	      (setf drugs (cons random-new-drug cds))
+	  ;; Otherwise (=2) kick one out randomly, and add a new one randomly
+	  (list random-new-drug (nth (random 2) cds))))
+      ;; Need to return the current list if no change.
+      drugs)))
+
+(defun untried-binary-cocktail (drugs ds cds)
+	(let* ((possible-drugs (set-difference *confounded-drugs* ds)))
+		(if (and possible-drugs (>= (length possible-drugs) 2)) ;; if there are no untried drugs, leave it as is. currently we miss one drug (since there are 11)
+			(let* ((random-new-drug-1 (nth (random (length possible-drugs)) possible-drugs))
+			       (foo (delete random-new-drug-1 possible-drugs))
+			       (random-new-drug-2 (nth (random (length possible-drugs)) possible-drugs)))
+			(setf drugs (list random-new-drug-1 random-new-drug-2)))))
+	drugs)
+
+#|(
+ (((:EGFR 1) (:IDH1 -1)) 
+  ((0.5 (:Bevacizumab)) (0.25 (:Bevacizumab :Cabazitaxel)) (0.25 (:Cabazitaxel :Disatinib :Nivolumab))))
+ (((:IDH2 1)) 
+  ((0.5 (:Temozolomide :TCAR)) (0.25 (:Cabazitaxel)) (0.25 (:Disatinib :Nivolumab))))
+ (((:IDH2 1) (:HLA-A2 1) (:MGMT-PROMOTER 1))
+  ((0.5 (:Cabazitaxel :Disatinib)) (0.3 (:Nivolumab)) (0.2 (:Bevacizumab))))
+ ) |#
+
+ #|
+ (defun name->drug (name)
+	(loop for drug in *confounded-drugs* 
+		when (equal (drug-name drug) name)
+		do (return drug)))
+		|#
+
+ (defun choose-drugs (muts)
+ 	;; what to do with no-match - try another treatment model or assume matches all of them
+ 	;; what happens if matches mutliple - answers: best match criteria (can have multiple best matches -> combines suggestions)
+ 	(loop for drug in (choose-most-likley-drugs (matching-drug-lists muts))
+ 		collect (name->drug drug))
+ 	)
+
+ (defun matching-drug-lists (tmuts)
+ 	(loop for (dmuts drugs) in *hypotheses*
+ 		when (mut-match? tmuts dmuts)
+ 		append drugs)
+ 	;;(second (nth (random (length *hypotheses*)) *hypotheses*))
+ 	;; if you have multiple matches -> append drug lists (why we need to normalize)
+ 	)
+
+(defun mut-match? (tmuts dmuts &aux (matches 0))
+  (loop for (dm mk) in dmuts
+	do (case mk 
+		 (1 (loop for tm in tmuts
+			  when (equalp dm tm) do (return (incf matches))))
+		 (-1 (loop for tm in tmuts
+			   when (equalp dm tm) do (return-from mut-match? nil))) ;; to exit the function immediately 
+		 (0 :continue)
+		 )
+	)
+  ;;(print matches)
+  (if (> matches 0) t nil))
+ 	
+(defun choose-most-likley-drugs (drugs &aux (probs 0) (total 0))
+  ;;(print drugs)
+  (let* ((stow 
+	  (if (= (length drugs) 0)
+	      (loop for (dmuts ds) in *hypotheses*
+		    append ds)
+	    drugs
+	    )))
+    ;;(print stow)
+    (loop for (score ds) in stow 
+	  do (incf total score))
+    ;;(format t "~%The total is ~a" total)
+    (loop for (score ds) in stow
+	  with target = (/ (random 10000) 10000)
+	  do 
+	  ;;(format t "~%The probs before incf is ~a~%" probs)
+	  ;;(format t "The drug score is ~a~%" score)
+	  (incf probs (/ score total))
+	  ;;(format t "The new probs is ~a~%" probs)
+	  (when (<= target probs) 
+	    ;;(format t "We have succeeded and picked ~a~%" ds) 
+	    (return-from choose-most-likley-drugs ds))
+	  ;; do something to deref drug
+	  )))
+ 	;;(second (nth (random (length drugs)) drugs))
+ 	;; use jeff's correct random choice idiom (summing walk) - normalize first (do here) 
+
+;;(defun priors-binary-cocktail (drugs ds cds hypotheses)
+;	(let* ((possible-drugs (set-difference *confounded-drugs* ds)))
+;		   (if (>)))
+
+(defun histscan (target-key px fn)
+  (loop for (nil key . rest) in (patient-history px)
+	when (eq target-key (cdr key))
+	collect (funcall fn rest)))
+  
+;;; =======================================================
+;;; Utils
+
+(defun utime->standard (utime)
+  (multiple-value-bind
+   (second minute hour date month year day daylight-p zone)
+   (decode-universal-time utime)
+   (format nil "~4,'0d-~2,'0d-~2,'0dT00:00:00.000Z" year month date)))
+
+(defun remdups (l &key (test #'eq))
+  (loop for l+ on l
+	unless (member (car l+) (cdr l+))
+	collect (car l+)))
+
+(defun dht (table &optional (n 10))
+  (maphash #'(lambda (key value)
+	       (when (zerop (decf n)) (return-from dht))
+	       (format t "~s: ~s~%" key value)	       
+	       )
+	   table))
+
+(defun record (px key &rest entry)
+  (push `((:date . ,*date*) (:action . ,key) ,@entry) (patient-history px)))
+
+(defun all-list-combinations (plists)
+  (cond ((null plists) (list nil))
+	(t (mapcan #'(lambda (elt) (insert-all-with-copies elt (all-list-combinations (cdr plists)))) (car plists)))))
+
+(defun insert-all-with-copies (what intos)
+  (loop for into in intos
+	collect (cons what (copy-list into))))
+
+(defun set-equal (a b)
+  (and (equal (length a) (length b))
+       (null (set-difference a b))
+       (null (set-difference b a)) ;; I don't think you need both of these conditions since the lengths are the same
+       ))
+
+(defun n-random (n l) ;; With repeats!
+  (loop for m below n collect (nth (random (length l)) l)))
+
+;; Hypothesis reader: reads in hypotheses generated by ML algorithm as "priors" for mutation-drug combos
+(defun hreader ()
+	(with-open-file 
+		(i "hypotheses.lisp")
+		(setf *hypotheses* (read i))
+		))
+
+;;; Q&D Graphic of px's k dynamics -- mostly for debugging
+;;;
+;;; (defun plot-k-history (px)
+;;;   (format *log* "~%")
+;;;   (loop for (nil (nil . key) . rest) in (patient-history px)
+;;; 	do (case key 
+;;; 		 (:scan 
+;;; 		  (loop for i below (cdar rest) do (format t "."))
+;;; 			(format *log* "~a~%" (cdar rest)))
+;;; 		 (:changed-tx (unless (member '(:result . :no-change) rest :test #'equal)
+;;; 				(format *log* "Changed treatments: ~a~%" (cdr (assoc :result rest)))))
+;;; 		 )))
+
+;;; =======================================================
+;;; Learning which drugs go with which molecular signatures.
+
+(defvar *tms->des* (make-hash-table :test #'equal)) ;; *tumor-markers->drug-effects*
+(defun molecular-signature (drug)
+  (clrhash *tms->des*)
+  (loop for (markers knew kold) in (drug-mrh drug)
+	do (push (- knew kold) (gethash markers *tms->des*)))
+  (sort 
+   (loop for markers being the hash-keys of *tms->des*
+	 using (hash-value kdels)
+	 collect (list (if (cdr kdels) (float (STATISTICS:MEAN kdels)) (car kdels))
+		       (if (cdr kdels) (STATISTICS:STANDARD-ERROR-OF-THE-MEAN kdels) 0.0)
+		       markers))
+   #'> :key #'car))
+
+;;; =======================================================
+;;; Genetic symbolification
+
+;; Take the *markers* list as a bit position, and assign a binary key
+;; to each combination of markers. nil -> 0, and anything else is a
+;; unique order-independent number for a given marker combination.
+
+(defun gene-code (markers)
+  (setf markers (remdups markers)) ;; Make sure we're not double counting -- very confusing!
+  (let ((code ( / (reduce #'+ (mapcar #'(lambda (marker) (expt 2 (length (member marker *markers*)))) markers)) 2)))
+    (unless (gethash code *genetics*) (push markers (gethash code *genetics*)))
+    code ))
+	    
+;;; =======================================================
+;;; Main fns
+
+(defun one-px (ncycles)
+  ;;(format *mrhlog* "---	---	---	---	---	---	---	---~%")
+  (catch 'done ;; "I see dead people."
+    (loop with px = (genpx)
+	  as *date* below ncycles
+	  do 
+	  (assess-and-treat px)
+	  (update-k px)
+	  finally (return px))))
+
+(defun run-trial (n ts)
+  ;; Clear drug mrhs
+  (loop for drug in *less-confounded-drugs* do (setf (drug-mrh drug) nil))
+  (setf *pxs* nil)
+  (with-open-file 
+   (o (format nil "results/~a-pxs.json" ts) :direction :output :if-exists :supersede)
+   (setq *foo*
+	 (loop for np below n
+	       with final-n = (- n 1)
+	       do
+	       (setf *p* (one-px *nmonths*))
+	       (push *p* *pxs*)
+	       (case *dump-pxs-in-json?*
+		     (:simple 
+		      ;; This ugliness is because *p* is a thing of type
+		      ;; string, but it wants to be a list for json
+		      ;; encoding. UUU
+		      (format o "~%~a~%" (json:encode-json-to-string
+					  (read-from-string (format nil "~s" *p*))))
+				)
+		     (:rbstyle 
+		      (if (= np 0) (format o "[~%"))
+		      (dump-patient-rb-style *p* o)
+		      (if (= np final-n) 
+			  (format o "~%]~%")
+			(format o ",~%")))
+		     (t :no-output)
+		     )))))
+
+(defun dump-patient-rb-style (p o)
+  ;; This is a highly specific style that Robert wanted
+  (format o 
+	  "{caseId: \"~a\",
+ source: \"Sim_version_~a\",
+ cancer_group: \"Brain\",
+ cancer_type: \"Glioblastoma\",
+ birthdate: ~s,
+ gender: \"~a\",
+ diagnosis_date: ~s,
+ case_history: 
+   [
+"
+	  (patient-id p)
+	  *sim-version*
+	  (format nil "~a-01-01T00:00:00.000Z" (patient-birth-year p))
+	  (patient-gender p)
+	  (utime->standard (patient-dx-utime p))
+	  )
+  (let ((history (reverse (patient-history p))))
+    (loop for elt in history
+	  as future on (cdr history) ;; This runs forward for computing tx durations UUU
+	  as k from 0 by 1
+	  with end-k = (- (length (patient-history p)) 2) ;; Don't put a comma on this one
+	  as type = (cdr (assoc :action elt))
+	  as now-date = (cdr (assoc :date elt))
+	  as event-date-utime = (+ (patient-dx-utime p) (* now-date 2678400)) 
+	  as event-standard-date = (utime->standard event-date-utime)
+	  do 
+	  (format o "   {event_type: \"~a\", event_date: \"~a\"" type event-standard-date)
+	  (case type
+		(:dx :no-further-output)
+		(:scan (format o ", kscore: \"~a\"" (cdr (assoc :k= elt))))
+		(:CHANGED-TX 
+		 (format o ", 
+     drugs:[")
+		 (loop for d in (cdr (assoc :result elt))
+		       as k from 0 by 1
+		       with end-k = (- (length (cdr (assoc :result elt))) 1)
+		       do (format o "{name: \"~a\",start_date: \"~a\", end_date: \"~a\", adverse_severity: \"~a\"}" 
+				  (drug-name d) event-standard-date 
+				  (utime->standard ;; OMG! This is so hairy!
+				   (+ event-date-utime 
+				      (* 2678400 (- (redruging-future-date d future) now-date))))
+				  (drug-adversity d))
+		       (if (= k end-k) (format o "") (format o ",
+            "))
+		       )
+		 (format o "]")
+		 )
+		)
+	  (format o "}")
+	  (if (= k end-k) (format o "~%") (format o ",~%"))
+	  ))
+  (format o "  ]
+}"))
+
+;;; Hairily figure the end date of a drug by walking forward in the
+;;; history until the drug isn't in the list anylonger (or the history
+;;; ends). UUU
+(defun redruging-future-date (drug future)
+  (loop for felt in future
+	with last-date = (cdr (assoc :date felt)) ;; This starts here and gets updated in progress
+	as date = (cdr (assoc :date felt))
+	until (and (eq :changed-tx (cdr (assoc :action felt)))
+		   (not (member drug (cdr (assoc :result felt))))) ;; I hope that this works by eq -- should!
+	do (setf last-date date)
+	finally (return last-date)))
+
+(defvar *tms->effs* (make-hash-table :test #'equal)) ;; *tumor-markers->drug-effectivenesses* (or whatever) 
+
+(defun report (ts &aux (ts+ (incf *fcounter*)))
+  ;; Summary stats
+  ;; Each k-summary (ks) in kss is: ((m1 m2 ...) klatest kprevious) -- set up here: [1]
+  (let* ((kss (mapcar #'(lambda (px) (histscan :scan px #'cdar)) *pxs*))
+	 (kss! (reduce #'append kss)))
+    (format *log* "~a	~a~%" (float (STATISTICS:MEAN kss!)) (STATISTICS:STANDARD-ERROR-OF-THE-MEAN kss!))
+    (with-open-file
+     (o (format nil "results/~a-~a-trajectories.xls" ts ts+) :direction :output)
+     (print *param-header* o) (terpri o)
+     (loop for ks in kss
+	   do (loop for i in (reverse ks)
+		    do (format o "~a	" i))
+	   (format o "~%")))
+    )
+  ;; Drug targeting
+  (with-open-file
+   (o (format nil "results/~a-~a-drug-targets.xls" ts ts+) :direction :output)
+   (print *param-header* o) (terpri o)
+   (loop for drug in *less-confounded-drugs*
+	 as molsig = (molecular-signature drug)
+	 do 
+	 ;; Note that this possibly confusingly replaces the mrh with its new value.
+	 (setf (drug-mrh drug) molsig)
+	 (pprint drug o)
+	 ;; This is a slightly hairy inversion, putting the drugs to the tumor markers
+	 (loop for (m se tmks) in molsig
+	       do (push (list (drug-name drug) m se)
+			(gethash tmks *tms->effs*)))
+	 )
+   (format o "~%=======================~%")
+   (loop for tmks being the hash-keys of *tms->effs*
+	 using (hash-value drug-effs)
+	 do (pprint (list tmks (sort drug-effs #'> :key #'second)) o))
+   ))
+
+(defun run (nruns param-names param-values &aux (ts (get-universal-time)))
+  (clrhash *genetics*)
+  ;; Put the drugs in the genetics table
+  (loop for drug in *less-confounded-drugs* do (gene-code (drug-markers drug)))
+  ;; Core execution loop, open output files...
+  (with-open-file 
+   (*mrhlog* (format nil "results/~a-mrhlog.xls" ts) :direction :output)
+   (format *mrhlog* "Patient	TimeStep	TumorCode	ComPos	Drug	DrugCode	KNow	KPrev	KDiff~%")
+   (with-open-file 
+    (*log* (format nil "results/~a-stats.xls" ts) :direction :output)
+    (loop for pn in param-names do (format *log* "~a	" pn))
+    (format *log* "mean-k	k-stderr~%")
+    ;; And go for it! ...
+    (loop for pset in (all-list-combinations param-values)
+	  do 
+	  (clrhash *tms->effs*)
+	  ;; *param-header* can be used elsewhere to figure out the params, if needed.
+	  (print (setf *param-header* (mapcar #'(lambda (n v) (set n v) (cons n v)) param-names pset)))
+	  (loop for (n . v) in *param-header* do (format *log* "~a	" v))
+	  (run-trial nruns ts)
+	  (report ts)
+	  )))
+  ;; Dump genetics
+  (with-open-file
+   (o (format nil "results/~a-genetics.tsv" ts) :direction :output)
+   (loop for code being the hash-keys of *genetics*
+	 using (hash-value markerss)
+	 do (format o "~a	~{~a~^ ~}~%" code (car markerss))))
+  )
+  
+;;; =======================================================
+;;; Startup calls
+
+(untrace)
+;;(trace ...)
+(setf *dump-pxs-in-json?* :rbstyle) ;; :simple :rbstyle :none (or nil)
+(hreader) ;; importing our hypotheses 
+;; NOTE RESET 1000 -> 10000, the 1000 is for rapid testing only 
+(run 1000 '(*nmonths* *txrule* *p-mutational-escape*) 
+; Usual default:    `((30) ,*txrules* ,(loop for i from 0.0 to 1.0 by 0.25 collect i)))
+; Txrules (just as a reminder):  :random-binary-cocktail :random-monotherapy :untried-monotherapy :binary-cocktail-changing-1-at-a-time :untried-binary-cocktail
+           `((30) (:targeted-therapy) (0.25)))

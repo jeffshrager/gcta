@@ -1,0 +1,3049 @@
+> d2=read.table("10000subjects.tsv",header=TRUE, sep="	", strip.white=TRUE)
+> d
+> 
+Warning messages:
+1: In checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv,  :
+  Model failed to converge with max|grad| = 0.11273 (tol = 0.002, component 1)
+2: In checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv,  :
+  Model is nearly unidentifiable: large eigenvalue ratio
+ - Rescale variables?
+> j
+Linear mixed model fit by maximum likelihood  ['lmerMod']
+Formula: 
+   Data: d
+      AIC       BIC    logLik  deviance  df.resid 
+ 2427.449  2469.352 -1203.725  2407.449       478 
+Random effects:
+ Groups   Name        Std.Dev. Corr 
+ SID      (Intercept) 9.88194       
+          Day         0.09721  -0.23
+ Tx       (Intercept) 2.89117       
+          Day         0.47731  1.00 
+ Residual             1.51684       
+Number of obs: 488, groups:  SID, 93; Tx, 2
+Fixed Effects:
+(Intercept)          Day          TxB  
+  68.740077    -0.009609    -8.313270  
+convergence code 0; 2 optimizer warnings; 0 lme4 warnings 
+> 
+> g
+Linear mixed model fit by maximum likelihood  ['lmerMod']
+Formula: KPS ~ Day + Tx + Day * Tx + ((1 | SID) + (0 + Day | SID))
+   Data: d
+      AIC       BIC    logLik  deviance  df.resid 
+ 2409.606  2438.938 -1197.803  2395.606       481 
+Random effects:
+ Groups   Name        Std.Dev.
+ SID      (Intercept) 9.76155 
+ SID.1    Day         0.09634 
+ Residual             1.51427 
+Number of obs: 488, groups:  SID, 93
+Fixed Effects:
+(Intercept)          Day          TxB      Day:TxB  
+    65.8868      -0.4793      -2.6502       0.9422  
+> coef(g)
+$SID
+   (Intercept)        Day       TxB  Day:TxB
+0     57.89200 -0.4466522 -2.650239 0.942219
+1     61.84545 -0.3934290 -2.650239 0.942219
+2     59.99362 -0.4816094 -2.650239 0.942219
+3     55.76000 -0.4773701 -2.650239 0.942219
+4     79.22935 -0.4247109 -2.650239 0.942219
+5     59.18590 -0.4335295 -2.650239 0.942219
+6     61.91359 -0.4800874 -2.650239 0.942219
+7     77.96918 -0.4102457 -2.650239 0.942219
+8     69.39580 -0.4793134 -2.650239 0.942219
+10    82.72509 -0.5045231 -2.650239 0.942219
+11    87.13767 -0.7490025 -2.650239 0.942219
+12    91.43455 -0.7730263 -2.650239 0.942219
+14    72.40625 -0.4710583 -2.650239 0.942219
+15    60.93332 -0.4687819 -2.650239 0.942219
+16    68.19071 -0.4759473 -2.650239 0.942219
+17    73.31120 -0.5156105 -2.650239 0.942219
+18    65.65581 -0.5387587 -2.650239 0.942219
+19    74.08311 -0.5050240 -2.650239 0.942219
+20    70.08470 -0.5949665 -2.650239 0.942219
+21    75.85366 -0.4502505 -2.650239 0.942219
+22    53.11214 -0.3689520 -2.650239 0.942219
+23    70.20902 -0.4954939 -2.650239 0.942219
+25    74.39905 -0.4677058 -2.650239 0.942219
+26    77.09276 -0.4876493 -2.650239 0.942219
+27    56.20753 -0.4926262 -2.650239 0.942219
+28    79.18582 -0.4900871 -2.650239 0.942219
+29    61.92946 -0.4593233 -2.650239 0.942219
+30    63.18884 -0.4729981 -2.650239 0.942219
+31    57.61984 -0.4168692 -2.650239 0.942219
+32    47.53004 -0.4711854 -2.650239 0.942219
+33    61.03709 -0.5063267 -2.650239 0.942219
+34    62.93207 -0.5151500 -2.650239 0.942219
+35    53.90074 -0.4803455 -2.650239 0.942219
+36    64.33260 -0.4878209 -2.650239 0.942219
+37    74.87705 -0.5213485 -2.650239 0.942219
+38    63.04000 -0.4593310 -2.650239 0.942219
+39    54.43623 -0.5616871 -2.650239 0.942219
+40    57.57466 -0.4947809 -2.650239 0.942219
+41    70.10505 -0.5283441 -2.650239 0.942219
+42    63.14703 -0.6031286 -2.650239 0.942219
+43    75.54216 -0.4304507 -2.650239 0.942219
+44    56.63698 -0.5480634 -2.650239 0.942219
+45    54.97972 -0.4308645 -2.650239 0.942219
+46    63.98157 -0.4811158 -2.650239 0.942219
+47    51.06460 -0.5008548 -2.650239 0.942219
+48    76.27990 -0.4793134 -2.650239 0.942219
+49    65.53887 -0.4680063 -2.650239 0.942219
+50    65.90593 -0.4792985 -2.650239 0.942219
+51    49.44419 -0.4894354 -2.650239 0.942219
+52    54.82008 -0.3990934 -2.650239 0.942219
+53    65.26544 -0.4794949 -2.650239 0.942219
+55    65.55802 -0.3268050 -2.650239 0.942219
+56    51.22679 -0.5182617 -2.650239 0.942219
+57    69.67657 -0.3804750 -2.650239 0.942219
+58    70.47616 -0.4680101 -2.650239 0.942219
+59    78.26330 -0.4600254 -2.650239 0.942219
+60    53.96743 -0.4862792 -2.650239 0.942219
+61    57.41539 -0.3854564 -2.650239 0.942219
+63    64.55312 -0.4489792 -2.650239 0.942219
+65    72.67641 -0.3719787 -2.650239 0.942219
+66    70.36478 -0.4802910 -2.650239 0.942219
+67    75.05523 -0.4584920 -2.650239 0.942219
+68    63.87527 -0.3768236 -2.650239 0.942219
+69    70.75844 -0.4778899 -2.650239 0.942219
+70    71.35234 -0.5184267 -2.650239 0.942219
+71    47.64858 -0.4586483 -2.650239 0.942219
+72    53.47947 -0.5815393 -2.650239 0.942219
+73    60.23919 -0.4613558 -2.650239 0.942219
+74    73.73554 -0.3418752 -2.650239 0.942219
+75    81.59752 -0.4318754 -2.650239 0.942219
+76    53.18115 -0.5364957 -2.650239 0.942219
+78    63.97231 -0.4800593 -2.650239 0.942219
+79    63.29998 -0.5782548 -2.650239 0.942219
+80    57.41055 -0.5139887 -2.650239 0.942219
+81    69.86999 -0.3365423 -2.650239 0.942219
+82    75.56198 -0.4467277 -2.650239 0.942219
+83    64.30830 -0.3647409 -2.650239 0.942219
+84    81.37894 -0.5602656 -2.650239 0.942219
+85    50.71035 -0.5925916 -2.650239 0.942219
+86    53.78570 -0.4804920 -2.650239 0.942219
+87    60.24728 -0.5000947 -2.650239 0.942219
+88    64.12740 -0.4854194 -2.650239 0.942219
+89    75.46201 -0.4766347 -2.650239 0.942219
+90    59.83689 -0.4822597 -2.650239 0.942219
+91    72.41048 -0.4523480 -2.650239 0.942219
+92    61.46911 -0.4050219 -2.650239 0.942219
+93    54.95034 -0.4857048 -2.650239 0.942219
+94    73.89819 -0.4528403 -2.650239 0.942219
+95    70.19433 -0.5096950 -2.650239 0.942219
+96    81.04485 -0.3170097 -2.650239 0.942219
+97    80.99122 -0.5681187 -2.650239 0.942219
+98    78.53456 -0.4958621 -2.650239 0.942219
+99    58.58825 -0.5804468 -2.650239 0.942219
+
+attr(,"class")
+[1] "coef.mer"
+> coef(j)
+$SID
+   (Intercept)           Day      TxB
+0     60.59352  0.0339382789 -8.31327
+1     64.60563  0.0797157244 -8.31327
+2     62.76132  0.0014918610 -8.31327
+3     58.43847  0.0068104130 -8.31327
+4     82.48825  0.0222321618 -8.31327
+5     61.94017  0.0396293925 -8.31327
+6     64.71228 -0.0013811332 -8.31327
+7     80.96267  0.0514666305 -8.31327
+8     72.21145 -0.0173410674 -8.31327
+10    85.84451 -0.0400344607 -8.31327
+11    90.06541 -0.2789567478 -8.31327
+12    94.37660 -0.3035876389 -8.31327
+14    75.43383 -0.0162915546 -8.31327
+15    63.72115  0.0034519510 -8.31327
+16    71.11032 -0.0115118487 -8.31327
+17    76.19440 -0.0458364834 -8.31327
+18    68.53934 -0.0687525017 -8.31327
+19    77.19283 -0.0520951801 -8.31327
+20    73.05889 -0.1299184979 -8.31327
+21    78.74653  0.0186407174 -8.31327
+22    55.82767  0.1053702904 -8.31327
+23    73.28200 -0.0335143964 -8.31327
+25    77.52500 -0.0175218638 -8.31327
+26    80.11960 -0.0296323638 -8.31327
+27    58.75353 -0.0007907987 -8.31327
+28    82.39446 -0.0367278018 -8.31327
+29    64.74744  0.0120645528 -8.31327
+30    65.98641 -0.0009156171 -8.31327
+31    60.33402  0.0582242342 -8.31327
+32    50.29751  0.0007228659 -8.31327
+33    63.79984 -0.0299520794 -8.31327
+34    65.77931 -0.0445098715 -8.31327
+35    56.68977 -0.0081243674 -8.31327
+36    67.13809 -0.0158196488 -8.31327
+37    77.91162 -0.0625028065 -8.31327
+38    65.88476  0.0112905165 -8.31327
+39    57.22276 -0.0891084117 -8.31327
+40    60.28704 -0.0218855765 -8.31327
+41    73.01605 -0.0608551127 -8.31327
+42    65.98227 -0.1297181448 -8.31327
+43    78.60221  0.0192407240 -8.31327
+44    59.38373 -0.0744497763 -8.31327
+45    57.70476  0.0438184555 -8.31327
+46    66.78068 -0.0070301434 -8.31327
+47    53.85352 -0.0285848487 -8.31327
+48    79.13512 -0.0327620391 -8.31327
+49    68.38730  0.0025395825 -8.31327
+50    68.76280 -0.0096429684 -8.31327
+51    52.14783 -0.0109840515 -8.31327
+52    57.57083  0.0740887299 -8.31327
+53    68.11362 -0.0083877427 -8.31327
+55    68.33409  0.1452156831 -8.31327
+56    53.37406 -0.0162678218 -8.31327
+57    72.54082  0.0883018208 -8.31327
+58    73.29821  0.0033156866 -8.31327
+59    81.54605 -0.0186270220 -8.31327
+60    56.63167  0.0105997280 -8.31327
+61    60.05893  0.0898945824 -8.31327
+63    67.22557  0.0251291784 -8.31327
+65    75.54100  0.0979395364 -8.31327
+66    73.38541 -0.0204764089 -8.31327
+67    78.17091 -0.0034346614 -8.31327
+68    66.70814  0.0939708939 -8.31327
+69    73.64478 -0.0191736431 -8.31327
+70    74.20198 -0.0475088345 -8.31327
+71    50.26760  0.0173162166 -8.31327
+72    55.98281 -0.0948412075 -8.31327
+73    62.81484  0.0171174136 -8.31327
+74    76.71590  0.1239202787 -8.31327
+75    85.46743  0.0042682956 -8.31327
+76    56.01494 -0.0656024120 -8.31327
+78    66.80814 -0.0060221751 -8.31327
+79    66.11469 -0.1062746312 -8.31327
+80    59.65616 -0.0280160273 -8.31327
+81    72.71592  0.1338568956 -8.31327
+82    78.68463  0.0049155424 -8.31327
+83    67.10164  0.1073171802 -8.31327
+84    84.43137 -0.0965443344 -8.31327
+85    53.47470 -0.1175348234 -8.31327
+86    56.60481  0.0163027889 -8.31327
+87    63.03687 -0.0250737438 -8.31327
+88    66.91953 -0.0116379589 -8.31327
+89    78.39118 -0.0285039657 -8.31327
+90    62.62252  0.0011765458 -8.31327
+91    75.34470  0.0129567199 -8.31327
+92    64.22745  0.0683614295 -8.31327
+93    57.62785  0.0089370775 -8.31327
+94    76.83307  0.0148557551 -8.31327
+95    73.07387 -0.0396830104 -8.31327
+96    83.96905  0.1419995136 -8.31327
+97    83.92414 -0.1008289245 -8.31327
+98    81.50180 -0.0316427797 -8.31327
+99    61.41876 -0.1092533912 -8.31327
+
+$Tx
+  (Intercept)        Day      TxB
+A    65.89004 -0.4801300 -8.31327
+B    71.59011  0.4609113 -8.31327
+
+attr(,"class")
+[1] "coef.mer"
+> j
+Linear mixed model fit by maximum likelihood  ['lmerMod']
+Formula: KPS ~ Day + Tx + (Day | Tx) + (Day | SID)
+   Data: d
+      AIC       BIC    logLik  deviance  df.resid 
+ 2427.449  2469.352 -1203.725  2407.449       478 
+Random effects:
+ Groups   Name        Std.Dev. Corr 
+ SID      (Intercept) 9.88194       
+          Day         0.09721  -0.23
+ Tx       (Intercept) 2.89117       
+          Day         0.47731  1.00 
+ Residual             1.51684       
+Number of obs: 488, groups:  SID, 93; Tx, 2
+Fixed Effects:
+(Intercept)          Day          TxB  
+  68.740077    -0.009609    -8.313270  
+convergence code 0; 2 optimizer warnings; 0 lme4 warnings 
+> g
+Linear mixed model fit by maximum likelihood  ['lmerMod']
+Formula: KPS ~ Day + Tx + Day * Tx + ((1 | SID) + (0 + Day | SID))
+   Data: d
+      AIC       BIC    logLik  deviance  df.resid 
+ 2409.606  2438.938 -1197.803  2395.606       481 
+Random effects:
+ Groups   Name        Std.Dev.
+ SID      (Intercept) 9.76155 
+ SID.1    Day         0.09634 
+ Residual             1.51427 
+Number of obs: 488, groups:  SID, 93
+Fixed Effects:
+(Intercept)          Day          TxB      Day:TxB  
+    65.8868      -0.4793      -2.6502       0.9422  
+> d$gpredict=predict(g)
+Error in predict(modified) : object 'modified' not found
+> d$jpredict=predict(j)
+> 
+> ggplot(d,aes(x=Day, y=KPS , group=SID))+geom_line(alpha=0.5)+geom_point()
+> p<-ggplot(d,aes(x=Day, y=KPS , group=SID))+geom_line(alpha=0.5)+geom_point()
+> 
+> 
+> p
+> g2=lmer(KPS~Day+Tx+(Day||SID),data=d,REML=F)
+> g2
+Linear mixed model fit by maximum likelihood  ['lmerMod']
+Formula: KPS ~ Day + Tx + ((1 | SID) + (0 + Day | SID))
+   Data: d
+      AIC       BIC    logLik  deviance  df.resid 
+ 2614.696  2639.838 -1301.348  2602.696       482 
+Random effects:
+ Groups   Name        Std.Dev.
+ SID      (Intercept) 9.6849  
+ SID.1    Day         0.4826  
+ Residual             1.5207  
+Number of obs: 488, groups:  SID, 93
+Fixed Effects:
+(Intercept)          Day          TxB  
+  65.180770     0.009682    -0.993560  
+> g
+Linear mixed model fit by maximum likelihood  ['lmerMod']
+Formula: KPS ~ Day + Tx + Day * Tx + ((1 | SID) + (0 + Day | SID))
+   Data: d
+      AIC       BIC    logLik  deviance  df.resid 
+ 2409.606  2438.938 -1197.803  2395.606       481 
+Random effects:
+ Groups   Name        Std.Dev.
+ SID      (Intercept) 9.76155 
+ SID.1    Day         0.09634 
+ Residual             1.51427 
+Number of obs: 488, groups:  SID, 93
+Fixed Effects:
+(Intercept)          Day          TxB      Day:TxB  
+    65.8868      -0.4793      -2.6502       0.9422  
+> j
+Linear mixed model fit by maximum likelihood  ['lmerMod']
+Formula: KPS ~ Day + Tx + (Day | Tx) + (Day | SID)
+   Data: d
+      AIC       BIC    logLik  deviance  df.resid 
+ 2427.449  2469.352 -1203.725  2407.449       478 
+Random effects:
+ Groups   Name        Std.Dev. Corr 
+ SID      (Intercept) 9.88194       
+          Day         0.09721  -0.23
+ Tx       (Intercept) 2.89117       
+          Day         0.47731  1.00 
+ Residual             1.51684       
+Number of obs: 488, groups:  SID, 93; Tx, 2
+Fixed Effects:
+(Intercept)          Day          TxB  
+  68.740077    -0.009609    -8.313270  
+convergence code 0; 2 optimizer warnings; 0 lme4 warnings 
+> d$g2predict=predict(g2)
+> p<-p+geom_line(aes(x=Day, y=g2predict , group=SID), col="#00dd0044")+geom_point(aes(x=Day, y=g2predict , group=SID), col="#00dd0044")
+> p
+Error in FUN(X[[i]], ...) : object 'g2predict' not found
+> p
+Error in FUN(X[[i]], ...) : object 'g2predict' not found
+> p<-ggplot(d,aes(x=Day, y=KPS , group=SID))+geom_line(alpha=0.5)+geom_point()
+> p<-p+geom_line(aes(x=Day, y=g2predict , group=SID), col="#dd000044")+geom_point(aes(x=Day, y=g2predict , group=SID), col="#dd000044")
+> p<-p+geom_line(aes(x=Day, y=jpredict , group=SID), col="#0000dd44")+geom_point(aes(x=Day, y=jpredict , group=SID), col="#0000dd44")
+> p
+> p<-ggplot(d,aes(x=Day, y=KPS , group=SID))+geom_line(alpha=0.5)+geom_point()
+> p<-p+geom_line(aes(x=Day, y=g2predict , group=SID), col="#dd000044")+geom_point(aes(x=Day, y=g2predict , group=SID), col="#dd000044")
+> p<-p+geom_line(aes(x=Day, y=jpredict , group=SID), col="#0000dd44")+geom_point(aes(x=Day, y=jpredict , group=SID), col="#0000dd44")
+> p
+> p<-ggplot(d,aes(x=Day, y=KPS , group=SID))+geom_line(alpha=0.5)+geom_point()
+> p<-p+geom_line(aes(x=Day, y=jpredict , group=SID), col="#0000dd44")+geom_point(aes(x=Day, y=jpredict , group=SID), col="#0000dd44")
+> p<-p+geom_line(aes(x=Day, y=gpredict , group=SID), col="#dd000044")+geom_point(aes(x=Day, y=gpredict , group=SID), col="#dd000044")
+> p
+> g
+Linear mixed model fit by maximum likelihood  ['lmerMod']
+Formula: KPS ~ Day + Tx + Day * Tx + ((1 | SID) + (0 + Day | SID))
+   Data: d
+      AIC       BIC    logLik  deviance  df.resid 
+ 2409.606  2438.938 -1197.803  2395.606       481 
+Random effects:
+ Groups   Name        Std.Dev.
+ SID      (Intercept) 9.76155 
+ SID.1    Day         0.09634 
+ Residual             1.51427 
+Number of obs: 488, groups:  SID, 93
+Fixed Effects:
+(Intercept)          Day          TxB      Day:TxB  
+    65.8868      -0.4793      -2.6502       0.9422  
+> g3=lmer(KPS ~ Day + Tx + Day * Tx + ((1 | SID) + (1 + Day | SID)),data=d,REML=F)
+0
+[1] 0
+> g
+Linear mixed model fit by maximum likelihood  ['lmerMod']
+Formula: KPS ~ Day + Tx + Day * Tx + ((1 | SID) + (0 + Day | SID))
+   Data: d
+      AIC       BIC    logLik  deviance  df.resid 
+ 2409.606  2438.938 -1197.803  2395.606       481 
+Random effects:
+ Groups   Name        Std.Dev.
+ SID      (Intercept) 9.76155 
+ SID.1    Day         0.09634 
+ Residual             1.51427 
+Number of obs: 488, groups:  SID, 93
+Fixed Effects:
+(Intercept)          Day          TxB      Day:TxB  
+    65.8868      -0.4793      -2.6502       0.9422  
+> g2
+Linear mixed model fit by maximum likelihood  ['lmerMod']
+Formula: KPS ~ Day + Tx + ((1 | SID) + (0 + Day | SID))
+   Data: d
+      AIC       BIC    logLik  deviance  df.resid 
+ 2614.696  2639.838 -1301.348  2602.696       482 
+Random effects:
+ Groups   Name        Std.Dev.
+ SID      (Intercept) 9.6849  
+ SID.1    Day         0.4826  
+ Residual             1.5207  
+Number of obs: 488, groups:  SID, 93
+Fixed Effects:
+(Intercept)          Day          TxB  
+  65.180770     0.009682    -0.993560  
+> g
+Linear mixed model fit by maximum likelihood  ['lmerMod']
+Formula: KPS ~ Day + Tx + Day * Tx + ((1 | SID) + (0 + Day | SID))
+   Data: d
+      AIC       BIC    logLik  deviance  df.resid 
+ 2409.606  2438.938 -1197.803  2395.606       481 
+Random effects:
+ Groups   Name        Std.Dev.
+ SID      (Intercept) 9.76155 
+ SID.1    Day         0.09634 
+ Residual             1.51427 
+Number of obs: 488, groups:  SID, 93
+Fixed Effects:
+(Intercept)          Day          TxB      Day:TxB  
+    65.8868      -0.4793      -2.6502       0.9422  
+> g
+g
+Linear mixed model fit by maximum likelihood  ['lmerMod']
+Formula: 
+   Data: d
+      AIC       BIC    logLik  deviance  df.resid 
+ 2409.606  2438.938 -1197.803  2395.606       481 
+Random effects:
+ Groups   Name        Std.Dev.
+ SID      (Intercept) 9.76155 
+ SID.1    Day         0.09634 
+ Residual             1.51427 
+Number of obs: 488, groups:  SID, 93
+Fixed Effects:
+(Intercept)          Day          TxB      Day:TxB  
+    65.8868      -0.4793      -2.6502       0.9422  
+> j
+Linear mixed model fit by maximum likelihood  ['lmerMod']
+Formula: KPS ~ Day + Tx + (Day | Tx) + (Day | SID)
+   Data: d
+      AIC       BIC    logLik  deviance  df.resid 
+ 2427.449  2469.352 -1203.725  2407.449       478 
+Random effects:
+ Groups   Name        Std.Dev. Corr 
+ SID      (Intercept) 9.88194       
+          Day         0.09721  -0.23
+ Tx       (Intercept) 2.89117       
+          Day         0.47731  1.00 
+ Residual             1.51684       
+Number of obs: 488, groups:  SID, 93; Tx, 2
+Fixed Effects:
+(Intercept)          Day          TxB  
+  68.740077    -0.009609    -8.313270  
+convergence code 0; 2 optimizer warnings; 0 lme4 warnings 
+> g
+
+Linear mixed model fit by maximum likelihood  ['lmerMod']
+Formula: 
+   Data: d
+      AIC       BIC    logLik  deviance  df.resid 
+ 2409.606  2438.938 -1197.803  2395.606       481 
+Random effects:
+ Groups   Name        Std.Dev.
+ SID      (Intercept) 9.76155 
+ SID.1    Day         0.09634 
+ Residual             1.51427 
+Number of obs: 488, groups:  SID, 93
+Fixed Effects:
+(Intercept)          Day          TxB      Day:TxB  
+    65.8868      -0.4793      -2.6502       0.9422  
+> j
+Linear mixed model fit by maximum likelihood  ['lmerMod']
+Formula: KPS ~ Day + Tx + (Day | Tx) + (Day | SID)
+   Data: d
+      AIC       BIC    logLik  deviance  df.resid 
+ 2427.449  2469.352 -1203.725  2407.449       478 
+Random effects:
+ Groups   Name        Std.Dev. Corr 
+ SID      (Intercept) 9.88194       
+          Day         0.09721  -0.23
+ Tx       (Intercept) 2.89117       
+          Day         0.47731  1.00 
+ Residual             1.51684       
+Number of obs: 488, groups:  SID, 93; Tx, 2
+Fixed Effects:
+(Intercept)          Day          TxB  
+  68.740077    -0.009609    -8.313270  
+convergence code 0; 2 optimizer warnings; 0 lme4 warnings 
+> g3=lmer(KPS ~ Day + Tx + ((Day | Tx) + (1 | SID) ),data=d,REML=F)
+boundary (singular) fit: see ?isSingular
+> g3=lmer(KPS ~ Day + Tx + ((Day | Tx) + (Tx | SID) ),data=d,REML=F)
+boundary (singular) fit: see ?isSingular
+> g3=lmer(KPS ~ Day + Tx + (Day | Tx),data=d,REML=F)
+boundary (singular) fit: see ?isSingular
+> g3=lmer(KPS ~ Day + Tx + (1 | Tx),data=d,REML=F)
+boundary (singular) fit: see ?isSingular
+> g3=lmer(KPS ~ 1 + Day + Tx + (1 | Tx),data=d,REML=F)
+boundary (singular) fit: see ?isSingular
+> KPS ~ 1 + Day + Tx + Day*Tx + (1 | Tx)
+boundary (singular) fit: see ?isSingular
+> g
+boundary (singular) fit: see ?isSingular
+> g
+Linear mixed model fit by maximum likelihood  ['lmerMod']
+Formula: 
+   Data: d
+      AIC       BIC    logLik  deviance  df.resid 
+ 2409.606  2438.938 -1197.803  2395.606       481 
+Random effects:
+ Groups   Name        Std.Dev.
+ SID      (Intercept) 9.76155 
+ SID.1    Day         0.09634 
+ Residual             1.51427 
+Number of obs: 488, groups:  SID, 93
+Fixed Effects:
+(Intercept)          Day          TxB      Day:TxB  
+    65.8868      -0.4793      -2.6502       0.9422  
+> g3=lmer(KPS ~ Day + Tx + Day * Tx + (Day | Tx) + ((1 | SID) + (0 + Day | SID)), ,data=d,REML=F)
+> g3=lmer(KPS ~ Day + Tx + (Day | Tx) + ((1 | SID) + (0 + Day | SID)), ,data=d,REML=F)
+boundary (singular) fit: see ?isSingular
+> g3=lmer(KPS ~ Day + Tx + (Day | Tx) + ((1 | SID) + (0 + Day | SID)), ,data=d,REML=F)
+Warning messages:
+1: In checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv,  :
+  Model failed to converge with max|grad| = 0.0170015 (tol = 0.002, component 1)
+2: In checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv,  :
+  Model is nearly unidentifiable: large eigenvalue ratio
+ - Rescale variables?
+> coef(g3)
+$SID
+   (Intercept)           Day       TxB
+0     58.17698  0.0254231107 -3.234893
+1     62.12334  0.0786921402 -3.234893
+2     60.28531 -0.0105557768 -3.234893
+3     56.05022 -0.0064593010 -3.234893
+4     79.48997  0.0477441463 -3.234893
+5     59.47108  0.0383262771 -3.234893
+6     62.20378 -0.0089769173 -3.234893
+7     78.24533  0.0621595261 -3.234893
+8     69.68465 -0.0081735042 -3.234893
+10    83.02221 -0.0340917216 -3.234893
+11    87.44044 -0.2774653558 -3.234893
+12    91.73944 -0.3015742529 -3.234893
+14    72.69898  0.0003913678 -3.234893
+15    61.22277  0.0029618717 -3.234893
+16    68.48669 -0.0046757528 -3.234893
+17    73.60634 -0.0440349024 -3.234893
+18    65.95899 -0.0684328614 -3.234893
+19    74.39324 -0.0346589587 -3.234893
+20    70.41449 -0.1261776255 -3.234893
+21    76.14607  0.0203357845 -3.234893
+22    53.39136  0.1030867163 -3.234893
+23    70.52198 -0.0246583825 -3.234893
+25    74.67974  0.0038523894 -3.234893
+26    77.38849 -0.0163385580 -3.234893
+27    56.50080 -0.0219841043 -3.234893
+28    79.47826 -0.0194667732 -3.234893
+29    62.22053  0.0112723430 -3.234893
+30    63.47902 -0.0012751318 -3.234893
+31    57.90045  0.0551900243 -3.234893
+32    47.82395 -0.0006914969 -3.234893
+33    61.33534 -0.0353593424 -3.234893
+34    63.22871 -0.0447082118 -3.234893
+35    54.19025 -0.0086027013 -3.234893
+36    64.62724 -0.0162752130 -3.234893
+37    75.17971 -0.0513521263 -3.234893
+38    63.33490  0.0111509540 -3.234893
+39    54.73124 -0.0900928534 -3.234893
+40    57.86961 -0.0243041347 -3.234893
+41    70.41122 -0.0574065068 -3.234893
+42    63.46558 -0.1343842741 -3.234893
+43    75.81880  0.0423573732 -3.234893
+44    56.94090 -0.0766974923 -3.234893
+45    55.26465  0.0410325241 -3.234893
+46    64.27444 -0.0100370435 -3.234893
+47    51.35469 -0.0291251974 -3.234893
+48    76.57556 -0.0081735042 -3.234893
+49    65.83281  0.0025054656 -3.234893
+50    66.19640 -0.0081595104 -3.234893
+51    49.73888 -0.0189112963 -3.234893
+52    55.10440  0.0727915416 -3.234893
+53    65.55924 -0.0083614120 -3.234893
+55    65.80774  0.1448822540 -3.234893
+56    51.55878 -0.0484497527 -3.234893
+57    69.96318  0.0906978920 -3.234893
+58    70.76513  0.0037412755 -3.234893
+59    78.55055  0.0118287166 -3.234893
+60    54.26158 -0.0153991088 -3.234893
+61    57.68504  0.0867354541 -3.234893
+63    64.82663  0.0230524989 -3.234893
+65    72.96416  0.0987192296 -3.234893
+66    70.65084 -0.0092148798 -3.234893
+67    75.33355  0.0129799748 -3.234893
+68    64.16596  0.0937615688 -3.234893
+69    71.05201 -0.0066962754 -3.234893
+70    71.64538 -0.0467637904 -3.234893
+71    47.93670  0.0119962081 -3.234893
+72    53.81878 -0.1129487859 -3.234893
+73    60.50805  0.0098978103 -3.234893
+74    73.97259  0.1304789010 -3.234893
+75    81.85450  0.0409306190 -3.234893
+76    53.47818 -0.0660575864 -3.234893
+78    64.26556 -0.0089469571 -3.234893
+79    63.61696 -0.1074951347 -3.234893
+80    57.76696 -0.0438755207 -3.234893
+81    70.15792  0.1341387306 -3.234893
+82    75.84323  0.0255068673 -3.234893
+83    64.58960  0.1072753607 -3.234893
+84    81.68846 -0.0892149932 -3.234893
+85    51.01656 -0.1226096297 -3.234893
+86    54.08097 -0.0093960227 -3.234893
+87    60.54357 -0.0296652289 -3.234893
+88    64.42481 -0.0144836753 -3.234893
+89    75.75508 -0.0053956275 -3.234893
+90    60.12994 -0.0112298446 -3.234893
+91    72.69649  0.0195506093 -3.234893
+92    61.74802  0.0670767168 -3.234893
+93    55.24435 -0.0148032557 -3.234893
+94    74.18582  0.0178783578 -3.234893
+95    70.49105 -0.0392494053 -3.234893
+96    81.31713  0.1564467753 -3.234893
+97    81.29228 -0.0978798061 -3.234893
+98    78.83005 -0.0253835532 -3.234893
+99    58.89192 -0.1101842380 -3.234893
+
+$Tx
+  (Intercept)       Day       TxB
+A    65.88324 -0.478635 -3.234893
+B    66.47494  0.462288 -3.234893
+
+attr(,"class")
+[1] "coef.mer"
+> g3
+Linear mixed model fit by maximum likelihood  ['lmerMod']
+Formula: KPS ~ Day + Tx + (Day | Tx) + ((1 | SID) + (0 + Day | SID))
+   Data: d
+      AIC       BIC    logLik  deviance  df.resid 
+ 2428.448  2466.160 -1205.224  2410.448       479 
+Random effects:
+ Groups   Name        Std.Dev. Corr
+ SID      Day         0.09812      
+ SID.1    (Intercept) 9.76112      
+ Tx       (Intercept) 0.29623      
+          Day         0.47102  1.00
+ Residual             1.51454      
+Number of obs: 488, groups:  SID, 93; Tx, 2
+Fixed Effects:
+(Intercept)          Day          TxB  
+  66.179092    -0.008174    -3.234893  
+convergence code 0; 2 optimizer warnings; 0 lme4 warnings 
+> g4=lmer(KPS ~ Day + Tx + (Day | Tx) + ((1 | SID) + (0 + Day | SID)), ,data=d,REML=F)
+Warning messages:
+1: In checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv,  :
+  Model failed to converge with max|grad| = 0.0170015 (tol = 0.002, component 1)
+2: In checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv,  :
+  Model is nearly unidentifiable: large eigenvalue ratio
+ - Rescale variables?
+> g4=lmer(KPS ~ Day + Tx + (Day | Tx) + ((1 | SID) + (0 + Day | SID)), ,data=d,REML=F)
+Warning message:
+In checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv,  :
+  Model failed to converge with max|grad| = 0.0365937 (tol = 0.002, component 1)
+> coef(g4)
+$SID
+   (Intercept)           Day        TxB
+0     56.07079  0.5095275892 -0.9929931
+1     59.87801  0.5592811819 -0.9929931
+2     60.31128 -0.0386156610 -0.9929931
+3     55.35233 -0.4450442680 -0.9929931
+4     75.88528 -0.2355003420 -0.9929931
+5     57.44833  0.5109926158 -0.9929931
+6     61.20298 -0.0100517961 -0.9929931
+7     75.85392  0.5557386511 -0.9929931
+8     67.75953  0.0096699799 -0.9929931
+10    82.71672 -0.5044832663 -0.9929931
+11    85.87350  0.1870356730 -0.9929931
+12    90.23010  0.1606149764 -0.9929931
+14    73.30270  0.2714166171 -0.9929931
+15    59.31411  0.4726705545 -0.9929931
+16    70.39894  0.2037088454 -0.9929931
+17    71.86276  0.4207240299 -0.9929931
+18    65.83939 -0.5422041868 -0.9929931
+19    76.57471  0.1668455769 -0.9929931
+20    71.66947 -0.6732260996 -0.9929931
+21    75.74473 -0.4463402819 -0.9929931
+22    51.19637  0.5809600558 -0.9929931
+23    71.22110  0.3451535430 -0.9929931
+25    66.99465  0.0726233362 -0.9929931
+26    75.83736  0.4290773970 -0.9929931
+27    54.47720 -0.3722420276 -0.9929931
+28    78.90952 -0.4773537947 -0.9929931
+29    61.77068 -0.4549213284 -0.9929931
+30    61.59703  0.4676622870 -0.9929931
+31    55.73008  0.5340810598 -0.9929931
+32    47.46466 -0.4701196261 -0.9929931
+33    59.89902  0.3929960556 -0.9929931
+34    62.94682 -0.5155508118 -0.9929931
+35    52.27194  0.4613197516 -0.9929931
+36    62.91536  0.4457884193 -0.9929931
+37    75.19517 -0.5435593551 -0.9929931
+38    63.00986 -0.4587014531 -0.9929931
+39    52.96703  0.3756656684 -0.9929931
+40    57.49017 -0.4934119317 -0.9929931
+41    69.18581  0.3793269365 -0.9929931
+42    64.16859 -0.6807709478 -0.9929931
+43    71.99213  0.6758559731 -0.9929931
+44    55.47645  0.3813794083 -0.9929931
+45    53.22876  0.5149020629 -0.9929931
+46    64.68957  0.0650196976 -0.9929931
+47    49.45095  0.4404633451 -0.9929931
+48    76.25742  0.0096699799 -0.9929931
+49    65.47569 -0.4663803852 -0.9929931
+50    62.48810 -0.0437305284 -0.9929931
+51    49.38744 -0.4865410040 -0.9929931
+52    53.05362  0.5464049849 -0.9929931
+53    63.84563 -0.0002592658 -0.9929931
+55    63.99315 -0.2852936298 -0.9929931
+56    61.52177 -0.1151383535 -0.9929931
+57    69.37221 -0.3571944815 -0.9929931
+58    68.82882  0.4739008953 -0.9929931
+59    76.80269  0.4706435325 -0.9929931
+60    55.77216 -0.1302734418 -0.9929931
+61    55.21080  0.5692647403 -0.9929931
+63    62.51231  0.5002472569 -0.9929931
+65    72.43772 -0.3650544989 -0.9929931
+66    67.12499 -0.2759317782 -0.9929931
+67    73.53852 -0.3711529059 -0.9929931
+68    63.72569 -0.3732751771 -0.9929931
+69    69.22332  0.0397346225 -0.9929931
+70    69.82890  0.4208474514 -0.9929931
+71    47.38480 -0.4524608520 -0.9929931
+72    56.12143 -0.6955725759 -0.9929931
+73    58.39138 -0.4072335853 -0.9929931
+74    71.36704 -0.2657268445 -0.9929931
+75    74.17960  0.7012239866 -0.9929931
+76    53.20880 -0.5370583627 -0.9929931
+78    62.16138 -0.0202700354 -0.9929931
+79    62.66169  0.3279993149 -0.9929931
+80    66.65328  0.1629877452 -0.9929931
+81    69.64141 -0.3302490670 -0.9929931
+82    73.21091  0.5399556331 -0.9929931
+83    62.44844  0.5845736945 -0.9929931
+84    80.44101  0.3574974368 -0.9929931
+85    51.01832 -0.6069339359 -0.9929931
+86    53.32545 -0.0197193225 -0.9929931
+87    60.23952 -0.4997980722 -0.9929931
+88    66.14842  0.1049138295 -0.9929931
+89    73.65603  0.0424827433 -0.9929931
+90    57.86507 -0.0810079621 -0.9929931
+91    70.68746  0.4935178777 -0.9929931
+92    59.52810  0.5470948737 -0.9929931
+93    56.67893 -0.1167862037 -0.9929931
+94    73.60985 -0.4439441912 -0.9929931
+95    70.20433 -0.5099039941 -0.9929931
+96    78.76622  0.6893317621 -0.9929931
+97    81.13192 -0.5742683636 -0.9929931
+98    78.50223 -0.4943759907 -0.9929931
+99    58.79944 -0.5858535308 -0.9929931
+
+$Tx
+  (Intercept)        Day        TxB
+A    65.18074 0.00966998 -0.9929931
+B    65.18074 0.00966998 -0.9929931
+
+attr(,"class")
+[1] "coef.mer"
+> g4=lmer(KPS ~ Day + Tx + (Day | Tx) + ((1 | SID) + (0 + Day | SID)),data=d,REML=F)
+Warning messages:
+1: In checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv,  :
+  Model failed to converge with max|grad| = 0.0170015 (tol = 0.002, component 1)
+2: In checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv,  :
+  Model is nearly unidentifiable: large eigenvalue ratio
+ - Rescale variables?
+> g4=lmer(KPS ~ Day + Tx + (Day | Tx) + ((1 | SID) + (0 + Day | SID)),data=d,REML=F)
+Warning messages:
+1: In checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv,  :
+  Model failed to converge with max|grad| = 0.0170015 (tol = 0.002, component 1)
+2: In checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv,  :
+  Model is nearly unidentifiable: large eigenvalue ratio
+ - Rescale variables?
+> coef(g4)
+$SID
+   (Intercept)           Day       TxB
+0     58.17698  0.0254231107 -3.234893
+1     62.12334  0.0786921402 -3.234893
+2     60.28531 -0.0105557768 -3.234893
+3     56.05022 -0.0064593010 -3.234893
+4     79.48997  0.0477441463 -3.234893
+5     59.47108  0.0383262771 -3.234893
+6     62.20378 -0.0089769173 -3.234893
+7     78.24533  0.0621595261 -3.234893
+8     69.68465 -0.0081735042 -3.234893
+10    83.02221 -0.0340917216 -3.234893
+11    87.44044 -0.2774653558 -3.234893
+12    91.73944 -0.3015742529 -3.234893
+14    72.69898  0.0003913678 -3.234893
+15    61.22277  0.0029618717 -3.234893
+16    68.48669 -0.0046757528 -3.234893
+17    73.60634 -0.0440349024 -3.234893
+18    65.95899 -0.0684328614 -3.234893
+19    74.39324 -0.0346589587 -3.234893
+20    70.41449 -0.1261776255 -3.234893
+21    76.14607  0.0203357845 -3.234893
+22    53.39136  0.1030867163 -3.234893
+23    70.52198 -0.0246583825 -3.234893
+25    74.67974  0.0038523894 -3.234893
+26    77.38849 -0.0163385580 -3.234893
+27    56.50080 -0.0219841043 -3.234893
+28    79.47826 -0.0194667732 -3.234893
+29    62.22053  0.0112723430 -3.234893
+30    63.47902 -0.0012751318 -3.234893
+31    57.90045  0.0551900243 -3.234893
+32    47.82395 -0.0006914969 -3.234893
+33    61.33534 -0.0353593424 -3.234893
+34    63.22871 -0.0447082118 -3.234893
+35    54.19025 -0.0086027013 -3.234893
+36    64.62724 -0.0162752130 -3.234893
+37    75.17971 -0.0513521263 -3.234893
+38    63.33490  0.0111509540 -3.234893
+39    54.73124 -0.0900928534 -3.234893
+40    57.86961 -0.0243041347 -3.234893
+41    70.41122 -0.0574065068 -3.234893
+42    63.46558 -0.1343842741 -3.234893
+43    75.81880  0.0423573732 -3.234893
+44    56.94090 -0.0766974923 -3.234893
+45    55.26465  0.0410325241 -3.234893
+46    64.27444 -0.0100370435 -3.234893
+47    51.35469 -0.0291251974 -3.234893
+48    76.57556 -0.0081735042 -3.234893
+49    65.83281  0.0025054656 -3.234893
+50    66.19640 -0.0081595104 -3.234893
+51    49.73888 -0.0189112963 -3.234893
+52    55.10440  0.0727915416 -3.234893
+53    65.55924 -0.0083614120 -3.234893
+55    65.80774  0.1448822540 -3.234893
+56    51.55878 -0.0484497527 -3.234893
+57    69.96318  0.0906978920 -3.234893
+58    70.76513  0.0037412755 -3.234893
+59    78.55055  0.0118287166 -3.234893
+60    54.26158 -0.0153991088 -3.234893
+61    57.68504  0.0867354541 -3.234893
+63    64.82663  0.0230524989 -3.234893
+65    72.96416  0.0987192296 -3.234893
+66    70.65084 -0.0092148798 -3.234893
+67    75.33355  0.0129799748 -3.234893
+68    64.16596  0.0937615688 -3.234893
+69    71.05201 -0.0066962754 -3.234893
+70    71.64538 -0.0467637904 -3.234893
+71    47.93670  0.0119962081 -3.234893
+72    53.81878 -0.1129487859 -3.234893
+73    60.50805  0.0098978103 -3.234893
+74    73.97259  0.1304789010 -3.234893
+75    81.85450  0.0409306190 -3.234893
+76    53.47818 -0.0660575864 -3.234893
+78    64.26556 -0.0089469571 -3.234893
+79    63.61696 -0.1074951347 -3.234893
+80    57.76696 -0.0438755207 -3.234893
+81    70.15792  0.1341387306 -3.234893
+82    75.84323  0.0255068673 -3.234893
+83    64.58960  0.1072753607 -3.234893
+84    81.68846 -0.0892149932 -3.234893
+85    51.01656 -0.1226096297 -3.234893
+86    54.08097 -0.0093960227 -3.234893
+87    60.54357 -0.0296652289 -3.234893
+88    64.42481 -0.0144836753 -3.234893
+89    75.75508 -0.0053956275 -3.234893
+90    60.12994 -0.0112298446 -3.234893
+91    72.69649  0.0195506093 -3.234893
+92    61.74802  0.0670767168 -3.234893
+93    55.24435 -0.0148032557 -3.234893
+94    74.18582  0.0178783578 -3.234893
+95    70.49105 -0.0392494053 -3.234893
+96    81.31713  0.1564467753 -3.234893
+97    81.29228 -0.0978798061 -3.234893
+98    78.83005 -0.0253835532 -3.234893
+99    58.89192 -0.1101842380 -3.234893
+
+$Tx
+  (Intercept)       Day       TxB
+A    65.88324 -0.478635 -3.234893
+B    66.47494  0.462288 -3.234893
+
+attr(,"class")
+[1] "coef.mer"
+> coef(j)$Tx
+  (Intercept)        Day      TxB
+A    65.89004 -0.4801300 -8.31327
+B    71.59011  0.4609113 -8.31327
+> coef(g4)$Tx
+  (Intercept)       Day       TxB
+A    65.88324 -0.478635 -3.234893
+B    66.47494  0.462288 -3.234893
+> Anova(j,j)
+Error in as.character.default(type) : 
+  no method for coercing this S4 class to a vector
+> anova(j,j)
+Error in as.character.default(type) : 
+  no method for coercing this S4 class to a vector
+> anova(j,g4)
+Data: d
+Models:
+MODEL1: KPS ~ Day + Tx + (Day | Tx) + (Day | SID)
+MODEL2: KPS ~ Day + Tx + (Day | Tx) + (Day | SID)
+       Df    AIC    BIC  logLik deviance Chisq Chi Df Pr(>Chisq)
+MODEL1 10 2427.4 2469.3 -1203.7   2407.4                        
+MODEL2 10 2427.4 2469.3 -1203.7   2407.4     0      0          1
+Warning message:
+In anova.merMod(j, j) : failed to find model names, assigning generic names
+> anova(j,g4)
+Data: d
+Models:
+g4: KPS ~ Day + Tx + (Day | Tx) + ((1 | SID) + (0 + Day | SID))
+j: KPS ~ Day + Tx + (Day | Tx) + (Day | SID)
+   Df    AIC    BIC  logLik deviance  Chisq Chi Df Pr(>Chisq)  
+g4  9 2428.4 2466.2 -1205.2   2410.4                           
+j  10 2427.4 2469.3 -1203.7   2407.4 2.9984      1    0.08335 .
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+> anova(j,g)
+Data: d
+Models:
+g: KPS ~ Day + Tx + Day * Tx + ((1 | SID) + (0 + Day | SID))
+j: 
+  Df    AIC    BIC  logLik deviance Chisq Chi Df Pr(>Chisq)
+g  7 2409.6 2438.9 -1197.8   2395.6                        
+j 10 2427.4 2469.3 -1203.7   2407.4     0      3          1
+> Anova(j,g)
+Error in as.character.default(type) : 
+  no method for coercing this S4 class to a vector
+> coef(j)$Tx
+  (Intercept)        Day      TxB
+A    65.89004 -0.4801300 -8.31327
+B    71.59011  0.4609113 -8.31327
+> coef(g)$Tx
+NULL
+> d1000=read.table("1000subjects.tsv",header=TRUE, sep="	", strip.white=TRUE)
+Error in file(file, "rt") : cannot open the connection
+In addition: Warning message:
+In file(file, "rt") :
+  cannot open file '1000subjects.tsv': No such file or directory
+> d2=read.table("10000subjects.tsv",header=TRUE, sep="	", strip.white=TRUE)
+> lmer(KPS ~ Day + Tx + (Day | Tx) + (Day | SID),data=d2,REML=F)
+boundary (singular) fit: see ?isSingular
+Linear mixed model fit by maximum likelihood  ['lmerMod']
+Formula: KPS ~ Day + Tx + (Day | Tx) + (Day | SID)
+   Data: d2
+      AIC       BIC    logLik  deviance  df.resid 
+129676.30 129758.49 -64828.15 129656.30     27422 
+Random effects:
+ Groups   Name        Std.Dev. Corr 
+ SID      (Intercept) 8.7339        
+          Day         0.1053   -0.08
+ Tx       (Intercept) 0.0000        
+          Day         0.5885    NaN 
+ Residual             0.9403        
+Number of obs: 27432, groups:  SID, 8568; Tx, 2
+Fixed Effects:
+(Intercept)          Day          TxB  
+  65.066979    -0.006363    -0.065771  
+convergence code 0; 1 optimizer warnings; 0 lme4 warnings 
+> lmer(KPS ~ Day + Tx + (Day | Tx) + (Day | SID),data=d2)
+Linear mixed model fit by REML ['lmerMod']
+Formula: KPS ~ Day + Tx + (Day | Tx) + (Day | SID)
+   Data: d2
+REML criterion at convergence: 129662.1
+Random effects:
+ Groups   Name        Std.Dev. Corr 
+ SID      (Intercept) 8.7280        
+          Day         0.1053   -0.08
+ Tx       (Intercept) 0.1587        
+          Day         3.2471   -1.00
+ Residual             0.9407        
+Number of obs: 27432, groups:  SID, 8568; Tx, 2
+Fixed Effects:
+(Intercept)          Day          TxB  
+  65.038734    -0.006384    -0.009271  
+convergence code 0; 2 optimizer warnings; 0 lme4 warnings 
+Warning messages:
+1: In checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv,  :
+  unable to evaluate scaled gradient
+2: In checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv,  :
+  Model failed to converge: degenerate  Hessian with 1 negative eigenvalues
+> 
+Linear mixed model fit by maximum likelihood  ['lmerMod']
+Formula: KPS ~ Day + Tx + (Day | Tx) + (Day | SID)
+   Data: d
+      AIC       BIC    logLik  deviance  df.resid 
+ 2427.449  2469.352 -1203.725  2407.449       478 
+Random effects:
+ Groups   Name        Std.Dev. Corr 
+ SID      (Intercept) 9.88194       
+          Day         0.09721  -0.23
+ Tx       (Intercept) 2.89117       
+          Day         0.47731  1.00 
+ Residual             1.51684       
+Number of obs: 488, groups:  SID, 93; Tx, 2
+Fixed Effects:
+(Intercept)          Day          TxB  
+  68.740077    -0.009609    -8.313270  
+convergence code 0; 2 optimizer warnings; 0 lme4 warnings 
+Warning messages:
+1: In checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv,  :
+  Model failed to converge with max|grad| = 0.11273 (tol = 0.002, component 1)
+2: In checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv,  :
+  Model is nearly unidentifiable: large eigenvalue ratio
+ - Rescale variables?
+> lmer(KPS ~ Day + Tx + (Day | Tx) + (Day | SID),data=d)
+Linear mixed model fit by REML ['lmerMod']
+Formula: KPS ~ Day + Tx + (Day | Tx) + (Day | SID)
+   Data: d
+REML criterion at convergence: 2402.143
+Random effects:
+ Groups   Name        Std.Dev. Corr 
+ SID      (Intercept) 10.04408      
+          Day          0.09747 -0.23
+ Tx       (Intercept)  2.44279      
+          Day          0.66789 -0.99
+ Residual              1.51489      
+Number of obs: 488, groups:  SID, 93; Tx, 2
+Fixed Effects:
+(Intercept)          Day          TxB  
+  64.193999    -0.009667     0.779519  
+convergence code 0; 2 optimizer warnings; 0 lme4 warnings 
+Warning messages:
+1: In checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv,  :
+  unable to evaluate scaled gradient
+2: In checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv,  :
+  Model failed to converge: degenerate  Hessian with 1 negative eigenvalues
+> lmer(KPS ~ Day + Tx + (Day | Tx) + (Day | SID),data=d2)
+Linear mixed model fit by REML ['lmerMod']
+Formula: KPS ~ Day + Tx + (Day | Tx) + (Day | SID)
+   Data: d2
+REML criterion at convergence: 129662.1
+Random effects:
+ Groups   Name        Std.Dev. Corr 
+ SID      (Intercept) 8.7280        
+          Day         0.1053   -0.08
+ Tx       (Intercept) 0.1587        
+          Day         3.2471   -1.00
+ Residual             0.9407        
+Number of obs: 27432, groups:  SID, 8568; Tx, 2
+Fixed Effects:
+(Intercept)          Day          TxB  
+  65.038734    -0.006384    -0.009271  
+convergence code 0; 2 optimizer warnings; 0 lme4 warnings 
+Warning messages:
+1: In checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv,  :
+  unable to evaluate scaled gradient
+2: In checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv,  :
+  Model failed to converge: degenerate  Hessian with 1 negative eigenvalues
+> j2=lmer(KPS~Day+Tx+(Day|Tx),data=d,REML=F)
+boundary (singular) fit: see ?isSingular
+> j=lmer(KPS~Day+Tx+(Day|Tx)+(Day|SID),data=d,REML=F)
+Warning messages:
+1: In checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv,  :
+  Model failed to converge with max|grad| = 0.11273 (tol = 0.002, component 1)
+2: In checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv,  :
+  Model is nearly unidentifiable: large eigenvalue ratio
+ - Rescale variables?
+> j2=lmer(KPS~Tx+(Day|Tx),data=d,REML=F)
+
+boundary (singular) fit: see ?isSingular
+> j2=lmer(KPS~Tx+(Day|Tx),data=d,REML=F)
+
+boundary (singular) fit: see ?isSingular
+> j=lmer(KPS~Day+Tx+(Day|Tx)+(Day|SID),data=d,REML=F)
+Warning messages:
+1: In checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv,  :
+  Model failed to converge with max|grad| = 0.11273 (tol = 0.002, component 1)
+2: In checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv,  :
+  Model is nearly unidentifiable: large eigenvalue ratio
+ - Rescale variables?
+> j2=lmer(KPS~Day+Tx+(Day|Tx),data=d,REML=F)
+boundary (singular) fit: see ?isSingular
+
+boundary (singular) fit: see ?isSingular
+> j2=lmer(KPS~Day+(Day|Tx),data=d,REML=F)
+
+boundary (singular) fit: see ?isSingular
+> j2=lmer(KPS~(Day|Tx),data=d,REML=F)
+boundary (singular) fit: see ?isSingular
+> j2
+Linear mixed model fit by maximum likelihood  ['lmerMod']
+Formula: KPS ~ (Day | Tx)
+   Data: d
+      AIC       BIC    logLik  deviance  df.resid 
+ 3626.176  3647.127 -1808.088  3616.176       483 
+Random effects:
+ Groups   Name        Std.Dev. Corr 
+ Tx       (Intercept) 1.6282        
+          Day         0.4768   -1.00
+ Residual             9.7003        
+Number of obs: 488, groups:  Tx, 2
+Fixed Effects:
+(Intercept)  
+      65.86  
+convergence code 0; 1 optimizer warnings; 0 lme4 warnings 
+> coef(j2)
+$Tx
+         Day (Intercept)
+A -0.5458810    67.72026
+B  0.3953373    64.50648
+
+attr(,"class")
+[1] "coef.mer"
+> 
+> dn70 = read.table("3780241556_s100_n70.tsv",header=TRUE, sep="	", strip.white=TRUE)
+> ggplot(aes(x = Day, y = KPS, group = SID), data = dn10) + geom_line() + geom_point()
+> ggplot(aes(x = Day, y = KPS, group = SID), data = dn70) + geom_line() + geom_point()
+> j70=lmer(KPS ~ Day + Tx + (Day | Tx) + (Day | SID),data=dn10)
+Linear mixed model fit by REML ['lmerMod']
+Formula: KPS ~ Day + Tx + (Day | Tx) + (Day | SID)
+   Data: dn10
+REML criterion at convergence: 1244.589
+Random effects:
+ Groups   Name        Std.Dev. Corr 
+ SID      (Intercept) 7.9649        
+          Day         0.1030   -0.31
+ Tx       (Intercept) 0.8362        
+          Day         0.4269   -0.09
+ Residual             0.9094        
+Number of obs: 269, groups:  SID, 84; Tx, 2
+Fixed Effects:
+(Intercept)          Day          TxB  
+  64.319163     0.002371    -1.603968  
+convergence code 0; 2 optimizer warnings; 0 lme4 warnings 
+Warning messages:
+1: In checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv,  :
+  unable to evaluate scaled gradient
+2: In checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv,  :
+  Model failed to converge: degenerate  Hessian with 2 negative eigenvalues
+> j10=lmer(KPS ~ Day + Tx + (Day | Tx) + (Day | SID),data=dn10)
+Warning messages:
+1: In checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv,  :
+  unable to evaluate scaled gradient
+2: In checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv,  :
+  Model failed to converge: degenerate  Hessian with 2 negative eigenvalues
+> j10=lmer(KPS ~ Day + Tx + (Day | Tx) + (Day | SID),data=dn10)
+Warning messages:
+1: In checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv,  :
+  unable to evaluate scaled gradient
+2: In checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv,  :
+  Model failed to converge: degenerate  Hessian with 2 negative eigenvalues
+> coef(j70)$Tx
+  (Intercept)        Day       TxB
+A    64.26465  0.3040659 -1.603968
+B    64.37368 -0.2993230 -1.603968
+> ggplot(aes(x = Day, y = KPS, group = SID), data = dn10) + geom_line() + geom_point()
+Error in UseMethod("depth") : 
+  no applicable method for 'depth' applied to an object of class "NULL"
+> dn10
+    SID Tx Day      KPS
+1     1  B  12 60.08273
+2     2  A   4 56.31242
+3     3  B  16 67.64030
+4     3  B  21 64.91727
+5     3  B  34 60.51939
+6     3  B  40 60.32576
+7     4  B   4 50.68758
+8     5  A  10 70.08607
+9     5  A  26 70.12577
+10    6  B  10 70.65395
+11    6  B  36 61.16820
+12    6  B  44 59.12336
+13    7  A   2 76.62122
+14    7  A  11 76.53667
+15    7  A  18 77.78092
+16    7  A  19 78.86153
+17    7  A  35 81.57122
+18    7  A  38 82.49303
+19    7  A  44 82.51666
+20    8  B   1 54.39939
+21    8  B   6 54.87637
+22    8  B  11 53.72334
+23    8  B  15 53.48092
+24    8  B  33 45.29001
+25    8  B  38 44.15698
+26    9  A   7 71.54424
+27   11  A   7 63.27424
+28   12  B  11 65.96334
+29   13  A   2 53.53121
+30   13  A  12 59.95727
+31   13  A  16 58.96969
+32   13  A  33 68.89998
+33   14  A   5 56.39302
+34   14  A   7 56.98423
+35   15  A   6 72.17363
+36   16  B   2 68.72879
+37   16  B   9 65.95456
+38   17  A  10 72.17606
+39   17  A  19 74.47150
+40   17  A  30 74.38817
+41   17  A  31 74.64877
+42   17  A  34 74.56059
+43   18  B  19 62.12848
+44   19  A   0 67.98000
+45   19  A   7 71.28423
+46   19  A  19 79.38150
+47   20  A  22 61.72333
+48   20  A  23 61.63393
+49   21  B  10 62.27394
+50   21  B  11 62.06334
+51   21  B  22 58.99667
+52   21  B  31 57.18122
+53   21  B  38 55.58698
+54   22  B   6 61.54637
+55   22  B  11 57.23334
+56   22  B  12 56.87273
+57   22  B  14 55.60152
+58   24  A   5 57.84303
+59   24  A   8 59.31485
+60   24  A  10 61.68606
+61   24  A  21 64.09273
+62   25  B   2 57.62879
+63   25  B  10 53.06394
+64   25  B  38 44.50697
+65   25  B  43 42.43395
+66   26  A  14 69.88847
+67   26  A  17 72.92030
+68   26  A  18 72.55090
+69   26  A  33 74.78998
+70   26  A  37 78.32240
+71   26  A  44 83.18665
+72   27  B  10 70.29395
+73   27  B  17 66.16972
+74   27  B  21 64.62729
+75   27  B  36 62.00819
+76   28  B   2 51.99879
+77   28  B   9 49.96454
+78   28  B  10 50.04394
+79   28  B  19 48.05849
+80   28  B  31 44.24122
+81   29  A  18 75.22089
+82   29  A  22 77.69331
+83   29  A  36 81.86179
+84   29  A  37 82.67240
+85   29  A  45 84.25724
+86   29  A  46 84.73785
+87   29  A  47 84.83845
+88   30  A   7 68.54424
+89   30  A   8 68.49484
+90   30  A  13 70.19787
+91   30  A  21 72.02271
+92   30  A  26 74.61574
+93   30  A  36 79.25180
+94   30  A  37 78.86240
+95   31  A   8 59.37484
+96   31  A   9 59.56544
+97   31  A  13 61.30787
+98   31  A  23 64.07392
+99   32  A  26 62.04575
+100  34  A   4 59.03243
+101  34  A   6 60.73364
+102  34  A   7 60.11425
+103  34  A  11 61.46667
+104  34  A  31 65.84878
+105  34  A  33 67.66999
+106  35  B  19 43.99850
+107  36  B   2 57.42879
+108  37  B  14 47.54151
+109  37  B  27 43.84364
+110  39  A   6 67.14365
+111  41  B  10 49.04395
+112  41  B  21 46.79728
+113  41  B  30 44.43183
+114  41  B  33 43.23001
+115  42  B   1 66.78940
+116  42  B   2 67.11879
+117  42  B   8 64.65515
+118  42  B  24 58.70547
+119  43  A   4 60.51242
+120  43  A  12 61.88727
+121  43  A  14 62.57848
+122  43  A  21 65.21272
+123  43  A  22 64.57332
+124  44  B   1 72.22939
+125  44  B  15 63.73092
+126  44  B  20 61.41788
+127  44  B  28 56.13304
+128  44  B  39 50.70638
+129  45  B   1 52.30940
+130  47  B   4 70.16758
+131  47  B   7 71.24576
+132  48  A   6 62.11364
+133  48  A   7 62.16424
+134  49  A   7 68.78424
+135  49  A  18 73.29092
+136  49  A  26 77.22576
+137  49  A  29 76.29758
+138  49  A  31 76.20879
+139  49  A  38 76.55302
+140  51  B   3 60.54818
+141  51  B   7 58.65576
+142  51  B   9 57.51454
+143  51  B  20 55.29788
+144  51  B  22 54.04666
+145  52  B  14 64.23152
+146  53  B   5 59.83697
+147  53  B   7 58.72575
+148  53  B  12 56.36272
+149  53  B  16 55.96030
+150  54  A   1 67.02061
+151  54  A   9 72.37546
+152  54  A  24 74.42454
+153  54  A  38 80.47301
+154  55  B   0 51.36000
+155  55  B  12 47.81274
+156  55  B  15 45.38092
+157  55  B  31 42.28124
+158  55  B  34 42.28942
+159  55  B  42 42.02457
+160  55  B  43 42.45397
+161  57  B  11 64.18334
+162  57  B  23 60.68608
+163  58  B  14 65.88151
+164  59  B   1 59.10939
+165  59  B   2 58.62879
+166  59  B   6 56.13636
+167  59  B   7 56.76575
+168  59  B  13 55.90212
+169  59  B  25 53.46485
+170  59  B  26 54.05425
+171  59  B  37 50.40758
+172  60  A   6 75.84364
+173  60  A  15 77.96909
+174  60  A  20 81.25212
+175  60  A  24 82.47455
+176  61  B   5 59.66698
+177  61  B   7 60.32576
+178  61  B  15 57.95092
+179  61  B  18 57.39910
+180  62  A   5 72.99303
+181  62  A  16 77.32969
+182  62  A  19 76.56150
+183  63  A   0 75.50000
+184  63  A   6 76.68363
+185  63  A  35 90.82117
+186  63  A  37 91.14238
+187  64  A  20 70.30212
+188  64  A  22 69.70334
+189  66  A  12 79.97726
+190  66  A  16 80.21968
+191  66  A  30 83.10816
+192  66  A  39 83.68362
+193  67  B   6 70.14635
+194  69  B  25 48.67485
+195  69  B  31 48.27122
+196  70  A   1 66.28061
+197  71  B  12 76.37273
+198  71  B  18 72.26910
+199  72  B   0 72.78000
+200  72  B   7 73.46577
+201  72  B  11 70.79334
+202  72  B  14 69.68153
+203  72  B  23 66.10607
+204  73  A   2 71.27121
+205  73  A   3 72.05182
+206  75  B  14 55.24152
+207  75  B  15 54.83091
+208  75  B  26 50.82425
+209  75  B  32 49.00062
+210  75  B  41 46.76516
+211  77  A   2 51.78121
+212  77  A   6 54.25364
+213  78  A   8 77.37485
+214  79  B  16 62.37032
+215  80  A  24 61.97454
+216  81  B   6 62.64637
+217  81  B  24 57.22546
+218  82  B   0 60.99000
+219  82  B   5 59.39697
+220  82  B   6 58.66636
+221  82  B   9 58.93454
+222  83  B   2 55.32879
+223  83  B  15 50.60091
+224  83  B  24 47.41546
+225  84  A   3 50.61182
+226  84  A  16 57.01969
+227  84  A  20 56.97212
+228  84  A  36 61.44182
+229  87  A   4 60.29242
+230  87  A   6 60.87363
+231  87  A  23 63.39393
+232  88  B  13 52.48212
+233  88  B  21 51.66727
+234  88  B  27 51.09364
+235  88  B  29 51.53243
+236  88  B  36 49.07819
+237  90  B   0 65.98000
+238  91  A   8 57.07485
+239  91  A  22 60.14332
+240  91  A  29 63.84756
+241  91  A  33 65.08999
+242  91  A  35 65.34120
+243  91  A  42 66.99545
+244  92  A  11 72.05666
+245  93  B   1 60.63939
+246  93  B   2 60.60879
+247  93  B   8 60.07515
+248  93  B  20 57.35789
+249  94  B   0 53.92000
+250  95  B   1 66.59939
+251  95  B   8 65.82516
+252  95  B  11 65.61334
+253  95  B  13 65.52213
+254  95  B  24 63.57546
+255  95  B  25 62.34486
+256  95  B  27 61.75364
+257  95  B  31 62.15122
+258  96  A   5 59.04303
+259  96  A   8 58.50485
+260  96  A  28 63.56696
+261  96  A  38 68.66302
+262  97  A   3 81.31181
+263  97  A   4 81.66242
+264  97  A  11 82.94666
+265  98  B   0 60.91000
+266  98  B  28 51.11304
+267  99  A  14 74.76849
+268  99  A  20 80.61213
+269  99  A  22 81.06334
+> head(dn10)
+  SID Tx Day      KPS
+1   1  B  12 60.08273
+2   2  A   4 56.31242
+3   3  B  16 67.64030
+4   3  B  21 64.91727
+5   3  B  34 60.51939
+6   3  B  40 60.32576
+> head(dn70)
+  SID Tx Day      KPS
+1   0  B   7 66.12000
+2   0  B  11 55.12999
+3   0  B  13 59.95999
+4   1  B   4 47.60000
+5   1  B   8 48.23000
+6   1  B  19 46.19999
+> j70=lmer(KPS ~ Day + Tx + (Day | Tx) + (Day | SID),data=dn70,REML=F)
+boundary (singular) fit: see ?isSingular
+> j70=lmer(KPS ~ Day + Tx + (Day | Tx) + (Day | SID),data=dn70,REML=F)
+boundary (singular) fit: see ?isSingular
+> coef(j70)$Tx
+  (Intercept)         Day      TxB
+A     63.9663 -0.04325382 3.483208
+B     63.9663 -0.04325384 3.483208
+> coef(j10)$Tx
+  (Intercept)        Day       TxB
+A    64.26465  0.3040659 -1.603968
+B    64.37368 -0.2993230 -1.603968
+> 
+Error in UseMethod("depth") : 
+  no applicable method for 'depth' applied to an object of class "NULL"
+> 
+> ggplot(aes(x = Day, y = KPS, group=SID), data = dn10) + geom_line() + geom_point()
+> ggplot(aes(x = Day, y = KPS, group=SID), data = dn70) + geom_line() + geom_point()
+> dn40 = read.table("3780242029_s100_n40.tsv",header=TRUE, sep="	", strip.white=TRUE)
+> head(dn40)
+  SID Tx Day      KPS
+1   1  A   3 65.06381
+2   1  A   5 62.44636
+3   1  A   9 70.57144
+4   1  A  16 64.57035
+5   1  A  17 67.90162
+6   1  A  22 74.55798
+> ggplot(aes(x = Day, y = KPS, group=SID), data = dn40) + geom_line() + geom_point()
+> j40=lmer(KPS ~ Day + Tx + (Day | Tx) + (Day | SID),data=dn40,REML=F)
+boundary (singular) fit: see ?isSingular
+> coef(j40)$Tx
+  (Intercept)        Day       TxB
+A    66.53126  0.2627600 -10.48076
+B    73.15287 -0.3200831 -10.48076
+> dn03 = read.table("3780242171_s100_n3.tsv",header=TRUE, sep="	", strip.white=TRUE)
+> ggplot(aes(x = Day, y = KPS, group=SID), data = dn03) + geom_line() + geom_point()
+> j03=lmer(KPS ~ Day + Tx + (Day | Tx) + (Day | SID),data=dn03,REML=F)
+Warning messages:
+1: In checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv,  :
+  unable to evaluate scaled gradient
+2: In checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv,  :
+  Model failed to converge: degenerate  Hessian with 1 negative eigenvalues
+> coef(j03)$Tx
+  (Intercept)        Day       TxB
+A    64.98646 -0.7846676 -1.065666
+B    67.26491  0.7228945 -1.065666
+> dn20 = read.table("3780242341_s100_n20.tsv",header=TRUE, sep="	", strip.white=TRUE)
+> ggplot(aes(x = Day, y = KPS, group=SID), data = dn20) + geom_line() + geom_point()
+> j20=
+Warning messages:
+1: In checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv,  :
+  Model failed to converge with max|grad| = 0.0749447 (tol = 0.002, component 1)
+2: In checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv,  :
+  Model is nearly unidentifiable: large eigenvalue ratio
+ - Rescale variables?
+> coef(j20)$Tx
+  (Intercept)        Day       TxB
+A    66.46552  0.1834432 -1.426081
+B    66.00698 -0.2205900 -1.426081
+> dn10 = read.table("3780242764_s100_n10.tsv",header=TRUE, sep="	", strip.white=TRUE)
+> dn20 = read.table("3780242768_s100_n20.tsv",header=TRUE, sep="	", strip.white=TRUE)
+> dn30 = read.table("3780242527_s100_n30.tsv",header=TRUE, sep="	", strip.white=TRUE)
+> coef(lmer(KPS ~ Day + Tx + (Day | Tx) + (Day | SID),data=dn10,REML=F))$Tx
+boundary (singular) fit: see ?isSingular
+  (Intercept)        Day       TxB
+A    74.91536  0.5631167 -30.35717
+B    88.58531 -1.0418296 -30.35717
+> coef(lmer(KPS ~ Day + Tx + (Day | Tx) + (Day | SID),data=dn20,REML=F))$Tx
+  (Intercept)        Day      TxB
+A    64.91654 -0.5201997 5.746471
+B    63.68093  0.4334460 5.746471
+Warning messages:
+1: In checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv,  :
+  unable to evaluate scaled gradient
+2: In checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv,  :
+  Model failed to converge: degenerate  Hessian with 1 negative eigenvalues
+> coef(lmer(KPS ~ Day + Tx + (Day | Tx) + (Day | SID),data=dn30,REML=F))$Tx
+boundary (singular) fit: see ?isSingular
+  (Intercept)        Day       TxB
+A    83.81027  0.2998496 -76.29538
+B   128.93631 -0.9372156 -76.29538
+> ggplot(aes(x = Day, y = KPS, group=SID), data = dn10) + geom_line() + geom_point()
+> ggplot(aes(x = Day, y = KPS, group=SID), data = dn20) + geom_line() + geom_point()
+> ggplot(aes(x = Day, y = KPS, group=SID), data = dn30) + geom_line() + geom_point()
+Error in grid.Call.graphics(C_upviewport, as.integer(n)) : 
+  cannot pop the top-level viewport ('grid' and 'graphics' output mixed?)
+> ggplot(aes(x = Day, y = KPS, group=SID), data = dn30) + geom_line() + geom_point()
+> ggplot(aes(x = Day, y = KPS, group=SID), data = dn10) + geom_line() + geom_point()
+> ggplot(aes(x = Day, y = KPS, group=SID), data = dn20) + geom_line() + geom_point()
+> ggplot(aes(x = Day, y = KPS, group=SID), data = dn30) + geom_line() + geom_point()
+> dn20 = read.table("3780242768_s100_n20.tsv",header=TRUE, sep="	", strip.white=TRUE)
+> 
+> 
+
+> dn30 = read.table("3780242766_s100_n30.tsv",header=TRUE, sep="	", strip.white=TRUE)
+> ggplot(aes(x = Day, y = KPS, group=SID), data = dn10) + geom_line() + geom_point()
+> ggplot(aes(x = Day, y = KPS, group=SID), data = dn10) + geom_line() + geom_point()
+Error in grid.Call.graphics(C_upviewport, as.integer(n)) : 
+  cannot pop the top-level viewport ('grid' and 'graphics' output mixed?)
+> ggplot(aes(x = Day, y = KPS, group=SID), data = dn10) + geom_line() + geom_point()
+> dn10 = read.table("3780242891_s100_n10.tsv",header=TRUE, sep="	", strip.white=TRUE)
+
+> ggplot(aes(x = Day, y = KPS, group=SID), data = dn10) + geom_line() + geom_point()
+> ggplot(aes(x = Day, y = KPS, group=SID), data = dn10) + geom_line() + geom_point()
+Error in UseMethod("depth") : 
+  no applicable method for 'depth' applied to an object of class "NULL"
+> ggplot(aes(x = Day, y = KPS, group=SID), data = dn10) + geom_line() + geom_point()
+> 3780242997_s100_n10.tsv
+Error: unexpected input in "3780242997_"
+> dn10 = read.table("3780242997_s100_n10.tsv",header=TRUE, sep="	", strip.white=TRUE)
+> ggplot(aes(x = Day, y = KPS, group=SID), data = dn10) + geom_line() + geom_point()
+> 
+> ggplot(aes(x = Day, y = KPS, group=SID), data = dn20) + geom_line() + geom_point()
+> ggplot(aes(x = Day, y = KPS, group=SID), data = dn20) + geom_line() + geom_point()
+> dn20 = read.table("3780243196_s100_n20.tsv",header=TRUE, sep="	", strip.white=TRUE)
+> ggplot(aes(x = Day, y = KPS, group=SID), data = dn20) + geom_line() + geom_point()
+Error in UseMethod("depth") : 
+  no applicable method for 'depth' applied to an object of class "NULL"
+> ggplot(aes(x = Day, y = KPS, group=SID), data = dn70) + geom_line() + geom_point()
+> 
+> ggplot(aes(x = Day, y = KPS, group=SID), data = dn70) + geom_line() + geom_point()
+> 
+> ggplot(aes(x = Day, y = KPS, group=SID), data = d) + geom_line() + geom_point()
+> d=read.table("3780243404_s100_n70.tsv",header=TRUE, sep="	", strip.white=TRUE)
+> ggplot(aes(x = Day, y = KPS, group=SID), data = d) + geom_line() + geom_point()
+> d=read.table("3780243480_s100_n10.tsv",header=TRUE, sep="	", strip.white=TRUE)
+> ggplot(aes(x = Day, y = KPS, group=SID), data = d) + geom_line() + geom_point()
+> 
+> ggplot(aes(x = Day, y = KPS, group=SID), data = d) + geom_line() + geom_point()
+> 
+> 
+> d30=d
+> d
+    SID Tx Day        KPS
+1     0  B   3  76.117530
+2     0  B   5  74.979220
+3     0  B  17  62.629356
+4     0  B  26  63.581944
+5     0  B  27  63.597786
+6     0  B  48  55.080456
+7     0  B  50  56.252136
+8     1  B  11  66.144295
+9     1  B  24  70.070274
+10    2  B   3  68.767540
+11    2  B  11  67.724290
+12    2  B  13  68.595980
+13    2  B  50  25.952087
+14    2  B  51  26.687927
+15    2  B  56  21.247131
+16    3  A  13  72.884030
+17    3  A  26  69.978070
+18    3  A  27  72.482230
+19    3  A  34  73.631310
+20    3  A  55  90.938576
+21    4  A   2  78.428314
+22    4  A   8  77.103250
+23    4  A  22  94.431440
+24    4  A  27  96.692220
+25    4  A  36  97.656624
+26    5  A   5  88.120780
+27    5  A   9  88.897410
+28    5  A  11  88.235720
+29    5  A  19  92.638970
+30    5  A  34  98.438310
+31    7  B  10  60.518402
+32    7  B  11  61.794243
+33    7  B  16  60.493443
+34    7  B  21  55.232643
+35    7  B  32  50.996887
+36    7  B  42  55.925297
+37    8  A   5  57.210800
+38    9  A   4  66.406620
+39    9  A   6  69.014930
+40    9  A  20  84.813110
+41    9  A  27  89.922200
+42   10  B  10  73.348440
+43   10  B  24  72.610260
+44   10  B  31  66.481170
+45   10  B  33  65.672860
+46   10  B  34  67.848700
+47   10  B  41  64.059610
+48   11  A   2  65.428320
+49   11  A  28  71.256370
+50   11  A  33  74.387146
+51   11  A  41  79.030380
+52   11  A  75  92.171670
+53   12  B  20  61.356873
+54   13  A  23  50.715664
+55   13  A  35  54.305573
+56   14  A  19  85.208960
+57   14  A  24  87.769740
+58   15  B   9  54.172560
+59   15  B  23  52.114334
+60   15  B  57  34.022910
+61   15  B  67  35.111317
+62   16  A  19  63.779007
+63   16  A  29  72.320564
+64   16  A  31  74.448875
+65   16  A  38  70.257970
+66   16  A  50  71.357834
+67   17  A  10  57.131596
+68   17  A  15  58.792397
+69   17  A  21  62.147354
+70   17  A  32  73.583084
+71   17  A  34  72.291400
+72   17  A  40  80.056330
+73   17  A  42  76.364640
+74   17  A  44  77.412950
+75   17  A  76  80.685920
+76   17  A  78  79.574230
+77   18  B   2  62.471684
+78   19  B   3  72.007530
+79   20  A   0  70.250000
+80   20  A   6  71.354930
+81   20  A  14  58.838177
+82   21  B  11  71.194290
+83   21  B  13  69.605980
+84   22  A  31  74.918820
+85   23  A   0  54.270000
+86   23  A   1  54.464160
+87   24  B   0  69.820000
+88   24  B  14  68.931816
+89   24  B  29  62.329437
+90   25  A   3  69.792465
+91   25  A   4  72.476620
+92   25  A  16  78.946480
+93   25  A  19  74.788950
+94   25  A  23  76.045570
+95   25  A  47  91.955310
+96   25  A  49  94.893616
+97   25  A  55  93.628555
+98   26  B   2  74.081690
+99   26  B   3  71.697530
+100  26  B  25  56.476055
+101  27  A   2  64.278320
+102  27  A  12  67.629875
+103  27  A  14  71.078186
+104  27  A  17  72.140656
+105  28  B  30  53.395233
+106  28  B  44  46.537000
+107  28  B  65  38.919650
+108  28  B  71  35.474693
+109  28  B  72  35.790535
+110  29  A   4  76.646620
+111  30  B   1  62.315840
+112  30  B   2  59.061684
+113  30  B   6  62.665043
+114  30  B  13  57.975930
+115  30  B  15  57.197610
+116  30  B  27  66.417725
+117  30  B  49  62.656260
+118  30  B  61  63.686400
+119  30  B  64  65.173935
+120  30  B  65  65.759780
+121  30  B  66  66.615620
+122  30  B  93  63.023388
+123  33  B   3  62.127518
+124  33  B  15  66.487630
+125  33  B  18  63.775158
+126  33  B  24  58.200200
+127  33  B  30  54.875244
+128  33  B  33  48.922768
+129  33  B  43  49.921177
+130  33  B  45  48.062860
+131  34  B   0  56.900000
+132  34  B   2  59.571686
+133  34  B  14  42.421770
+134  34  B  15  44.417610
+135  34  B  20  39.816820
+136  34  B  22  38.198500
+137  34  B  26  31.991863
+138  34  B  27  31.887703
+139  34  B  66  16.665482
+140  34  B  73  16.716366
+141  34  B  78  19.435570
+142  34  B  83  16.184772
+143  35  B   6  69.035070
+144  35  B  13  59.815970
+145  35  B  49  46.976234
+146  36  B   8  62.096750
+147  36  B  11  60.224270
+148  37  B   2  69.691696
+149  37  B   3  67.517540
+150  37  B  17  74.459360
+151  37  B  19  76.381040
+152  37  B  28  71.873634
+153  37  B  34  72.328700
+154  37  B  44  74.437150
+155  37  B  51  71.218056
+156  37  B  62  69.742340
+157  37  B  72  69.420784
+158  38  B   5  68.209220
+159  38  B   6  66.215065
+160  38  B  15  72.177660
+161  38  B  23  65.884415
+162  38  B  25  64.956100
+163  38  B  27  65.527790
+164  38  B  29  69.609474
+165  38  B  33  71.262856
+166  38  B  34  68.338700
+167  38  B  37  66.646225
+168  38  B  39  65.567920
+169  38  B  45  62.692970
+170  38  B  47  59.694650
+171  39  A   3  66.332470
+172  40  B   5  74.889220
+173  40  B  10  71.698450
+174  40  B  16  69.543500
+175  40  B  17  66.349350
+176  40  B  19  63.591040
+177  40  B  23  58.824400
+178  40  B  27  57.177765
+179  40  B  41  52.119537
+180  41  B  58  36.988846
+181  41  B  62  31.952208
+182  41  B  70  24.638933
+183  42  B  21  56.862663
+184  42  B  34  57.008590
+185  43  A  20  56.793194
+186  43  A  28  56.906470
+187  43  A  29  56.050630
+188  43  A  33  62.017265
+189  43  A  37  60.003902
+190  43  A  38  61.938060
+191  43  A  43  60.118860
+192  43  A  48  58.449654
+193  43  A  60  57.539562
+194  43  A  71  65.555320
+195  43  A  74  64.457790
+196  43  A  75  64.471940
+197  46  A   0  76.550000
+198  46  A  11  79.795715
+199  46  A  23  76.395570
+200  46  A  24  77.459724
+201  47  A  10  61.271595
+202  47  A  12  62.529915
+203  48  B   2  51.241684
+204  48  B   4  52.803368
+205  48  B   6  50.555050
+206  48  B  12  49.210094
+207  48  B  13  46.705936
+208  48  B  22  39.288506
+209  48  B  34  35.158592
+210  48  B  47  29.844517
+211  48  B  67  10.901327
+212  48  B  78   2.375579
+213  48  B  79   1.521420
+214  48  B  80   0.000000
+215  49  A   8  69.863240
+216  49  A  13  72.634020
+217  49  A  31  68.208824
+218  49  A  33  70.037130
+219  49  A  36  75.359604
+220  49  A  39  75.552070
+221  49  A  40  77.006226
+222  49  A  52  77.896090
+223  49  A  55  77.368550
+224  49  A  59  72.355170
+225  49  A  69  72.256730
+226  50  B   5  61.589214
+227  50  B  13  61.865944
+228  50  B  15  63.907627
+229  50  B  23  65.534360
+230  50  B  31  64.941100
+231  50  B  38  58.601990
+232  50  B  39  58.887830
+233  51  B   2  59.091682
+234  52  A  15  88.662320
+235  52  A  16  88.136480
+236  52  A  32  93.312965
+237  52  A  37  99.068310
+238  52  A  50  99.592470
+239  52  A  66  96.758310
+240  52  A  67  96.532460
+241  52  A  72 100.000000
+242  52  A  90  94.792460
+243  53  A   6  79.324940
+244  53  A  13  81.344040
+245  53  A  14  79.498190
+246  53  A  23  80.855590
+247  53  A  39  78.322075
+248  53  A  44  76.652850
+249  53  A  47  83.325320
+250  53  A  50  84.987785
+251  53  A  51  84.431940
+252  53  A  53  80.920250
+253  53  A  67 100.000000
+254  53  A  68 100.000000
+255  53  A  84  98.272470
+256  53  A  85  98.586624
+257  53  A  93 100.000000
+258  53  A  96 100.000000
+259  54  A  38  66.858010
+260  54  A  43  68.248780
+261  54  A  50  80.617860
+262  54  A  60  73.439390
+263  54  A  64  77.516010
+264  55  B   2  70.521690
+265  55  B   5  72.909225
+266  55  B  15  70.457670
+267  55  B  48  64.500480
+268  55  B  52  63.783860
+269  55  B  61  50.906420
+270  56  A   8  71.673256
+271  56  A  11  70.215720
+272  56  A  14  70.888190
+273  56  A  21  73.807274
+274  57  A  27  65.332240
+275  57  A  28  66.396390
+276  57  A  31  65.268860
+277  58  B   9  70.212616
+278  58  B  14  73.621830
+279  58  B  37  56.346233
+280  58  B  52  59.883840
+281  58  B  53  60.889680
+282  58  B  62  56.322243
+283  58  B  68  51.467285
+284  58  B  71  47.944810
+285  58  B  83  40.364900
+286  58  B  84  39.240738
+287  58  B  93  44.723305
+288  58  B  99  38.278347
+289  59  B   0  78.260000
+290  59  B   2  75.261690
+291  59  B   3  76.717530
+292  59  B  15  69.527664
+293  59  B  46  52.798775
+294  59  B  64  51.853900
+295  59  B  69  52.683105
+296  59  B  85  59.116590
+297  59  B  90  58.955790
+298  60  B   2  69.771690
+299  60  B  13  59.835964
+300  60  B  16  59.223488
+301  60  B  30  47.385254
+302  60  B  31  47.071095
+303  60  B  38  40.551980
+304  61  B   5  76.829220
+305  62  A  19  79.418950
+306  62  A  22  73.911420
+307  62  A  34  82.301290
+308  62  A  36  81.219604
+309  62  A  54  98.034410
+310  62  A  65  98.558310
+311  62  A  68  99.920780
+312  62  A  73  98.281560
+313  62  A  80  98.302470
+314  62  A  81  99.456620
+315  62  A  86  97.388306
+316  62  A  88  94.356620
+317  62  A  97  91.064026
+318  62  A 101  94.780650
+319  63  B   9  51.872566
+320  63  B  10  51.198406
+321  63  B  12  51.470085
+322  63  B  15  47.857610
+323  63  B  22  39.898490
+324  63  B  33  36.562737
+325  63  B  38  35.501940
+326  63  B  51  40.117874
+327  63  B  53  40.449554
+328  64  B   1  69.635840
+329  64  B   5  73.569214
+330  64  B  15  68.447655
+331  64  B  22  64.298570
+332  64  B  23  63.384410
+333  64  B  24  63.970253
+334  64  B  29  56.129456
+335  64  B  34  54.048660
+336  64  B  36  52.820340
+337  64  B  58  47.078835
+338  64  B  79  38.831490
+339  64  B  83  40.364853
+340  64  B  89  36.199898
+341  64  B  99  34.288303
+342  65  B   8  64.736755
+343  65  B  12  61.290120
+344  65  B  19  59.900997
+345  65  B  31  54.061080
+346  65  B  34  55.188602
+347  65  B  39  50.047810
+348  66  A  13  75.974030
+349  66  A  30  78.164660
+350  66  A  41  83.000374
+351  66  A  42  85.234530
+352  66  A  45  88.187000
+353  66  A  49  88.903610
+354  67  A   8  63.513264
+355  67  A   9  63.497420
+356  67  A  10  62.671580
+357  67  A  18  60.564846
+358  67  A  37  60.533870
+359  67  A  49  65.923780
+360  69  A  15  82.752330
+361  69  A  21  79.717260
+362  69  A  29  93.900505
+363  69  A  35  96.595436
+364  69  A  39  99.534160
+365  69  A  43  97.884155
+366  69  A  57  92.292336
+367  69  A  66  89.599740
+368  69  A  83  75.560390
+369  69  A  84  77.164540
+370  70  A   1  56.564160
+371  70  A  18  66.374860
+372  70  A  24  73.269800
+373  70  A  26  73.478100
+374  70  A  40  75.566284
+375  70  A  43  76.388756
+376  70  A  53  77.430310
+377  70  A  68  79.112650
+378  70  A  84  77.959145
+379  70  A  85  77.913300
+380  71  A  11  69.785710
+381  71  A  21  76.857270
+382  71  A  23  71.995580
+383  71  A  34  82.681280
+384  71  A  41  92.260376
+385  71  A  58  99.368310
+386  72  B   0  74.270004
+387  72  B   4  70.913380
+388  72  B  10  76.738450
+389  72  B  11  77.744290
+390  72  B  19  77.571060
+391  72  B  24  72.820274
+392  72  B  28  71.143654
+393  72  B  35  65.974560
+394  72  B  42  68.695465
+395  72  B  52  69.843900
+396  72  B  63  63.448185
+397  72  B  64  64.184030
+398  73  A   8  58.703274
+399  73  A  24  67.719780
+400  73  A  31  63.468872
+401  73  A  49  69.213680
+402  73  A  61  66.113540
+403  73  A  73  79.183420
+404  74  B   0  54.130000
+405  74  B   7  52.350887
+406  74  B  50  43.912030
+407  74  B  67  49.851326
+408  74  B  76  38.503895
+409  75  A  16  70.616540
+410  75  A  37  73.223816
+411  75  A  40  71.406280
+412  75  A  49  72.583670
+413  75  A  53  74.470290
+414  75  A  58  77.541060
+415  75  A  68  78.402596
+416  75  A  72  81.759220
+417  76  A  20  97.716610
+418  76  A  36  99.172470
+419  76  A  49  94.534935
+420  76  A  76  95.782460
+421  77  B   2  54.311680
+422  77  B   8  47.176727
+423  79  A   3  74.512470
+424  79  A   5  75.020775
+425  79  A   6  76.834930
+426  79  A  12  76.559870
+427  79  A  16  80.276500
+428  79  A  27  68.552210
+429  79  A  29  65.610520
+430  79  A  35  67.315470
+431  79  A  50  80.337810
+432  79  A  53  82.300270
+433  79  A  72  78.009230
+434  79  A  75  78.201700
+435  79  A  82  77.400780
+436  80  B  12  57.870117
+437  80  B  21  48.982677
+438  80  B  28  36.583565
+439  80  B  43  36.191174
+440  80  B  55  31.791260
+441  80  B  57  34.612940
+442  80  B  61  30.926306
+443  80  B  64  27.283829
+444  80  B  75  25.568075
+445  81  B   6  55.265040
+446  81  B   9  56.032562
+447  82  B  13  56.995975
+448  82  B  15  57.867657
+449  82  B  35  57.914467
+450  82  B  42  65.435356
+451  82  B  46  66.038734
+452  82  B  58  65.238850
+453  82  B  67  66.251460
+454  82  B  70  66.268980
+455  82  B  73  66.496510
+456  82  B  74  68.012360
+457  83  B  11  59.644250
+458  83  B  14  55.821774
+459  84  A  25  68.533890
+460  85  A   1  50.484158
+461  85  A  11  58.035760
+462  85  A  12  56.219917
+463  85  A  15  61.362396
+464  85  A  22  66.981510
+465  85  A  27  64.892290
+466  85  A  30  60.044760
+467  85  A  53  82.060356
+468  85  A  75  89.631775
+469  85  A  76  92.285934
+470  85  A  87  98.681640
+471  86  A   1  53.144160
+472  86  A  15  46.502390
+473  86  A  26  52.808147
+474  86  A  30  53.794790
+475  86  A  36  60.479744
+476  87  A   3  50.752480
+477  87  A  21  54.817350
+478  87  A  27  53.432304
+479  87  A  39  60.892212
+480  87  A  47  67.905464
+481  87  A  52  74.936240
+482  87  A  55  70.478710
+483  87  A  56  68.092865
+484  87  A  67  71.908585
+485  87  A  69  74.606895
+486  87  A  91  66.608315
+487  87  A  93  67.686630
+488  88  A  41  83.130356
+489  88  A  43  84.778660
+490  88  A  47  85.435280
+491  89  B   0  69.540000
+492  89  B  35  50.864433
+493  89  B  36  48.090275
+494  89  B  68  32.067170
+495  89  B  71  34.694687
+496  90  B  15  51.437610
+497  90  B  20  53.436817
+498  90  B  23  49.824337
+499  90  B  24  47.560177
+500  90  B  34  46.308582
+501  90  B  42  46.015300
+502  90  B  49  40.636190
+503  90  B  50  37.352028
+504  94  B  32  44.146900
+505  94  B  36  49.640263
+506  94  B  38  46.011944
+507  94  B  43  40.781143
+508  94  B  47  39.674503
+509  94  B  49  42.136185
+510  94  B  62  46.452110
+511  94  B  66  46.725475
+512  94  B  84  33.840603
+513  95  A  10  82.051550
+514  95  A  11  79.575710
+515  95  A  24  93.859730
+516  95  A  53  91.780260
+517  95  A  58  93.321030
+518  96  B   0  59.860000
+519  96  B  16  54.443450
+520  96  B  20  51.236813
+521  96  B  21  53.892654
+522  96  B  38  43.691950
+523  97  B  16  54.463486
+524  98  B   2  72.141685
+525  98  B   3  73.687530
+526  98  B  40  72.743780
+527  99  B   3  55.777523
+528  99  B   6  56.095047
+529  99  B  11  55.214252
+> d2=read.table("3780243526_s100_n2.tsv",header=TRUE, sep="	", strip.white=TRUE)
+> coef(lmer(KPS ~ Day + Tx + (Day | Tx) + (Day | SID),data=dn2,REML=F))$Tx
+boundary (singular) fit: see ?isSingular
+  (Intercept)         Day      TxB
+A    66.34091 -0.06122475 2.062387
+B    66.34091  0.07876493 2.062387
+> coef(lmer(KPS ~ Day + Tx + (Day | Tx) + (Day | SID),data=d2,REML=F))$Tx
+Error: 'data' not found, and some variables missing from formula environment
+> 
+  (Intercept)        Day      TxB
+A    64.26750  0.3140217 -2.53904
+B    65.57005 -0.3146514 -2.53904
+Warning messages:
+1: In checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv,  :
+  unable to evaluate scaled gradient
+2: In checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv,  :
+  Model failed to converge: degenerate  Hessian with 1 negative eigenvalues
+> 
+> coef()$Tx
+  (Intercept)        Day       TxB
+A    66.16738  0.2830008 0.9955735
+B    65.67548 -0.3061398 0.9955735
+Warning messages:
+1: In checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv,  :
+  unable to evaluate scaled gradient
+2: In checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv,  :
+  Model failed to converge: degenerate  Hessian with 1 negative eigenvalues
+> ggplot(aes(x = Day, y = KPS, group=SID), data = d7) + geom_line() + geom_point()
+>
+> 
+> coef()$Tx
+  (Intercept)        Day       TxB
+A    66.11919  0.3217004 -3.968189
+B    67.73631 -0.3002480 -3.968189
+Warning messages:
+1: In checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv,  :
+  Model failed to converge with max|grad| = 0.021426 (tol = 0.002, component 1)
+2: In checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv,  :
+  Model is nearly unidentifiable: large eigenvalue ratio
+ - Rescale variables?
+> m15=lmer(KPS ~ Day + Tx + (Day | Tx) + (Day | SID),data=d15)
+Warning messages:
+1: In checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv,  :
+  Model failed to converge with max|grad| = 0.021426 (tol = 0.002, component 1)
+2: In checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv,  :
+  Model is nearly unidentifiable: large eigenvalue ratio
+ - Rescale variables?
+> m2=lmer(KPS ~ Day + Tx + (Day | Tx) + (Day | SID),data=d2)
+Warning messages:
+1: In checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv,  :
+  unable to evaluate scaled gradient
+2: In checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv,  :
+  Model failed to converge: degenerate  Hessian with 1 negative eigenvalues
+> m2=lmer(KPS ~ Day + Tx + (Day | Tx) + (Day | SID),data=d2)
+Warning messages:
+1: In checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv,  :
+  unable to evaluate scaled gradient
+2: In checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv,  :
+  Model failed to converge: degenerate  Hessian with 1 negative eigenvalues
+> 
+Error in anova.merMod(m2, m7) : 
+  models were not all fitted to the same size of dataset
+> Anova(m2,m7,test="F", type="III")
+Error in anova.merMod(m2, m7, test = "F", type = "III") : 
+  models were not all fitted to the same size of dataset
+> Anova(m2,m7,test="F", type="III")
+Error in linearHypothesis.mer(model = model, hypothesis.matrix = hypothesis.matrix,  : 
+  F test available only for linear mixed model fit by REML
+In addition: Warning messages:
+1: In checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv,  :
+  unable to evaluate scaled gradient
+2: In checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv,  :
+  Model failed to converge: degenerate  Hessian with 2 negative eigenvalues
+> m15=lmer(KPS ~ Day + Tx + (Day | Tx) + (Day | SID),data=d15)
+Warning messages:
+1: In checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv,  :
+  unable to evaluate scaled gradient
+2: In checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv,  :
+  Model failed to converge: degenerate  Hessian with 1 negative eigenvalues
+> m2=lmer(KPS ~ Day + Tx + (Day | Tx) + (Day | SID),data=d2)
+Warning messages:
+1: In checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv,  :
+  unable to evaluate scaled gradient
+2: In checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv,  :
+  Model failed to converge: degenerate  Hessian with 2 negative eigenvalues
+> m7=lmer(KPS ~ Day + Tx + (Day | Tx) + (Day | SID),data=d7)
+Warning messages:
+1: In checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv,  :
+  unable to evaluate scaled gradient
+2: In checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv,  :
+  Model failed to converge: degenerate  Hessian with 2 negative eigenvalues
+> 
+Warning messages:
+1: In checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv,  :
+  unable to evaluate scaled gradient
+2: In checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv,  :
+  Model failed to converge: degenerate  Hessian with 2 negative eigenvalues
+> Anova(m7,m15,test="F", type="III")
+Analysis of Deviance Table (Type III Wald F tests with Kenward-Roger df)
+
+Response: KPS
+                    F Df     Df.res Pr(>F)    
+(Intercept) 2641.9622  1 1.2985e+08 <2e-16 ***
+Day            0.0000  1 1.5747e+13 0.9998    
+Tx             0.4195  1 1.0066e+08 0.5172    
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+> Anova(m7,m15,test="F", type="III")
+Analysis of Deviance Table (Type III Wald F tests with Kenward-Roger df)
+
+Response: KPS
+                   F Df  Df.res   Pr(>F)    
+(Intercept) 296.2164  1 2.62368 0.000902 ***
+Day           0.0012  1 1.00000 0.978006    
+Tx            0.6792  1 0.08597 0.862189    
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+> coef(m2)$Tx
+  (Intercept)        Day       TxB
+A    64.26533  0.3140478 -1.127986
+B    64.16137 -0.3146798 -1.127986
+> coef(m7)$Tx
+  (Intercept)        Day       TxB
+A    66.11783  0.3219147 -5.672529
+B    69.44077 -0.3004047 -5.672529
+> coef(m15)$Tx
+  (Intercept)        Day       TxB
+A    66.16019  0.2838418 -1.198897
+B    67.88095 -0.3071841 -1.198897
+> Anova(m2,m15,test="F",type="III")
+Analysis of Deviance Table (Type III Wald F tests with Kenward-Roger df)
+
+Response: KPS
+                    F Df     Df.res Pr(>F)    
+(Intercept) 2641.9622  1 1.2985e+08 <2e-16 ***
+Day            0.0000  1 1.5747e+13 0.9998    
+Tx             0.4195  1 1.0066e+08 0.5172    
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+> Anova(m2,m15,type="III")
+Error in match.arg(test.statistic) : 
+  'arg' must be NULL or a character vector
+> 
+Analysis of Deviance Table (Type III Wald F tests with Kenward-Roger df)
+
+Response: KPS
+                    F Df     Df.res Pr(>F)    
+(Intercept) 2641.9622  1 1.2985e+08 <2e-16 ***
+Day            0.0000  1 1.5747e+13 0.9998    
+Tx             0.4195  1 1.0066e+08 0.5172    
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+> Anova(m2,test="F")
+Analysis of Deviance Table (Type III Wald F tests with Kenward-Roger df)
+
+Response: KPS
+                    F Df     Df.res Pr(>F)    
+(Intercept) 2641.9622  1 1.2985e+08 <2e-16 ***
+Day            0.0000  1 1.5747e+13 0.9998    
+Tx             0.4195  1 1.0066e+08 0.5172    
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+> anova(m2,test="F")
+Analysis of Deviance Table (Type II Wald F tests with Kenward-Roger df)
+
+Response: KPS
+         F Df     Df.res Pr(>F)
+Day 0.0000  1 1.5747e+13 0.9998
+Tx  0.4195  1 1.0066e+08 0.5172
+> anova(m2,test="F")
+Analysis of Variance Table
+    Df  Sum Sq Mean Sq F value
+Day  1 0.00000 0.00000  0.0000
+Tx   1 0.06145 0.06145  0.4196
+> coef(m7)
+  (Intercept)        Day       TxB
+A    66.11783  0.3219147 -5.672529
+B    69.44077 -0.3004047 -5.672529
+> coef(m7)
+$SID
+   (Intercept)           Day       TxB
+0     70.01429 -1.120113e-02 -5.672529
+1     59.85405 -2.327284e-02 -5.672529
+2     62.82849  3.899777e-02 -5.672529
+3     71.12519 -4.355184e-02 -5.672529
+7     60.09602 -4.369020e-02 -5.672529
+9     54.35287  6.574599e-02 -5.672529
+10    60.39903  4.398769e-02 -5.672529
+11    64.54752  7.172949e-03 -5.672529
+12    61.09357  4.142978e-02 -5.672529
+13    62.55692 -5.571729e-03 -5.672529
+14    83.75664 -6.147852e-02 -5.672529
+15    61.82178  3.544007e-02 -5.672529
+16    58.51220  1.812757e-02 -5.672529
+17    57.64852 -3.585492e-02 -5.672529
+18    68.30928  6.045077e-02 -5.672529
+19    80.03770  1.724190e-02 -5.672529
+21    74.71098  1.665192e-02 -5.672529
+22    74.57656  6.193454e-02 -5.672529
+23    56.58027  7.227049e-03 -5.672529
+24    56.98332  3.330997e-02 -5.672529
+25    64.42615  5.282882e-03 -5.672529
+26    65.77011  4.696819e-02 -5.672529
+27    66.65291  1.011939e-02 -5.672529
+28    55.68120  6.964043e-02 -5.672529
+29    61.60430  2.096257e-03 -5.672529
+30    65.61737 -3.115236e-02 -5.672529
+31    74.03501  6.739065e-02 -5.672529
+32    71.67025  2.060478e-02 -5.672529
+33    83.09338  3.495728e-02 -5.672529
+34    55.15871  4.259802e-02 -5.672529
+35    80.06999 -2.073757e-02 -5.672529
+36    68.48206 -9.362134e-03 -5.672529
+37    71.24133  9.581826e-03 -5.672529
+39    61.60207 -1.724667e-02 -5.672529
+40    77.25752  1.929193e-02 -5.672529
+41    64.59084  3.362494e-03 -5.672529
+42    68.54417 -8.133034e-02 -5.672529
+43    75.39881  1.817745e-02 -5.672529
+44    82.83568  7.959773e-03 -5.672529
+45    62.66633 -2.908104e-02 -5.672529
+47    72.46859  4.274469e-03 -5.672529
+48    63.61638  3.640015e-02 -5.672529
+49    62.20583  2.464507e-02 -5.672529
+50    72.02683  1.227133e-02 -5.672529
+51    62.37718  1.822994e-02 -5.672529
+52    67.03270  4.113330e-03 -5.672529
+53    76.81239 -3.370176e-02 -5.672529
+54    64.53888  2.730004e-05 -5.672529
+55    82.38236 -8.509145e-02 -5.672529
+56    68.19895 -1.278168e-02 -5.672529
+57    55.72662 -2.222845e-02 -5.672529
+58    66.08227  1.005668e-03 -5.672529
+59    57.87451 -3.661939e-03 -5.672529
+60    72.38899 -4.266822e-02 -5.672529
+61    55.61069 -5.712203e-02 -5.672529
+62    75.82278  1.130643e-01 -5.672529
+63    68.39903 -3.737948e-02 -5.672529
+64    62.44441  8.605901e-02 -5.672529
+65    80.48654  1.138848e-02 -5.672529
+66    71.36988  8.588288e-02 -5.672529
+67    67.51626  1.422614e-02 -5.672529
+68    69.38187  1.165937e-02 -5.672529
+69    63.00513  5.110182e-03 -5.672529
+70    73.30649  1.388207e-02 -5.672529
+72    82.80944  9.397561e-02 -5.672529
+73    53.81951 -6.746263e-02 -5.672529
+74    80.50901  3.333886e-02 -5.672529
+75    65.06170 -4.582899e-02 -5.672529
+76    79.76253  5.272440e-02 -5.672529
+77    68.88195  1.151407e-02 -5.672529
+78    59.77285  1.208116e-01 -5.672529
+79    69.44737  3.966663e-02 -5.672529
+80    57.75668  5.514250e-03 -5.672529
+81    60.20416  3.076236e-02 -5.672529
+83    77.61620 -4.020293e-02 -5.672529
+84    76.65858  8.695618e-02 -5.672529
+86    81.85337  6.428341e-02 -5.672529
+87    74.20987  4.450403e-02 -5.672529
+88    73.03893 -1.399768e-02 -5.672529
+89    68.68923 -7.596570e-03 -5.672529
+90    55.76688 -4.176687e-02 -5.672529
+91    76.85533  7.201342e-03 -5.672529
+92    75.73280  1.644833e-02 -5.672529
+93    70.85477  2.642565e-02 -5.672529
+95    56.01645 -1.961489e-02 -5.672529
+96    52.11631 -7.225946e-02 -5.672529
+97    63.15544  7.193163e-02 -5.672529
+98    78.00128  1.012655e-02 -5.672529
+99    66.48811  9.919555e-03 -5.672529
+
+$Tx
+  (Intercept)        Day       TxB
+A    66.11783  0.3219147 -5.672529
+B    69.44077 -0.3004047 -5.672529
+
+attr(,"class")
+[1] "coef.mer"
+> m7
+Linear mixed model fit by REML ['lmerMod']
+Formula: KPS ~ Day + Tx + (Day | Tx) + (Day | SID)
+   Data: d7
+REML criterion at convergence: 2094.918
+Random effects:
+ Groups   Name        Std.Dev. Corr 
+ SID      (Intercept) 8.39957       
+          Day         0.05421  0.05 
+ Tx       (Intercept) 2.35007       
+          Day         0.43994  -1.00
+ Residual             0.97627       
+Number of obs: 514, groups:  SID, 89; Tx, 2
+Fixed Effects:
+(Intercept)          Day          TxB  
+   67.77930      0.01076     -5.67253  
+convergence code 0; 2 optimizer warnings; 0 lme4 warnings 
+> m2
+Linear mixed model fit by REML ['lmerMod']
+Formula: KPS ~ Day + Tx + (Day | Tx) + (Day | SID)
+   Data: d2
+REML criterion at convergence: 1328.047
+Random effects:
+ Groups   Name        Std.Dev. Corr 
+ SID      (Intercept) 8.32402       
+          Day         0.01245  -0.28
+ Tx       (Intercept) 0.30988       
+          Day         1.80367  0.96 
+ Residual             0.38271       
+Number of obs: 562, groups:  SID, 92; Tx, 2
+Fixed Effects:
+(Intercept)          Day          TxB  
+  64.213351    -0.000316    -1.127986  
+convergence code 0; 2 optimizer warnings; 0 lme4 warnings 
+> coef(m2)$Tx
+  (Intercept)        Day       TxB
+A    64.26533  0.3140478 -1.127986
+B    64.16137 -0.3146798 -1.127986
+>  d30=
+> m30=lmer(KPS ~ Day + Tx + (Day | Tx) + (Day | SID),data=d30)
+Warning messages:
+1: In checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv,  :
+  unable to evaluate scaled gradient
+2: In checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv,  :
+  Model failed to converge: degenerate  Hessian with 2 negative eigenvalues
+> coef(d30)$Tx
+NULL
+> ggplot(aes(x = Day, y = KPS, group=SID), data = d30) + geom_line() + geom_point()
+Error in UseMethod("depth") : 
+  no applicable method for 'depth' applied to an object of class "NULL"
+> 
+> p<-ggplot(d,aes(x=Day, y=KPS , group=SID))+geom_line(alpha=0.5)+geom_point()
+> p<-p+geom_line(aes(x=Day, y=g2predict , group=SID), col="#dd000044")+geom_point(aes(x=Day, y=g2predict , group=SID), col="#dd000044")
+> p<-p+geom_line(aes(x=Day, y=jpredict , group=SID), col="#0000dd44")+geom_point(aes(x=Day, y=jpredict , group=SID), col="#0000dd44")
+
+> Error: unexpected '>' in ">"
+> Error: unexpected '>' in ">"
+> ggplot(aes(x = Day, y = KPS, group=SID), data = d30) + geom_line() + geom_point()
+> p<-ggplot(d,aes(x=Day, y=KPS , group=SID))+geom_line(alpha=0.5)+geom_point()
+> p<-p+geom_line(aes(x=Day, y=KPS , group=SID), col="#dd000044")+geom_point(aes(x=Day, y=KPS , group=SID), col="#dd000044")
+> p<-p+geom_line(aes(x=Day, y=KPS , group=SID), col="#dd000044")+geom_point(aes(x=Day, y=KPS , group=SID), col="#dd000044")
+> p
+> p<-ggplot(d,aes(x=Day, y=KPS , color=factor(SID)))+geom_line(alpha=0.5)+geom_point()
+> p<-ggplot(d,aes(x=Day, y=KPS , color=factor(Tx)))+geom_line(alpha=0.5)+geom_point()
+> p
+Error in grid.Call.graphics(C_upviewport, as.integer(n)) : 
+  cannot pop the top-level viewport ('grid' and 'graphics' output mixed?)
+> ggplot(d,aes(x=Day, y=KPS ,color=factor(Tx), groups=SID))+geom_line(alpha=0.5)+geom_point()
+> p
+> ggplot(d,aes(x=Day, y=KPS ,color=factor(Tx), groups=SID))+geom_line(alpha=0.5)+geom_point()
+Error in `[.data.frame`(data, "group") : undefined columns selected
+> ggplot(d,aes(x=Day, y=KPS, color=factor(Tx), group=SID))+geom_line(alpha=0.5)+geom_point()
+Error in `[.data.frame`(data, "group") : undefined columns selected
+> ggplot(d,aes(x=Day, y=KPS, color=factor(Tx), group=SID))+geom_line(alpha=0.5)+geom_point()
+> ggplot(d30,aes(x=Day, y=KPS, color=factor(Tx), group=SID))+geom_line(alpha=0.5)+geom_point()
+> ggplot(d15,aes(x=Day, y=KPS, color=factor(Tx), group=SID))+geom_line(alpha=0.5)+geom_point()
+> ggplot(d7,aes(x=Day, y=KPS, color=factor(Tx), group=SID))+geom_line(alpha=0.5)+geom_point()
+> ggplot(d7,aes(x=Day, y=KPS, color=factor(Tx), group=SID))+geom_line(alpha=0.5)+geom_point()
+> ggplot(d10,aes(x=Day, y=KPS, color=factor(Tx), group=SID))+geom_line(alpha=0.5)+geom_point()
+> coef(lmer(KPS ~ Day + Tx + (Day | Tx) + (Day | SID),data=read.table("3780243581_s100_n30.tsv",header=TRUE, sep="	", strip.white=TRUE)))$Tx
+  (Intercept)        Day       TxB
+A    67.33810  0.2589680 -1.380859
+B    67.25466 -0.3402775 -1.380859
+Warning messages:
+1: In checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv,  :
+  unable to evaluate scaled gradient
+2: In checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv,  :
+  Model failed to converge: degenerate  Hessian with 2 negative eigenvalues
+> coef(lmer(KPS ~ Day + Tx + (Day | Tx) + (Day | SID),data=read.table("3780243526_s100_n2.tsv",header=TRUE, sep="	", strip.white=TRUE)))$Tx
+Error in checkFormulaData(formula, data, checkLHS = control$check.formula.LHS ==  : 
+  bad 'data': cannot open the connection
+In addition: Warning message:
+In file(file, "rt") :
+  cannot open file '3780243581_s100_n2.tsv': No such file or directory
+> 
+  (Intercept)        Day       TxB
+A    64.26533  0.3140478 -1.127986
+B    64.16137 -0.3146798 -1.127986
+Warning messages:
+1: In checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv,  :
+  unable to evaluate scaled gradient
+2: In checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv,  :
+  Model failed to converge: degenerate  Hessian with 2 negative eigenvalues
+> 
+  (Intercept)        Day       TxB
+A    66.16019  0.2838418 -1.198897
+B    67.88095 -0.3071841 -1.198897
+Warning messages:
+1: In checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv,  :
+  unable to evaluate scaled gradient
+2: In checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv,  :
+  Model failed to converge: degenerate  Hessian with 1 negative eigenvalues
+> coef(lmer(KPS ~ Day + Tx + (Day | Tx),data=read.table("3780243721_s100_n2.tsv",header=TRUE, sep="	", strip.white=TRUE)))$Tx
+  (Intercept)        Day      TxB
+A    65.95306  0.3062282 11.89418
+B    54.92014 -0.3612288 11.89418
+Warning messages:
+1: In checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv,  :
+  unable to evaluate scaled gradient
+2: In checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv,  :
+  Model failed to converge: degenerate  Hessian with 1 negative eigenvalues
+> coef(lmer(KPS ~ Day + Tx + (Day | Tx) + (Day | SID)),data=read.table("3780243526_s100_n2.tsv",header=TRUE, sep="	", strip.white=TRUE)))$Tx
+  (Intercept)        Day       TxB
+A    64.26533  0.3140478 -1.127986
+B    64.16137 -0.3146798 -1.127986
+Warning messages:
+1: In checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv,  :
+  unable to evaluate scaled gradient
+2: In checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv,  :
+  Model failed to converge: degenerate  Hessian with 2 negative eigenvalues
+> coef(lmer(KPS ~ Day +  (Day | Tx),data=read.table("3780243526_s100_n2.tsv",header=TRUE, sep="	", strip.white=TRUE)))$Tx
+  (Intercept)        Day      TxB
+A    64.26859  0.3269405 1.477206
+B    61.42773 -0.3380825 1.477206
+Warning messages:
+1: In checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv,  :
+  unable to evaluate scaled gradient
+2: In checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv,  :
+  Model failed to converge: degenerate  Hessian with 1 negative eigenvalues
+> coef(lmer(KPS ~ Day +  (Day | Tx),data=read.table("3780243526_s100_n2.tsv",header=TRUE, sep="	")))$Tx
+boundary (singular) fit: see ?isSingular
+  (Intercept)        Day
+A     64.2475  0.3273671
+B     62.9280 -0.3385247
+> coef(lmer(KPS ~ (Tx | Day) + (Day | Tx),data=read.table("3780243526_s100_n2.tsv",header=TRUE, sep="	")))$Tx
+boundary (singular) fit: see ?isSingular
+  (Intercept)        Day
+A     64.2475  0.3273671
+B     62.9280 -0.3385247
+> coef(lmer(KPS ~ Tx + (Tx | Day) + (Day | Tx),data=read.table("3780243526_s100_n2.tsv",header=TRUE, sep="	")))$Tx
+boundary (singular) fit: see ?isSingular
+  TxB        Day (Intercept)
+A   0  0.3267342    64.26934
+B   0 -0.3378935    62.90363
+> coef(lmer(KPS ~ Tx + (Tx | Day) + (Day | Tx),data=read.table("3780243526_s100_n2.tsv",header=TRUE, sep="	")))$Tx
+         Day (Intercept)       TxB
+A  0.3263487    64.28843 -5.836744
+B -0.3374929    68.71954 -5.836744
+Warning messages:
+1: In checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv,  :
+  unable to evaluate scaled gradient
+2: In checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv,  :
+  Model failed to converge: degenerate  Hessian with 1 negative eigenvalues
+> coef(lmer(KPS ~ Day + Tx + (Day | Tx) + (Tx | SID)),data=read.table("3780243526_s100_n2.tsv",header=TRUE, sep="	")))$Tx
+Error: unexpected ')' in "coef(lmer(KPS ~ Day + Tx + (Day | Tx) + (Day | SID)),data=read.table("3780243526_s100_n2.tsv",header=TRUE, sep="", strip.white=TRUE)))"
+> 
+Error: unexpected ')' in "coef(lmer(KPS ~ Day + Tx + (Day | Tx) + (Tx | SID)),data=read.table("3780243526_s100_n2.tsv",header=TRUE, sep="")))"
+> j
+Linear mixed model fit by maximum likelihood  ['lmerMod']
+Formula: 
+   Data: d
+      AIC       BIC    logLik  deviance  df.resid 
+ 2427.449  2469.352 -1203.725  2407.449       478 
+Random effects:
+ Groups   Name        Std.Dev. Corr 
+ SID      (Intercept) 9.88194       
+          Day         0.09721  -0.23
+ Tx       (Intercept) 2.89117       
+          Day         0.47731  1.00 
+ Residual             1.51684       
+Number of obs: 488, groups:  SID, 93; Tx, 2
+Fixed Effects:
+(Intercept)          Day          TxB  
+  68.740077    -0.009609    -8.313270  
+convergence code 0; 2 optimizer warnings; 0 lme4 warnings 
+> coef(,data=read.table("3780243526_s100_n2.tsv",header=TRUE))$Tx
+Error: unexpected ')' in "coef(lmer(KPS ~ Day + Tx + (Day | Tx) + (Day | SID)),data=read.table("3780243526_s100_n2.tsv",header=TRUE)))"
+> coef(lmer(KPS ~ Day + Tx + (Day | Tx) + (Day | SID)),data=read.table("3780243526_s100_n2.tsv",header=TRUE))$Tx
+Error in eval(predvars, data, env) : object 'KPS' not found
+> coef(lmer(KPS ~ Day + Tx + (Day | Tx) + (Day | SID)),data=)$Tx
+Error in eval(predvars, data, env) : object 'KPS' not found
+>
+> 
+Error: unexpected input in "3780246485_"
+> 
+> lmer(KPS ~ Day + Tx + (Day | Tx) + (Day | SID),data=sd10)
+Error: unexpected ',' in "lmer(KPS ~ Day + Tx + (Day | Tx) + (Day | SID)),"
+> m10=lmer(KPS ~ Day + Tx + (Day | Tx) + (Day | SID),data=sd10)
+Linear mixed model fit by REML ['lmerMod']
+Formula: KPS ~ Day + Tx + (Day | Tx) + (Day | SID)
+   Data: sd10
+REML criterion at convergence: 2281.773
+Random effects:
+ Groups   Name        Std.Dev. Corr 
+ SID      (Intercept) 10.0676       
+          Day          0.0863  -0.16
+ Tx       (Intercept)  0.6252       
+          Day          0.4261  0.97 
+ Residual              1.1994       
+Number of obs: 502, groups:  SID, 90; Tx, 2
+Fixed Effects:
+(Intercept)          Day          TxB  
+    64.7240      -0.0107      -0.6327  
+convergence code 0; 2 optimizer warnings; 0 lme4 warnings 
+Warning messages:
+1: In checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv,  :
+  unable to evaluate scaled gradient
+2: In checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv,  :
+  Model failed to converge: degenerate  Hessian with 2 negative eigenvalues
+> ms10=lmer(KPS ~ Day + Tx + (Day | Tx) + (Day | SID),data=sd10)
+Warning messages:
+1: In checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv,  :
+  unable to evaluate scaled gradient
+2: In checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv,  :
+  Model failed to converge: degenerate  Hessian with 2 negative eigenvalues
+> m10
+Linear mixed model fit by REML ['lmerMod']
+Formula: KPS ~ Day + Tx + (Day | Tx) + (Day | SID)
+   Data: sd10
+REML criterion at convergence: 2281.773
+Random effects:
+ Groups   Name        Std.Dev. Corr 
+ SID      (Intercept) 10.0676       
+          Day          0.0863  -0.16
+ Tx       (Intercept)  0.6252       
+          Day          0.4261  0.97 
+ Residual              1.1994       
+Number of obs: 502, groups:  SID, 90; Tx, 2
+Fixed Effects:
+(Intercept)          Day          TxB  
+    64.7240      -0.0107      -0.6327  
+convergence code 0; 2 optimizer warnings; 0 lme4 warnings 
+> coef(m10)
+$SID
+    (Intercept)           Day        TxB
+s0     50.92883  0.0048074702 -0.6326938
+s1     81.06715 -0.0134124588 -0.6326938
+s10    79.45595 -0.0437609176 -0.6326938
+s13    62.38442 -0.0191002209 -0.6326938
+s14    66.90210 -0.0552884669 -0.6326938
+s15    62.65510  0.0408052407 -0.6326938
+s16    56.41129  0.0406030969 -0.6326938
+s17    62.92196 -0.0263503039 -0.6326938
+s18    61.99590 -0.0743289102 -0.6326938
+s19    81.25410  0.0915012130 -0.6326938
+s2     65.71784 -0.0185203855 -0.6326938
+s21    75.56652 -0.0100464213 -0.6326938
+s22    62.18054 -0.0255290277 -0.6326938
+s23    59.77961 -0.1241321716 -0.6326938
+s25    63.08483  0.0940127412 -0.6326938
+s26    67.39736  0.1001224997 -0.6326938
+s28    62.35404  0.0243352626 -0.6326938
+s29    49.87847 -0.0637484560 -0.6326938
+s3     77.60972  0.0118140394 -0.6326938
+s30    63.93673  0.0220610460 -0.6326938
+s31    61.78671  0.0489606022 -0.6326938
+s32    79.68859 -0.0004943677 -0.6326938
+s33    81.84461 -0.0789225382 -0.6326938
+s34    67.28809 -0.0653756386 -0.6326938
+s35    58.11654 -0.0165147799 -0.6326938
+s36    50.24553 -0.0693355014 -0.6326938
+s37    66.50093 -0.0599853177 -0.6326938
+s38    53.12623 -0.0014479177 -0.6326938
+s4     68.91457 -0.0719336745 -0.6326938
+s41    83.45118 -0.0137278832 -0.6326938
+s42    70.11559  0.0070226809 -0.6326938
+s43    61.07072 -0.0553687226 -0.6326938
+s44    54.88217  0.0104751380 -0.6326938
+s45    51.45981  0.0620605162 -0.6326938
+s46    73.10132 -0.0170611596 -0.6326938
+s47    49.78611  0.0093184514 -0.6326938
+s48    60.94767 -0.0560281951 -0.6326938
+s49    56.31093 -0.1036726464 -0.6326938
+s5     56.11437 -0.1746437489 -0.6326938
+s50    70.25786  0.0183508938 -0.6326938
+s51    71.56890 -0.1193359025 -0.6326938
+s52    55.62329  0.0064283731 -0.6326938
+s53    61.53192  0.0402583365 -0.6326938
+s54    64.23401 -0.0100752006 -0.6326938
+s55    60.66676 -0.0279159345 -0.6326938
+s56    72.41389  0.0291493533 -0.6326938
+s57    52.57968 -0.0112974729 -0.6326938
+s59    50.50144  0.0746960102 -0.6326938
+s6     72.10580 -0.2168899883 -0.6326938
+s60    50.51753 -0.0391345690 -0.6326938
+s61    53.99578  0.0199748566 -0.6326938
+s62    64.28174 -0.0735708838 -0.6326938
+s64    65.64703  0.1362653682 -0.6326938
+s65    77.61901 -0.0411207303 -0.6326938
+s66    80.80892 -0.0036123667 -0.6326938
+s67    79.08812 -0.0671693839 -0.6326938
+s68    65.45633  0.1431573716 -0.6326938
+s69    49.42213  0.0643222026 -0.6326938
+s7     73.69018  0.0580594126 -0.6326938
+s70    50.47832  0.0623019288 -0.6326938
+s71    75.35680 -0.0241659798 -0.6326938
+s72    54.79508  0.1074262221 -0.6326938
+s73    50.86019 -0.0872470605 -0.6326938
+s74    72.27092 -0.1066548713 -0.6326938
+s75    56.02109 -0.0832499772 -0.6326938
+s76    75.36380  0.0043683248 -0.6326938
+s77    53.89478 -0.0048622850 -0.6326938
+s78    71.53529 -0.0645600968 -0.6326938
+s79    77.23863 -0.0161107955 -0.6326938
+s8     61.54051  0.0364495109 -0.6326938
+s81    73.73297  0.1519416417 -0.6326938
+s82    68.06900  0.0353693265 -0.6326938
+s83    76.22795 -0.0202791660 -0.6326938
+s84    52.77689  0.0243532438 -0.6326938
+s85    67.03134 -0.0383964609 -0.6326938
+s86    74.68935 -0.1727223412 -0.6326938
+s87    55.47826 -0.0373459039 -0.6326938
+s88    50.89515 -0.0072646198 -0.6326938
+s89    70.60504  0.0996797784 -0.6326938
+s9     62.88580 -0.0086655543 -0.6326938
+s90    70.68658 -0.0528880249 -0.6326938
+s91    63.55554  0.0284594430 -0.6326938
+s92    79.63028 -0.1383524675 -0.6326938
+s93    49.22218 -0.0006313621 -0.6326938
+s94    73.52112  0.0083943317 -0.6326938
+s95    63.56406  0.0182439100 -0.6326938
+s96    54.74256  0.1216879317 -0.6326938
+s97    71.82601  0.0075630428 -0.6326938
+s98    52.29807 -0.0010815529 -0.6326938
+s99    84.12406 -0.0941620366 -0.6326938
+
+$Tx
+  (Intercept)        Day        TxB
+A    65.15357  0.2907853 -0.6326938
+B    64.29448 -0.3121785 -0.6326938
+
+attr(,"class")
+[1] "coef.mer"
+> d10=read.table("3780243480_s100_n10.tsv",header=TRUE)
+> ms10=lmer(KPS ~ Day + Tx + (Day | Tx) + (Day | SID),data=sd10)
+Warning messages:
+1: In checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv,  :
+  unable to evaluate scaled gradient
+2: In checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv,  :
+  Model failed to converge: degenerate  Hessian with 2 negative eigenvalues
+>  m10=lmer(KPS ~ Day + Tx + (Day | Tx) + (Day | SID),data=d10)
+Warning messages:
+1: In checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv,  :
+  unable to evaluate scaled gradient
+2: In checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv,  :
+  Model failed to converge: degenerate  Hessian with 2 negative eigenvalues
+>  m10=lmer(KPS ~ Day + Tx + (Day | Tx) + (Day | SID),data=d10)
+Warning messages:
+1: In checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv,  :
+  unable to evaluate scaled gradient
+2: In checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv,  :
+  Model failed to converge: degenerate  Hessian with 1 negative eigenvalues
+> coef(sd10)$Tx
+NULL
+> coef(sd10)$Tx
+NULL
+> m10=lmer(KPS ~ Day + Tx + (Day | Tx) + (Day | SID),data=d10)
+Warning messages:
+1: In checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv,  :
+  unable to evaluate scaled gradient
+2: In checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv,  :
+  Model failed to converge: degenerate  Hessian with 2 negative eigenvalues
+> coef(ms10)$Tx
+  (Intercept)        Day        TxB
+A    65.15357  0.2907853 -0.6326938
+B    64.29448 -0.3121785 -0.6326938
+> coef(lmer(KPS ~ Day + Tx + (Day | Tx) + (Day | SID),data=d10))$Tx
+Warning messages:
+1: In checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv,  :
+  unable to evaluate scaled gradient
+2: In checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv,  :
+  Model failed to converge: degenerate  Hessian with 1 negative eigenvalues
+> m10
+Linear mixed model fit by REML ['lmerMod']
+Formula: KPS ~ Day + Tx + (Day | Tx) + (Day | SID)
+   Data: d10
+REML criterion at convergence: 1877.11
+Random effects:
+ Groups   Name        Std.Dev. Corr 
+ SID      (Intercept) 8.90282       
+          Day         0.08065  -0.24
+ Tx       (Intercept) 0.89830       
+          Day         4.12588  -0.05
+ Residual             1.07767       
+Number of obs: 421, groups:  SID, 87; Tx, 2
+Fixed Effects:
+(Intercept)          Day          TxB  
+   65.90769     -0.01687      0.45732  
+convergence code 0; 2 optimizer warnings; 0 lme4 warnings 
+> coef(m10)$Tx
+  (Intercept)        Day       TxB
+A    65.90456  0.2828963 0.4573236
+B    65.91082 -0.3166421 0.4573236
+> coef(ms10)$Tx
+  (Intercept)        Day        TxB
+A    65.15357  0.2907853 -0.6326938
+B    64.29448 -0.3121785 -0.6326938
+> coef(lmer(KPS ~ Day + Tx + (Day | Tx) + (Day | SID),data=d10))$Tx
+  (Intercept)        Day       TxB
+A    65.90456  0.2828963 0.4573236
+B    65.91082 -0.3166421 0.4573236
+Warning messages:
+1: In checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv,  :
+  unable to evaluate scaled gradient
+2: In checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv,  :
+  Model failed to converge: degenerate  Hessian with 1 negative eigenvalues
+> coef(lmer(KPS ~ Day + Tx + (Day | Tx) + (Day | SID),data=sd10))$Tx
+  (Intercept)        Day        TxB
+A    65.15357  0.2907853 -0.6326938
+B    64.29448 -0.3121785 -0.6326938
+Warning messages:
+1: In checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv,  :
+  unable to evaluate scaled gradient
+2: In checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv,  :
+  Model failed to converge: degenerate  Hessian with 2 negative eigenvalues
+> 
+Warning messages:
+1: In checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv,  :
+  unable to evaluate scaled gradient
+2: In checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv,  :
+  Model failed to converge: degenerate  Hessian with 2 negative eigenvalues
+> head(sd10)
+  SID Tx Day      KPS
+1  s0  A   4 52.38664
+2  s1  B  17 74.88935
+3  s2  B   4 63.55338
+4  s2  B  12 60.65010
+5  s3  B   2 75.90169
+6  s3  B  11 73.41429
+> head(d10)
+  SID Tx Day      KPS
+1   0  B   8 67.84675
+2   0  B   9 68.47259
+3   1  A  10 73.56155
+4   1  A  24 74.16972
+5   2  B   7 58.31089
+6   2  B  15 54.12761
+> md10=lmer(KPS ~ Day + Tx + (Day | Tx) + (Day | SID),data=d10)
+Warning messages:
+1: In checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv,  :
+  unable to evaluate scaled gradient
+2: In checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv,  :
+  Model failed to converge: degenerate  Hessian with 1 negative eigenvalues
+> head(coef(d10))
+NULL
+> coef(m10)
+$SID
+   (Intercept)          Day       TxB
+0     70.39130 -0.020944312 0.4573236
+1     70.50429 -0.102929810 0.4573236
+2     59.55507 -0.040428618 0.4573236
+3     56.00187 -0.002646687 0.4573236
+5     56.05864  0.003507799 0.4573236
+6     52.23447  0.007130099 0.4573236
+7     59.32533  0.071342357 0.4573236
+9     48.47270  0.049723820 0.4573236
+10    59.83541  0.068470493 0.4573236
+11    78.44959 -0.059312237 0.4573236
+12    79.26306 -0.071390017 0.4573236
+13    68.16317 -0.037957441 0.4573236
+14    72.19967  0.082855720 0.4573236
+15    60.85130  0.033716712 0.4573236
+16    71.44327 -0.100418963 0.4573236
+17    59.51773 -0.055644719 0.4573236
+18    51.72785  0.011364206 0.4573236
+20    62.74882  0.049419537 0.4573236
+21    66.85629  0.004690785 0.4573236
+22    66.88413  0.004421391 0.4573236
+23    53.46293  0.084510302 0.4573236
+25    67.04670  0.084654629 0.4573236
+26    62.10077 -0.012021465 0.4573236
+29    42.65261  0.115021196 0.4573236
+30    69.57795  0.025241824 0.4573236
+31    60.25686 -0.004487193 0.4573236
+32    73.38960 -0.031186336 0.4573236
+33    56.65715 -0.121409748 0.4573236
+34    65.97518 -0.027792448 0.4573236
+35    62.77565 -0.065310772 0.4573236
+36    58.88624 -0.057766663 0.4573236
+37    73.22970 -0.059696405 0.4573236
+38    57.02053 -0.012176509 0.4573236
+39    58.65880 -0.033893144 0.4573236
+40    62.42265 -0.057011291 0.4573236
+41    52.97072  0.040625184 0.4573236
+42    67.02581  0.012353892 0.4573236
+43    76.63031 -0.037386048 0.4573236
+44    67.41592 -0.218569507 0.4573236
+45    63.75913 -0.069051741 0.4573236
+46    53.72684  0.018858958 0.4573236
+48    71.31438 -0.007334732 0.4573236
+49    61.22008  0.043954112 0.4573236
+50    62.80355 -0.010449507 0.4573236
+51    76.62473 -0.041666989 0.4573236
+53    67.29792 -0.015932238 0.4573236
+54    61.44269 -0.068693060 0.4573236
+55    80.29147 -0.195949876 0.4573236
+56    75.74404  0.058215349 0.4573236
+57    64.15068 -0.021455970 0.4573236
+59    74.23804 -0.024067496 0.4573236
+60    47.35677 -0.071989672 0.4573236
+61    75.06872 -0.039342249 0.4573236
+62    62.33015 -0.059124128 0.4573236
+63    71.39093 -0.122887078 0.4573236
+64    70.18745 -0.028234194 0.4573236
+65    73.00296  0.047778229 0.4573236
+66    78.93749  0.110515557 0.4573236
+67    75.67156 -0.050792046 0.4573236
+68    78.94412 -0.041942533 0.4573236
+69    72.26786 -0.017522985 0.4573236
+70    56.09131  0.026410845 0.4573236
+71    68.94108  0.060189018 0.4573236
+72    66.58857 -0.023640046 0.4573236
+73    56.22462 -0.041011873 0.4573236
+74    70.34477 -0.013516086 0.4573236
+75    76.17684  0.047153864 0.4573236
+76    58.47219  0.096816895 0.4573236
+77    73.80188 -0.021142070 0.4573236
+79    76.13898 -0.003644193 0.4573236
+80    79.36362  0.013977602 0.4573236
+81    76.99903 -0.110884648 0.4573236
+83    71.09219 -0.001604642 0.4573236
+84    62.23210 -0.020080982 0.4573236
+85    55.64196  0.028692526 0.4573236
+87    51.80586  0.011208856 0.4573236
+89    77.87334 -0.025783547 0.4573236
+90    64.14953 -0.061762001 0.4573236
+91    69.40018  0.020646085 0.4573236
+92    74.78234  0.018212532 0.4573236
+93    62.24360 -0.036767058 0.4573236
+94    75.55985 -0.027041741 0.4573236
+95    51.38081 -0.009033588 0.4573236
+96    75.92363 -0.035246608 0.4573236
+97    64.30068 -0.126180636 0.4573236
+98    68.69257 -0.118456671 0.4573236
+99    73.33600 -0.027011277 0.4573236
+
+$Tx
+  (Intercept)        Day       TxB
+A    65.90456  0.2828963 0.4573236
+B    65.91082 -0.3166421 0.4573236
+
+attr(,"class")
+[1] "coef.mer"
+> coef(ms10)
+$SID
+    (Intercept)           Day        TxB
+s0     50.92883  0.0048074702 -0.6326938
+s1     81.06715 -0.0134124588 -0.6326938
+s10    79.45595 -0.0437609176 -0.6326938
+s13    62.38442 -0.0191002209 -0.6326938
+s14    66.90210 -0.0552884669 -0.6326938
+s15    62.65510  0.0408052407 -0.6326938
+s16    56.41129  0.0406030969 -0.6326938
+s17    62.92196 -0.0263503039 -0.6326938
+s18    61.99590 -0.0743289102 -0.6326938
+s19    81.25410  0.0915012130 -0.6326938
+s2     65.71784 -0.0185203855 -0.6326938
+s21    75.56652 -0.0100464213 -0.6326938
+s22    62.18054 -0.0255290277 -0.6326938
+s23    59.77961 -0.1241321716 -0.6326938
+s25    63.08483  0.0940127412 -0.6326938
+s26    67.39736  0.1001224997 -0.6326938
+s28    62.35404  0.0243352626 -0.6326938
+s29    49.87847 -0.0637484560 -0.6326938
+s3     77.60972  0.0118140394 -0.6326938
+s30    63.93673  0.0220610460 -0.6326938
+s31    61.78671  0.0489606022 -0.6326938
+s32    79.68859 -0.0004943677 -0.6326938
+s33    81.84461 -0.0789225382 -0.6326938
+s34    67.28809 -0.0653756386 -0.6326938
+s35    58.11654 -0.0165147799 -0.6326938
+s36    50.24553 -0.0693355014 -0.6326938
+s37    66.50093 -0.0599853177 -0.6326938
+s38    53.12623 -0.0014479177 -0.6326938
+s4     68.91457 -0.0719336745 -0.6326938
+s41    83.45118 -0.0137278832 -0.6326938
+s42    70.11559  0.0070226809 -0.6326938
+s43    61.07072 -0.0553687226 -0.6326938
+s44    54.88217  0.0104751380 -0.6326938
+s45    51.45981  0.0620605162 -0.6326938
+s46    73.10132 -0.0170611596 -0.6326938
+s47    49.78611  0.0093184514 -0.6326938
+s48    60.94767 -0.0560281951 -0.6326938
+s49    56.31093 -0.1036726464 -0.6326938
+s5     56.11437 -0.1746437489 -0.6326938
+s50    70.25786  0.0183508938 -0.6326938
+s51    71.56890 -0.1193359025 -0.6326938
+s52    55.62329  0.0064283731 -0.6326938
+s53    61.53192  0.0402583365 -0.6326938
+s54    64.23401 -0.0100752006 -0.6326938
+s55    60.66676 -0.0279159345 -0.6326938
+s56    72.41389  0.0291493533 -0.6326938
+s57    52.57968 -0.0112974729 -0.6326938
+s59    50.50144  0.0746960102 -0.6326938
+s6     72.10580 -0.2168899883 -0.6326938
+s60    50.51753 -0.0391345690 -0.6326938
+s61    53.99578  0.0199748566 -0.6326938
+s62    64.28174 -0.0735708838 -0.6326938
+s64    65.64703  0.1362653682 -0.6326938
+s65    77.61901 -0.0411207303 -0.6326938
+s66    80.80892 -0.0036123667 -0.6326938
+s67    79.08812 -0.0671693839 -0.6326938
+s68    65.45633  0.1431573716 -0.6326938
+s69    49.42213  0.0643222026 -0.6326938
+s7     73.69018  0.0580594126 -0.6326938
+s70    50.47832  0.0623019288 -0.6326938
+s71    75.35680 -0.0241659798 -0.6326938
+s72    54.79508  0.1074262221 -0.6326938
+s73    50.86019 -0.0872470605 -0.6326938
+s74    72.27092 -0.1066548713 -0.6326938
+s75    56.02109 -0.0832499772 -0.6326938
+s76    75.36380  0.0043683248 -0.6326938
+s77    53.89478 -0.0048622850 -0.6326938
+s78    71.53529 -0.0645600968 -0.6326938
+s79    77.23863 -0.0161107955 -0.6326938
+s8     61.54051  0.0364495109 -0.6326938
+s81    73.73297  0.1519416417 -0.6326938
+s82    68.06900  0.0353693265 -0.6326938
+s83    76.22795 -0.0202791660 -0.6326938
+s84    52.77689  0.0243532438 -0.6326938
+s85    67.03134 -0.0383964609 -0.6326938
+s86    74.68935 -0.1727223412 -0.6326938
+s87    55.47826 -0.0373459039 -0.6326938
+s88    50.89515 -0.0072646198 -0.6326938
+s89    70.60504  0.0996797784 -0.6326938
+s9     62.88580 -0.0086655543 -0.6326938
+s90    70.68658 -0.0528880249 -0.6326938
+s91    63.55554  0.0284594430 -0.6326938
+s92    79.63028 -0.1383524675 -0.6326938
+s93    49.22218 -0.0006313621 -0.6326938
+s94    73.52112  0.0083943317 -0.6326938
+s95    63.56406  0.0182439100 -0.6326938
+s96    54.74256  0.1216879317 -0.6326938
+s97    71.82601  0.0075630428 -0.6326938
+s98    52.29807 -0.0010815529 -0.6326938
+s99    84.12406 -0.0941620366 -0.6326938
+
+$Tx
+  (Intercept)        Day        TxB
+A    65.15357  0.2907853 -0.6326938
+B    64.29448 -0.3121785 -0.6326938
+
+attr(,"class")
+[1] "coef.mer"
+> j
+Linear mixed model fit by maximum likelihood  ['lmerMod']
+Formula: KPS ~ Day + Tx + (Day | Tx) + (Day | SID)
+   Data: d
+      AIC       BIC    logLik  deviance  df.resid 
+ 2427.449  2469.352 -1203.725  2407.449       478 
+Random effects:
+ Groups   Name        Std.Dev. Corr 
+ SID      (Intercept) 9.88194       
+          Day         0.09721  -0.23
+ Tx       (Intercept) 2.89117       
+          Day         0.47731  1.00 
+ Residual             1.51684       
+Number of obs: 488, groups:  SID, 93; Tx, 2
+Fixed Effects:
+(Intercept)          Day          TxB  
+  68.740077    -0.009609    -8.313270  
+convergence code 0; 2 optimizer warnings; 0 lme4 warnings 
+> ggplot(d2,aes(x=Day, y=KPS, color=factor(Tx), group=SID))+geom_line(alpha=0.5)+geom_point()
+> ggplot(d2,aes(x=Day, y=KPS, color=factor(Tx), group=SID))+geom_line(alpha=0.5)+geom_point()
+> 

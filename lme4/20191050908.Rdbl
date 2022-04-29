@@ -1,0 +1,121 @@
+> d=read.table("dat.tsv",header=TRUE, sep="	", strip.white=TRUE)
+> m1=lmer(KPS~Day+Tx+(Day|Tx)+(Day|SID),data=d)
+> m1
+> Anova(m1)
+> m2=lmer(KPS ~ Day * Tx + (1|SID), data = d, REML = F)
+> m2
+> Anova(m2)
+>  m3<-lmer(KPS ~ Day + Tx + Day*Tx + (1 | SID), data = d, REML = F)
+> m3
+> Anova(m3)
+> d=read.table("dat.tsv",header=TRUE, sep="	", strip.white=TRUE)
+> head(d)
+  SID Tx Day      KPS
+1   0  A   1 66.53818
+2   0  A   7 62.77728
+3   1  A   3 62.72454
+4   1  A  14 55.35455
+5   2  A   9 58.54365
+6   2  A  14 55.85456
+> m1=lmer(KPS~Day+Tx+(Day|Tx)+(Day|SID),data=d)
+Warning messages:
+1: In checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv,  :
+  unable to evaluate scaled gradient
+2: In checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv,  :
+  Model failed to converge: degenerate  Hessian with 1 negative eigenvalues
+> m1
+Linear mixed model fit by REML ['lmerMod']
+Formula: KPS ~ Day + Tx + (Day | Tx) + (Day | SID)
+   Data: d
+REML criterion at convergence: 129662.1
+Random effects:
+ Groups   Name        Std.Dev. Corr 
+ SID      (Intercept) 8.7280        
+          Day         0.1053   -0.08
+ Tx       (Intercept) 0.1587        
+          Day         3.2471   -1.00
+ Residual             0.9407        
+Number of obs: 27432, groups:  SID, 8568; Tx, 2
+Fixed Effects:
+(Intercept)          Day          TxB  
+  65.038734    -0.006384    -0.009271  
+convergence code 0; 2 optimizer warnings; 0 lme4 warnings 
+> Anova(m1)
+Analysis of Deviance Table (Type II Wald chisquare tests)
+
+Response: KPS
+     Chisq Df Pr(>Chisq)
+Day 0.0000  1     0.9978
+Tx  0.0023  1     0.9614
+> cm1=coef(m1)
+$SID
+     (Intercept)           Day          TxB
+0       66.99453 -1.456838e-02 -0.009271273
+1       64.30625 -4.278005e-02 -0.009271273
+2       64.13262  5.575710e-02 -0.009271273
+3       66.55833 -7.581356e-02 -0.009271273
+5       58.39590  3.581502e-02 -0.009271273
+6       68.80685 -9.197837e-02 -0.009271273
+7       67.14215  7.370993e-02 -0.009271273
+8       76.81704 -1.019678e-01 -0.009271273
+9       50.36853  5.431475e-02 -0.009271273
+10      65.65467  2.476179e-02 -0.009271273
+11      69.06047 -1.133015e-02 -0.009271273
+12      77.78598  2.229563e-02 -0.009271273
+13      78.24377 -2.264586e-03 -0.009271273
+14      55.74841  7.228456e-02 -0.009271273
+15      48.85643 -5.754847e-02 -0.009271273
+16      69.08991 -6.365918e-03 -0.009271273
+17      50.32297 -2.855044e-03 -0.009271273
+18      77.73525  1.046521e-02 -0.009271273
+19      74.62140 -1.168924e-02 -0.009271273
+20      78.56726  3.132351e-02 -0.009271273
+0
+[1] 0
+> cm1=coef(m1)
+> cm1$Tx
+  (Intercept)        Day          TxB
+A    65.06706 -0.5858725 -0.009271273
+B    65.01041  0.5731459 -0.009271273
+> m2=lmer(KPS ~ Day * Tx + (1|SID), data = d, REML = F)
+> m2
+Linear mixed model fit by maximum likelihood  ['lmerMod']
+Formula: KPS ~ Day * Tx + (1 | SID)
+   Data: d
+      AIC       BIC    logLik  deviance  df.resid 
+137827.87 137877.19 -68907.94 137815.87     27426 
+Random effects:
+ Groups   Name        Std.Dev.
+ SID      (Intercept) 8.699   
+ Residual             1.468   
+Number of obs: 27432, groups:  SID, 8568
+Fixed Effects:
+(Intercept)          Day          TxB      Day:TxB  
+   65.08543     -0.58786     -0.07136      1.15934  
+> Anova(m2)
+Anova(m2)
+Analysis of Deviance Table (Type II Wald chisquare tests)
+
+Response: KPS
+            Chisq Df Pr(>Chisq)    
+Day        97.976  1  < 2.2e-16 ***
+Tx       7921.826  1  < 2.2e-16 ***
+Day:Tx 377200.895  1  < 2.2e-16 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+> m3<-lmer(KPS ~ Day + Tx + Day*Tx + (1 | SID), data = d, REML = F)
+> m3
+Linear mixed model fit by maximum likelihood  ['lmerMod']
+Formula: KPS ~ Day + Tx + Day * Tx + (1 | SID)
+   Data: d
+      AIC       BIC    logLik  deviance  df.resid 
+137827.87 137877.19 -68907.94 137815.87     27426 
+Random effects:
+ Groups   Name        Std.Dev.
+ SID      (Intercept) 8.699   
+ Residual             1.468   
+Number of obs: 27432, groups:  SID, 8568
+Fixed Effects:
+(Intercept)          Day          TxB      Day:TxB  
+   65.08543     -0.58786     -0.07136      1.15934  
+> 

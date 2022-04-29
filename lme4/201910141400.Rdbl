@@ -1,0 +1,140 @@
+> d=read.table("dat.tsv",header=TRUE, sep="	", strip.white=TRUE)
+> head(d)
+> (plot5 <- ggplot(aes(x = Day, y = KPS, group = SID), data = d) + geom_line() + geom_point())
+
+> m1=lmer(KPS~Day+Tx+(Day|Tx),data=d)
+> 
+$Tx
+  (Intercept)        Day      TxB
+A    67.70515 -0.5459090 5.198364
+B    59.33733  0.3949532 5.198364
+
+attr(,"class")
+[1] "coef.mer"
+> m1=lmer(KPS~Day+Tx+(Day|Tx),data=d)
+Warning messages:
+1: In checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv,  :
+  unable to evaluate scaled gradient
+2: In checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv,  :
+  Model failed to converge: degenerate  Hessian with 2 negative eigenvalues
+> coef(m1)
+$Tx
+  (Intercept)        Day      TxB
+A    67.70515 -0.5459090 5.198364
+B    59.33733  0.3949532 5.198364
+
+attr(,"class")
+[1] "coef.mer"
+> m2=lmer(KPS~Day+Tx+(1+Day|Tx),data=d)
+Warning messages:
+1: In checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv,  :
+  unable to evaluate scaled gradient
+2: In checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv,  :
+  Model failed to converge: degenerate  Hessian with 2 negative eigenvalues
+> coef(m2)
+$Tx
+  (Intercept)        Day      TxB
+A    67.70515 -0.5459090 5.198364
+B    59.33733  0.3949532 5.198364
+
+attr(,"class")
+[1] "coef.mer"
+> m4=lmer(KPS~(Day|Tx),data=d)
+Warning messages:
+1: In checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv,  :
+  unable to evaluate scaled gradient
+2: In checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv,  :
+  Model failed to converge: degenerate  Hessian with 2 negative eigenvalues
+> coef(m3)
+$Tx
+         Day (Intercept)      TxB
+A -0.5450889    67.67699 14.71247
+B  0.3945253    49.83786 14.71247
+
+attr(,"class")
+[1] "coef.mer"
+> m4=lmer(KPS~(Day|Tx),data=d)
+boundary (singular) fit: see ?isSingular
+> coef(m4)
+$Tx
+         Day (Intercept)
+A -0.5454793    67.69831
+B  0.3949256    64.52873
+
+attr(,"class")
+[1] "coef.mer"
+> anova(m1,m4,test="F")
+refitting model(s) with ML (instead of REML)
+Data: d
+Models:
+m1: KPS ~ Day + Tx + (Day | Tx)
+m2: KPS ~ Day + Tx + (1 + Day | Tx)
+   Df    AIC    BIC  logLik deviance Chisq Chi Df Pr(>Chisq)
+m1  7 3628.3 3657.6 -1807.1   3614.3                        
+m2  7 3628.3 3657.6 -1807.1   3614.3     0      0          1
+> anova(m1,m2,test="F")
+refitting model(s) with ML (instead of REML)
+Data: d
+Models:
+m1: KPS ~ Day + Tx + (Day | Tx)
+m2: KPS ~ Day + Tx + (1 + Day | Tx)
+   Df    AIC    BIC  logLik deviance Chisq Chi Df Pr(>Chisq)
+m1  7 3628.3 3657.6 -1807.1   3614.3                        
+m2  7 3628.3 3657.6 -1807.1   3614.3     0      0          1
+> anova(m3,m4,test="F")
+refitting model(s) with ML (instead of REML)
+Data: d
+Models:
+m4: KPS ~ (Day | Tx)
+m1: KPS ~ Day + Tx + (Day | Tx)
+   Df    AIC    BIC  logLik deviance Chisq Chi Df Pr(>Chisq)
+m4  5 3626.2 3647.1 -1808.1   3616.2                        
+m1  7 3628.3 3657.6 -1807.1   3614.3 1.901      2     0.3865
+> anova(m3,m4,test="F")
+refitting model(s) with ML (instead of REML)
+Data: d
+Models:
+m4: KPS ~ (Day | Tx)
+m3: KPS ~ Tx + (1 + Day | Tx)
+   Df    AIC    BIC  logLik deviance  Chisq Chi Df Pr(>Chisq)
+m4  5 3626.2 3647.1 -1808.1   3616.2                         
+m3  6 3626.3 3651.5 -1807.2   3614.3 1.8554      1     0.1732
+> coef(m3)
+$Tx
+         Day (Intercept)      TxB
+A -0.5450889    67.67699 14.71247
+B  0.3945253    49.83786 14.71247
+
+attr(,"class")
+[1] "coef.mer"
+> m5=lmer(KPS~Day+Tx+(Day|Tx),data=d)
+m5=lmer(KPS~Day+Tx+(Day|Tx),data=d)
+Warning messages:
+1: In checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv,  :
+  unable to evaluate scaled gradient
+2: In checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv,  :
+  Model failed to converge: degenerate  Hessian with 2 negative eigenvalues
+> coef(m5)
+$Tx
+  (Intercept)        Day      TxB
+A    67.70515 -0.5459090 5.198364
+B    59.33733  0.3949532 5.198364
+
+attr(,"class")
+[1] "coef.mer"
+> m4
+Linear mixed model fit by REML ['lmerMod']
+Formula: KPS ~ (Day | Tx)
+   Data: d
+REML criterion at convergence: 3615.056
+Random effects:
+ Groups   Name        Std.Dev. Corr 
+ Tx       (Intercept) 1.6062        
+          Day         0.4765   -1.00
+ Residual             9.7103        
+Number of obs: 488, groups:  Tx, 2
+Fixed Effects:
+(Intercept)  
+      65.86  
+convergence code 0; 1 optimizer warnings; 0 lme4 warnings 
+> d

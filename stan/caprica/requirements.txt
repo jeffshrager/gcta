@@ -1,0 +1,6 @@
+numpy
+pandas
+pystan
+ipywidgets
+bqplot
+ordered_set

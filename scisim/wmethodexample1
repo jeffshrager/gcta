@@ -1,0 +1,20 @@
+   1 │     0  836604631      0  PRO         1     22      2  IMUNO   418932835  F2lamamim  REC-COMBINE-AS-PROS+CONS
+   2 │     0  836604631      0  PRO         2     20      3  IMUNO   891235047  F5qrkamim  REC-COMBINE-AS-PROS+CONS
+   3 │     0  836604631      0  PRO         3     19      4  IMUNO   969970961  E9betamim  REC-COMBINE-AS-PROS+CONS
+   6 │     0  836604631      1  PRO         1     22      2  IMUNO   418932835  F2lamamim  REC-ONE-PRO-PER-CAT+CONS
+   7 │     0  836604631      1  PRO         2     19     21  TRGTD   111776857  H9qrkatar  REC-ONE-PRO-PER-CAT+CONS
+   8 │     0  836604631      1  PRO         3     19     41  CHEMO   516942320  N9velokem  REC-ONE-PRO-PER-CAT+CONS
+  11 │     0  836604631      2  PRO         1     22      2  IMUNO   418932835  F2lamamim  REC-N-PROS
+  12 │     0  836604631      2  PRO         2     20     41  IMUNO   891235047  F5qrkamim  REC-N-PROS
+  13 │     0  836604631      2  PRO         3     20      4  IMUNO   969970961  E9betamim  REC-N-PROS
+
+
+
+2 3 4 1 5 (6)
+
+2 3 4 21 41
+[1 2 3 6 6]
+[1 6 6 2 3]
+[1 6 3 6 2]
+
+[1,1,1],[2,6,6],[3,6,3],[6,2,6],[6,3,2]

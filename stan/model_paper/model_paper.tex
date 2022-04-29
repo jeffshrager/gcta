@@ -1,0 +1,1102 @@
+%% BioMed_Central_Tex_Template_v1.06
+%%                                      %
+%  bmc_article.tex            ver: 1.06 %
+%                                       %
+
+%%IMPORTANT: do not delete the first line of this template
+%%It must be present to enable the BMC Submission system to
+%%recognise this template!!
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%                                     %%
+%%  LaTeX template for BioMed Central  %%
+%%     journal article submissions     %%
+%%                                     %%
+%%          <8 June 2012>              %%
+%%                                     %%
+%%                                     %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%                                                                 %%
+%% For instructions on how to fill out this Tex template           %%
+%% document please refer to Readme.html and the instructions for   %%
+%% authors page on the biomed central website                      %%
+%% http://www.biomedcentral.com/info/authors/                      %%
+%%                                                                 %%
+%% Please do not use \input{...} to include other tex files.       %%
+%% Submit your LaTeX manuscript as one .tex document.              %%
+%%                                                                 %%
+%% All additional figures and files should be attached             %%
+%% separately and not embedded in the \TeX\ document itself.       %%
+%%                                                                 %%
+%% BioMed Central currently use the MikTex distribution of         %%
+%% TeX for Windows) of TeX and LaTeX.  This is available from      %%
+%% http://www.miktex.org                                           %%
+%%                                                                 %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%% additional documentclass options:
+%  [doublespacing]
+%  [linenumbers]   - put the line numbers on margins
+
+%%% loading packages, author definitions
+
+\documentclass[twocolumn]{bmcart}% uncomment this for twocolumn layout and comment line below
+% \documentclass{bmcart}
+
+
+%%% Load packages
+\usepackage{amsthm,amsmath}
+\usepackage{bm}
+\usepackage{graphicx}
+\usepackage{microtype}
+\usepackage{xcolor}
+\usepackage{booktabs}
+
+% \RequirePackage{natbib}
+\RequirePackage[authoryear]{natbib}% uncomment this for author-year bibliography
+\RequirePackage{hyperref}
+\usepackage[utf8]{inputenc} %unicode support
+%\usepackage[applemac]{inputenc} %applemac support if unicode package fails
+%\usepackage[latin1]{inputenc} %UNIX support if unicode package fails
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%                                             %%
+%%  If you wish to display your graphics for   %%
+%%  your own use using includegraphic or       %%
+%%  includegraphics, then comment out the      %%
+%%  following two lines of code.               %%
+%%  NB: These line *must* be included when     %%
+%%  submitting to BMC.                         %%
+%%  All figure files must be submitted as      %%
+%%  separate graphics through the BMC          %%
+%%  submission process, not included in the    %%
+%%  submitted article.                         %%
+%%                                             %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+% \def\includegraphic{}
+% \def\includegraphics{}
+
+
+%%% Put your definitions there:
+\startlocaldefs
+\endlocaldefs
+%\providecommand{\v}[1]{\ensuremath{\mathbf{#1}}
+\newcommand{\todo}[1]{{\color{red} [\bf{#1}]}}
+\def\v#1{\bm{#1}}
+\newcommand{\norm}{\ensuremath{\mathcal{N}}}
+\newcommand{\like}{\ensuremath{\mathcal{L}}}
+\newcommand{\tl}{\ensuremath{\text{TL}}}
+\newcommand{\ps}{\ensuremath{\text{PS}}}
+\newcommand{\sae}{\ensuremath{\text{SAE}}}
+\newcommand{\prog}{\ensuremath{\text{DP}}}
+\newcommand{\obs}{\ensuremath{\text{obs}}}
+
+%%% Begin ...
+\begin{document}
+
+%%% Start of article front matter
+\begin{frontmatter}
+
+\begin{fmbox}
+\dochead{Research}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%                                          %%
+%% Enter the title of your article here     %%
+%%                                          %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\title{CAPRICA: Continuous Analysis and Probabilistic Inference for Cancer; A multilevel Bayesian model for precision oncology}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%                                          %%
+%% Enter the authors here                   %%
+%%                                          %%
+%% Specify information, if available,       %%
+%% in the form:                             %%
+%%   <key>={<id1>,<id2>}                    %%
+%%   <key>=                                 %%
+%% Comment or delete the keys which are     %%
+%% not used. Repeat \author command as much %%
+%% as required.                             %%
+%%                                          %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\author[
+   addressref={aff1, aff2},
+   corref={aff1},
+   email={awasserman@xcures.com},
+]{\inits{AW} \fnm{Asher} \snm{Wasserman}}
+\author[
+   addressref={aff1},
+   email={mshapiro@xcures.com}
+]{\inits{MS} \fnm{Mark} \snm{Shapiro}}
+\author[
+    addressref={aff1}
+]{\inits{SS} \fnm{Srikar} \snm{Sriranth}}
+\author[
+   addressref={aff1, aff3},
+   email={jshrager@xcures.com}
+]{\inits{JS} \fnm{Jeff} \snm{Shrager}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%                                          %%
+%% Enter the authors' addresses here        %%
+%%                                          %%
+%% Repeat \address commands as much as      %%
+%% required.                                %%
+%%                                          %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\address[id=aff1]{
+  \orgname{xCures, Inc.},
+  \street{5050 El Camino Real},                     
+  \city{Los Altos, CA},
+  \postcode{94022},
+  \cny{USA}
+}
+
+\address[id=aff2]{
+  \orgname{Department of Astronomy and Astrophysics, University of California, Santa Cruz},
+  \street{1156 High St},
+  \city{Santa Cruz, CA},
+  \postcode{95064},
+  \cny{USA}
+}
+
+\address[id=aff3]{
+  \orgname{Symbolic Systems Program, Stanford University},
+  \street{450 Serra Mall},
+  \city{Stanford, CA},
+  \postcode{94305-2150},
+  \cny{USA}
+}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%                                          %%
+%% Enter short notes here                   %%
+%%                                          %%
+%% Short notes will be after addresses      %%
+%% on first page.                           %%
+%%                                          %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% \begin{artnotes}
+% %\note{Sample of title note}     % note to the article
+% %\note[id=n1]{Equal contributor} % note, connected to author
+% \end{artnotes}
+
+% \end{fmbox}% comment this for two column layout
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%                                          %%
+%% The Abstract begins here                 %%
+%%                                          %%
+%% Please refer to the Instructions for     %%
+%% authors on http://www.biomedcentral.com  %%
+%% and include the section headings         %%
+%% accordingly for your article type.       %%
+%%                                          %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{abstractbox}
+
+\begin{abstract} 
+\parttitle{Background}
+% Cancer is hard.
+
+\parttitle{Methods}
+% Statistics can help.
+
+\parttitle{Results}
+% Science!
+
+\end{abstract}
+
+\begin{keyword}
+\kwd{Precision oncology}
+\kwd{Targeted therapies}
+\kwd{Bayesian generalized linear mixed models}
+\kwd{Longitudinal data}
+\kwd{Multivariate data}
+\kwd{Time-to-event data}
+\end{keyword}
+
+% MSC classifications codes, if any
+%\begin{keyword}[class=AMS]
+%\kwd[Primary ]{}
+%\kwd{}
+%\kwd[; secondary ]{}
+%\end{keyword}
+
+\end{abstractbox}
+%
+\end{fmbox}% uncomment this for twcolumn layout
+
+\end{frontmatter}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%                                          %%
+%% The Main Body begins here                %%
+%%                                          %%
+%% Please refer to the instructions for     %%
+%% authors on:                              %%
+%% http://www.biomedcentral.com/info/authors%%
+%% and include the section headings         %%
+%% accordingly for your article type.       %%
+%%                                          %%
+%% See the Results and Discussion section   %%
+%% for details on how to create sub-sections%%
+%%                                          %%
+%% use \cite{...} to cite references        %%
+%%  \cite{koon} and                         %%
+%%  \cite{oreg,khar,zvai,xjon,schn,pond}    %%
+%%  \nocite{smith,marg,hunn,advi,koha,mouse}%%
+%%                                          %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%% start of article main body
+% <put your article body there>
+%%%%%%%%%%%%%%%%
+%% Background %%
+%%
+\section{Background}\label{sec:background}
+
+The problem of precision oncology -- that is, precision medicine in cases of
+advanced cancer -- is this: Given a description of a specific patient's state,
+including their history, and all available knowledge and data, choose the
+treatment that is most likely to have the greatest utility with respect to this
+patient's treatment goals. We here take the patient's goals to be prolonging of
+expected time to disease progression or death, as well as avoiding serious
+adverse events.
+
+Physicians engaged in precision oncology must integrate an overwhelming amount
+of information from publications, and from their own experience. At this
+writing (2019-08-29), PubMed reports 36,371 publications matching the term
+``breast cancer'' in the past year alone, and the same search for open,
+recruiting studies in ClinicalTrials.gov returns 2,194 studies. Oncologists
+fighting less common cancers are in potentially a worse situation; Instead of
+being overwhelmed, they have only a few relevant publications, and may have
+seen only a small number of similar cases.
+
+In this paper we describe a model whose purpose is to help oncologist predict
+outcomes for particular patients under different treatment regimens. The
+parameters in the model can be conditioned on summary statistics from clinical
+trials and/or individual patient outcomes. Once conditioned, the model can
+predict outcomes for new patients under different treatment choices and provide
+a measure of the uncertainty of these predictions. The model's structure bears
+an understandable relationship to the domain, and to the types of inputs and
+outputs oncologists would expect. This may help users of the model to
+understand how the predictions, and uncertainty, are derived.
+
+
+\todo{
+  Mark's notes; further notes from 9/11/19 email are incorporated in the text.
+
+  I think we should look at how Ioannidis framed the ``problem'' of
+  personalized medicine and respond to that in the intro.  While things have
+  evolved since 2009 when he published this in The International Journal of
+  Forecasting (interesting choice), the gist of his argument then was too much
+  information, lack of validation of causal relationships between treatment and
+  outcome, poor selection and reporting of outcomes, lack of standardized
+  reporting and publication bias, among others.  Ultimately, he was still
+  thinking of studies and meta-analyses to develop predictive algorithms in
+  medicine.
+
+  I like the framing, which is that personalized medicine requires individual
+  prediction, selection and administration of therapy, selection and assessment
+  of individually relevant outcomes, and analysis models that allow for
+  investigation of causal relationships and approriate levels of generalization
+  of information to other patients.  Existing frameworks for evidence are still
+  constructed at the level of meta-trials, that is analysis of trials on groups
+  of patients, in which patients are often considered as identical and
+  interchangeable.  Our suggestion is a learning model than can incorpoate
+  existing trial information into a framework that treats it as
+  meta-information makes individual forecasts based on meta-information and
+  other individual forecasts and response assessments on a continuous basis.
+
+  It is not efficient to have individual physicians or even expert panels try
+  to synthesize existing clinical trial information periodically into
+  guidelines with the volume and speed of new information on both interventions
+  and diagnostic criteria.  Similarly, the causal relevance of both are often
+  not well explored.  For example, classification model of patients based on
+  tumor -omics often doesn't have a clear link that establishes relevance in
+  relation to specific interventions.  In other words, we know that many tumors
+  are really dozens or hundreds of subtypes, but there is little information
+  about how those subtypes relate to one another or to intervention responses.
+  Future directions in personalized medicine will need a rigorous framework to
+  incorporate systemic knowledge from trials and meta-analyses that is a
+  learning system that can incorporate new information and apply confidence
+  weighting on the applicability general knowledge to specific individuals, as
+  well as integrating individual level data back into the predicition
+  algorithm.}
+
+\subsection{The Machine Learning Approach to Precision Oncology}\label{sec:MLapproach}
+
+The basic machine learning regression task is to find a function,
+$f: \v x \rightarrow \v y$
+that maps a feature vector, $\v x$,
+to a target vector $\v y$.
+In context, $\v x$
+consists of variables that indicate the presence of patient biomarkers,
+including general markers such as age and gender; molecular markers such as
+genomic tests; and historical facts, such as whether or not a the patient has
+had prior exposure to a particular treatment, and the time since these
+treatment events. The target, $\v y$,
+is a vector of patient outcomes, such as of tumor size, time to disease
+progression or other adverse events.
+
+As a machine learning problem, precision oncology is made especially difficult
+by the high dimensionality of the problem space, and lack of training data as a
+result of the high cost and danger of intervention, and long response lag
+times \citep{shrager2019}.
+
+%% Forward evaluation of the model takes a set of features, $\v x$, to a
+%% set of patient outcomes, $\v y$.
+
+In addition to the technical goals of producing outcomes and a robust measure
+of their uncertainty, and avoiding overfitting the limited and noisy data
+endemic in this domain, we wish the model to be causally interpretable by
+domain-experts such as physicians and biomedical researchers.  This feature of
+interpretability encourages clinical utility and helps ensure the face validity
+of the model.
+
+Standard machine learning approaches such as neural networks and random
+decision forests attempt to approximate the data-generating model, $f(\v x)$,
+non-parametrically.  These can be excellent tools for obtaining high predictive
+accuracy models, however it is often difficult to explain the outputs of such
+black box models in a ``human-readable'' fashion \citep{miller2017,
+  molnar2019}.  
+
+While progress has been made in constructing interpretable machine learning
+models \citep[e.g.,][]{benitez1997, caruana2015, ribeiro2016, barratt2017,
+  lundberg2017}, it remains difficult to infer causal effects without assuming
+some sort of underlying generative model.  In addition, in many cases a
+generative model can learn faster (i.e. achieve better predictive accuracy with
+the same amount of data) than discriminative models like neural networks
+\citep{ng2002}.  This is particularly relevant in the ``wide data'' regime of
+this application, where the number of potential predictors variables is large
+but the number of patients is relatively small \citep{shrager2019}.
+
+Motivated by the constraints highlighted above, we have constructed a Bayesian
+hierarchical model that includes both population-level fixed effects and
+patient-level random effects.  Framed from the perspective of Bayesian
+inference, our task is to specify a probabilistic generative model for patient
+outcomes.  Our prior belief in the model is represented with the prior
+distribution, $P(\v \theta)$.
+The forward model for patient outcomes is represented by the likelihood,
+$\like(\v y | \v\theta, \v x)$.
+For observed outcomes $\v y$,
+the Bayesian update for the model is given by Bayes' Theorem:
+
+\begin{equation}
+  \label{eq:bayes}
+  P(\v\theta | \v y, \v x) = \frac{\like(\v y | \v\theta, \v x) \cdot P(\v\theta)}{P(\v y | \v x)}
+\end{equation}
+
+In many interesting cases, the normalization term (also referred to as the
+model evidence or marginal likelihood),
+$P(\v y) = \int \like(\v y | \v\theta) \text{ d}\v\theta$,
+is analytically intractable, and thus a wide range of techniques have been
+developed to either approximate the evidence or to directly sample from
+$P(\v\theta | \v y)$
+\citep[e.g.,][]{metropolis1949, gilks1992, skilling2004, betancourt2017}.
+
+In Section~\ref{sec:data}, we describe the patient outcome data we want to
+model, and in Section~\ref{sec:model}, we build a Bayesian hierarchical model
+for these data.  We discuss the choice of priors in Section~\ref{sec:priors}.
+In Section~\ref{sec:tests}, we evaluate the how well the model works on mock
+data and quantify the systematic uncertainty of model misspecification.
+Finally, we discuss the context and implications of this work in
+Section~\ref{sec:discussion}.
+
+\section{Data}\label{sec:data}
+
+Here we describe the outputs and inputs of the model.
+
+\subsection{Outcome data}\label{sec:data-outcome}
+
+We consider four types of patient outcome data which serve as the outputs of
+the generative model:
+
+\begin{enumerate}
+\item Tumor load (TL), a measure or proxy of the volume of a patient's tumor
+\item Time-to-disease progression (DP), starting from the time of first treatment
+\item Time-to-serious adverse event (SAE), starting from the time of first treatment
+\item Performance score (PS), a measure of a patient's function
+\end{enumerate}
+
+TL and PS are both longitudinal outcomes, usually measured in regular cadences,
+and so for each patient we have a time series of PS and TL measurements.  For
+DP and SAE, we use time-to-event models, and so for each patient we have a time
+and a binary indication of whether the event was observed or is right-censored.
+
+There are a number of motivations for modeling these types of patient outcomes.
+
+\todo{From Mark's notes}
+
+Tumor load (TL; i.e. tumor volume), alone is an imperfect biomarker for
+survial, but when tumor location is included, this becomes a strong predictor
+for survival and other outcomes that are obviously important to patients, such
+as pain and other types of discomfort and functionally disabling symptoms that
+all reduce quality of life.  Similarly, tumor load when considered as rate of
+change in tumor volume, when controlled for location, often provides a good
+measure of treatment activity.  In most cases, when the tumor growth rate is
+reduced or reversed in temporal association with treatment, that is evidence of
+a response to the treatment.
+
+\todo{Not yet sure where this goes: ** As radiologists and clinicians have
+  become more familiar with the effects of immunoncology treatments that can
+  cause pseudoprogression, the sensitivity of TL as a biomarker has improved as
+  comments around psuedoprogresion, necrosis, immune inflitration, etc. provide
+  the evidence for radiographic response in such cases.  This happens when the
+  tumor looks bigger because of immune cell recruitment to the surface after
+  anti-PD1 therapy.}
+
+\todo{Another comment/question - do we talk about tumor load as an indirect
+  measurement that is being infered from the combination of
+  quantiative/qualitiative information on scans together with other indirect
+  measures used clinically at the individual level?  For example, a pancreatic
+  cancer patient whose tumor sheds CA19-9 or prostate cancer patient whose
+  tumor sheds PSA, may be individually evaluated by their clinician using those
+  lab tests.  Such tests must be considered at an individual level and in
+  context.  When a patient whose CA19-9 levels are growing exponentially sees
+  normalization after starting a new line of therapy that evidence should be
+  incorporated into the model in context. In other words, it may be evidence of
+  individual response, especially if symptoms and function improve, but not if
+  the therapy was an antibody to circulating CA19-9.}
+
+Time-to-progression is a common biomarker in clinical trials, which provides
+some interpretability of response measures in relation to clinical trials.
+Importantly time-to-progression does not always correlate with overall
+survival, especially in clinical trials where crossovers and subsequent
+therapies make post-progression analysis and interpretability more difficult.
+Another advantage of this model is that patients are observed over multiple
+lines of therapy in which prior lines of therapy and response become additional
+patient features.  This facilitates the exploration of the relative
+contribution of different lines and interaction between lines of therapy to
+survival.
+
+Serious adverse events (SAEs) defined under the \mbox{CTCAE}
+criteria\footnote{\url{https://evs.nci.nih.gov/ftp1/CTCAE/About.html}} as grade
+3 or higher, provide information about risk of unfavorable outcome due to side
+effects, which differ across treatments, mitigate the predicted benefit.  SAEs
+by their nature are correlated with unfavorable outcomes, including premature
+death, and thus SAE risk should be incorporated into predictive models.
+
+Performance scores (PS; also known as functional scores) are measurements from
+patients, caregivers or clinicians that are valid assessments of individuals
+functional status across relevant domains and specific for their disease.  When
+they are causally related to treatment, improvements in those aspects of
+patient functioning are direct measures of treatment benefit.  Because patients
+with the same type of tumor experience heterogeneous symptoms and symptom
+severity due to numerous factors, including the size and location of tumors in
+relation to key physiologic structures, individual measures of symptoms provide
+a precision medicine approach to measuring individual benefit.
+
+\todo{Discuss range of PS types, e.g., KPS, ECOG}
+
+We apply an affine transformation on all PS measurements such that they range
+from 0 to 1, where 1 is perfectly healthy and 0 is dead.
+
+
+\subsection{Patient features}\label{sec:data-features}
+
+Each patient receives one of a set of $N_\text{tx}$
+possible treatments at measured times, and so the PS and TL time series data
+can be converted to a time offset from a time of treatment.  For this context
+we consider a treatment to be either a monotherapy or a combination of
+therapies.  In practice, we consider the action of a treatment to be
+represented as a one-hot-encoded indicator vector, $\v x_\text{tx}$.
+
+Each patient also has a set of $N_\text{bm}$
+biomarkers, $\v x_\text{bm}$,
+that can be used to predict the utility of various treatments.  Here we are
+using a very general definition of the term biomarker to include any clinically
+relevant features (genetic mutations, age, sex, tumor location, previous
+treatments, etc.).  In principle these biomarkers can be time-dependent and
+continuous, but here we consider the simplification of static biomarkers with
+binary values (present or not present).
+
+The set of predictors measuring treatment-biomarker interactions,
+$\v x_{\text{int}_i}$,
+is formed by flattening the $N_\text{bm}$
+by $N_\text{tx}$ matrix of possible interactions,
+\begin{equation}
+  \label{eq:int}
+  x_\text{int} = \begin{pmatrix} 
+    x_\text{bm}[1] \cdot x_\text{tx}[1] & \dots & x_\text{bm}[1] \cdot x_\text{tx}[N_\text{tx}] \\
+    \vdots & \ddots & \vdots \\
+    x_\text{bm}[N_\text{bm}] \cdot x_\text{tx}[1] & \dots & x_\text{bm}[N_\text{bm}] \cdot x_\text{tx}[N_\text{tx}]
+        \end{pmatrix}
+\end{equation}
+and it is entirely determined from the input treatment and biomarker data.
+
+\section{Model}\label{sec:model}
+
+Many studies \citep[e.g.,][\todo{cite, cite}]{adrion2012, hickey2018} have
+proposed and evaluated flexible longitudinal outcomes models.
+
+We model each type of outcome as a multi-level generalized linear response.
+Population-level slope and intercept parameters are denoted as $\v \beta$,
+while patient-level effects are denoted as $\v u_i$.
+In the terminology of mixed models, these are referred to as fixed and random
+effects, respectively.
+
+Table~\ref{tab:symbols} list variables defined in this section, and
+Figure~\ref{fig:dag} shows a summary of the causal assumptions in the model as
+a Bayesian network.
+
+\begin{figure*}
+  \centering
+  \includegraphics[width=0.95\textwidth]{dag/model.pdf}
+  \caption{
+    Bayesian network graph showing the causal assumptions in the model.  
+    Nodes represent parameters in the model, and directed arrows indicate the assumed causal relation between parameters.
+    Time dependencies are suppressed for visual clarity, with the partial exception of the time-to-event models.
+    Blue nodes are patient data, both inputs and modeled outcomes.
+    Yellow nodes represent noise terms, both patient-level and population-level.
+    Green nodes represent population-level (i.e., fixed) effects.
+    % The red diamond indicates the action of recommending a treatment to a patient.
+    Boxes indicate variables that are deterministically calculated from parent
+    nodes.  Ellipses indicate that the variable is probabilistically drawn
+    using values from parent nodes.  Parallelograms represent inputs that are
+    fixed during a specific prediction and inference.  Parameters with no
+    parent nodes are implicitly drawn from a prior distribution (see
+    Section~\ref{sec:priors}).  Red arrows highlight causal effects between
+    outcome sub-models.  In particular, we have assumed that both tumor load
+    and the occurrence of serious adverse events have a causal effect on
+    performance score (but not vice-versa).}
+  \label{fig:dag}
+\end{figure*}
+
+\begin{table*}
+  \centering
+  \begin{tabular}{llll}
+    \toprule
+    Symbol & Size & Role & Meaning \\
+    \midrule
+    $\v x_{\text{bm}_i}$ & $N_\text{bm}$ & data & indicator vector for biomarkers \\[2pt]
+    $\v x_{\text{tx}_i}$ & $N_\text{tx}$ & data & one-hot-encoded indicator vector for treatment \\[2pt]
+    $\v x_{\text{int}_i}$ & $N_\text{int} = N_\text{bm} \times N_\text{tx}$ & data & indicator vector for biomarkers--treatment interactions \\[2pt]
+    $\v x_i^\tl$ & $1 + N_\text{bm} + N_\text{tx} + N_\text{int}$ & data & TL sub-model predictors \\[2pt]
+    $\v x_i^\sae$ & $N_\text{tx} + N_\text{int}$ & data & SAE sub-model predictors \\[2pt]
+    $x_{\text{loc}_i}$ & 1 & data & indicator for whether or not the tumor is in an impactful location \\[2pt]
+    $t_{ij}^{\{\tl,\ps\}}$ & 1 & data & time after first treatment for \{TL, PS\} data \\[2pt]
+    $y_{ij}^{\{\tl,\ps\}}$ & 1 & data & observed value for \{TL, PS\} time series data \\[2pt]
+    $\tilde{T}_{i}^{\{\prog,\sae\}}$ & 1 & data & survival time (either observed or right-censored) for DP or SAE \\[2pt]
+    $T_{i}^{\{\prog,\sae\}}$ & 1 & parameter & true survival time for DP or SAE \\[2pt]
+    
+    $\beta_0^{\{\tl, \ps\}}$ & 1 & parameter$^*$ & \{TL, PS\} sub-model population-level intercept \\[2pt]
+    $\v \beta^\tl$ & $1 + N_\text{bm} + N_\text{tx} + N_\text{int}$ & parameter$^*$ & TL sub-model population-level slope effect sizes \\[2pt]
+    $\v \beta^\sae$ & $N_\text{tx} + N_\text{int}$ & parameter$^*$ & SAE sub-model population-level effect sizes \\[2pt]
+    $\beta_\tl^\ps$ & 1 & parameter$^*$ & effect of TL on PS \\[2pt]
+    $\v \beta_\sae^\ps$ & $N_\text{tx}$ & parameter$^*$ & effect of SAE on PS \\[2pt]
+    $\v I_{ij}^\sae$ & $N_\text{tx}$ & parameter & indicator for $t_{ij} < T_i^\sae$ \\[2pt]
+    $\sigma_\epsilon^{\{\tl, \ps\}}$ & 1 & parameter$^*$ & standard deviation of measurement error for \{TL, PS\} sub-model \\[2pt]
+    
+    $\alpha^{\{\prog, \sae\}}$ & 1 & parameter$^*$ & Weibull shape parameter for the \{DP, SAE\} sub-model \\[2pt]
+    $\lambda_i^{\{\prog, \sae\}}(t)$ & 1 & parameter & hazard function for the \{DP, SAE\} sub-model \\[2pt]
+    $S_i^{\{\prog, \sae\}}(t)$ & 1 & parameter & survival function for the \{DP, SAE\} sub-model \\[2pt]
+
+    $\v u_{i}^{\{\tl, \ps\}}$ & 2 & parameter$^*$ & vector of \{TL, PS\} sub-model patient-level intercept and slope terms \\[2pt]
+    $u_{i}^\sae$ & 1 & parameter$^*$ & SAE sub-model patient-level frailty \\[2pt]
+    $\Sigma_u$ & (5, 5) & parameter$^*$ & patient-level effects covariance matrix \\[2pt]
+    $\delta_i^{\{\tl, \sae\}}$ & 1 & parameter & \{TL, SAE\} linear response slope \\[2pt]
+    $\eta_{ij}^{\{\tl, \ps\}}$ & 1 & parameter & \{TL, PS\} linear response \\[2pt]                                     
+    \bottomrule \\
+  \end{tabular}
+  \caption{Symbols for variables representing data and model parameters.  The first column lists the symbol, the second column indicates the size of the vector or matrix, the third column indicates the role of the variable (fixed data or varying model parameter), and the fourth column describes the meaning of the variable.  The sizes are listed for considering a single set of outcome data for a single patient (i.e., a fixed $i$ and $j$).  Under the third column, a star indicates variables that are probabilistically sampled from either a prior distribution or from a distribution conditioned on other variables, while a lack of a star indicates that the parameter is deterministically computed from other variables as described in the text.}
+  \label{tab:symbols}
+\end{table*}
+
+
+\subsection{Tumor load sub-model}\label{sec:model-tl}
+
+For the $i$-th patient, the slope of the tumor load linear response is given by
+\begin{equation}
+  \label{eq:tl_slope}
+  \delta_i^\tl = \v x_i^\tl \cdot \v \beta^\tl + u_{1i}^\tl
+\end{equation}
+where $\v x_i^\tl = (1, \v x_{\text{bm}_i}, \v x_{\text{tx}_i}, \v x_{\text{int}_i})$ is the vector of predictors, $\v \beta^\tl$ is the vector of population-level effect sizes associated to the predictors, and $u_{1i}^\tl$ is the patient-level slope.
+
+For the $j$-th time series data point from the $i$-th patient, the  mean linear response for tumor load is
+\begin{equation}
+  \label{eq:tl_res}
+  \eta_{ij}^\tl = (\beta_0^\tl + u_{0i}^\tl) + \delta_i^\tl \ t_{ij}^\tl
+\end{equation}
+where $\beta_0^\tl$ is the population-level intercept, $u_{0i}^\tl$ is the patient-level intercept, and $t_{ij}^\tl$ is the time after treatment.
+We use a log normal likelihood to restrict the model to positive TL values:
+\begin{equation}
+  \label{eq:tl_likelihood}
+  \log y_{ij}^\tl \sim \norm(\eta_{ij}^\tl, \sigma_\epsilon^\tl)
+\end{equation}
+
+\subsection{Disease progression sub-model}
+
+We model the time-to-disease progression data using a proportional hazards Weibull survival model \citep[e.g.,][]{kleinbaum2012} with a shape parameter, $\alpha^\prog$ and a patient covariate-dependent hazard rate.
+
+The baseline hazard rate is given by
+\begin{equation}
+  \label{eq:baseline_hazard}
+  \lambda_0^\prog(t) = \alpha^\prog t^{\alpha^\prog - 1}
+\end{equation}
+where $\alpha^\prog$ determines whether the hazard increases ($\alpha^\prog > 1$) or decreases ($\alpha^\prog < 1$) over time.
+
+The conditional hazard function is
+\begin{equation}
+  \label{eq:covariate_hazard}
+  \lambda_i^\prog(t) = \lambda_0^\prog(t) \exp\left(\gamma_\tl^\prog \delta_i^\tl\right) \ .
+\end{equation}
+where $\delta_i^\tl$ is the slope of the tumor load sub-model (Equation~\ref{eq:tl_slope}) and the $\gamma_\tl^\prog$ parameter determines how a change in TL maps to a probability of the patient's disease being classified as progressive.
+In the context the survival analysis literature, the exponential of the patient-level slope, $u_{1i}^\tl$ is occasionally referred to as frailty.
+
+The survival function, $S(t)$ associated to the hazard function, $\lambda(t)$, is given by the exponential of the negative cumulative hazard,
+\begin{equation}
+  \label{eq:survival}
+  S(t) = \exp\left(-\int_0^t \lambda(s) \ \mathrm{d}s \right) \ .
+\end{equation}
+In the generative model, the probability distribution function of a time-to-event (as measured from time of treatment) is given by
+\begin{equation}
+  \label{eq:surv_generative}
+  P(T^\prog) = S(T^\prog) \cdot \lambda(T^\prog)
+\end{equation}
+Fortunately, many patients have censored survival times.
+The likelihood for observed survival times, $\tilde{T}_i^\prog$, when considering right-censored data is given by
+\begin{align}
+  \label{eq:surv_likelihood}
+  \like^\prog(\tilde{T}_i^\prog | \text{ censored}) &= S(\tilde{T}_i^\prog) \\
+  \like^\prog(\tilde{T}_i^\prog | \text{ observed}) &= S(\tilde{T}_i^\prog) \cdot \lambda(\tilde{T}_i^\prog) \ . \nonumber
+\end{align}
+
+\subsection{Serious adverse events sub-model}\label{sec:model-sae}
+
+As with the disease progression sub-model, we use a proportional hazards Weibull model for the occurrence of SAEs.
+
+The slope of the SAE hazard is given by
+\begin{equation}
+  \label{eq:sae_slope}
+  \delta_i^\sae = \v x_i^\sae \cdot \v \beta^\sae + u_i^\sae
+\end{equation}
+where $\v x_i^\sae = (\v x_{\text{tx}_i}, \v x_{\text{int}_i})$, $\v \beta^\sae$ is a vector of population-level effect sizes, and $u_i^\sae$ is the patient-level effect.
+
+The SAE hazard is then
+\begin{equation}
+  \label{eq:sae_hazard}
+  \lambda_i^\sae(t) = \alpha^\sae t^{\alpha^\sae - 1} \exp(\delta_i^\sae)
+\end{equation}
+where $\alpha^\sae$ is the Weibull shape parameter for the SAE sub-model.
+The likelihood for the SAE outcomes, $\tilde{T}_i^\sae$, is identical in form to that of the DP sub-model (Equation~\ref{eq:surv_likelihood}).
+
+
+\subsection{Performance score sub-model}\label{sec:model-ps}
+
+We assume that patient performance is impacted by their tumor size, side effects (both chronic and acute), and other unmeasured patient-level effects.
+
+For the $j$-th time series data from the $i$-th patient, the mean linear response for performance score is
+\begin{align}
+  \label{eq:ps_res}
+  \eta_{ij}^\ps =& \beta_0^\ps + \v x_{\text{tx}_i} \cdot \v \beta_\text{tx}^\ps + u_{0i}^\ps \nonumber \\ 
+               & + \beta_\tl^\ps \ x_{\text{loc}_i} \eta_{ij}^\tl + \v I_{ij}^\sae \cdot \v \beta_\sae^\ps \\
+               & + (\beta_1^\ps + u_{1i}^\ps) \ t_{ij}^\ps \ . \nonumber
+\end{align}
+
+In the time-independent component (the top line of Equation~\ref{eq:ps_res}), $\beta_0^\ps$ is a population-level intercept term, $\v x_\text{tx}$ is the treatment indicator vector, $\v \beta_\text{tx}^\ps$ is a vector of length $N_\text{tx}$ representing the chronic effect of each treatment on patient performance, and $u_{0i}^\ps$ is a patient-level intercept term.
+In the time-dependent component (the bottom two lines of Equation~\ref{eq:ps_res}), $\beta_\tl^\ps$ is the effect of tumor size on patient performance, $x_{\text{loc}_i}$ is a variable indicating whether the tumor is in a critical location (1) or not (0), $\eta_{ij}^\tl$ is the linear tumor load response at the $j$-th PS time series measurement, $\v I_{ij}^\sae$ is an indicator for whether or not $t_{ij}^\ps < T_i^\sae$, $\v \beta_\sae^\ps$ is the effect of SAEs on performance, $\beta_1^\ps$ is the population-level slope and $u_{1i}^\ps$ is the patient-level slope.
+The vectors $\v I_{ij}^\sae$ and $\v \beta_\sae^\ps$ each have a size of $N_\text{tx}$, and each entry corresponds to SAEs associated to each of the different possible treatments.
+
+For continuous PS data, we use a logit-normal distribution for $y^\ps$:
+\begin{equation}
+  \label{eq:ps_likelihood}
+  \text{Logit}\left(y^\ps_{ij}\right) \sim \norm(\eta_{ij}^\ps, \sigma_\epsilon^\ps)
+\end{equation}
+
+For ordered categorical PS data with $K$ categories, we use a multinomial ordered logistic distribution.
+\begin{equation}
+  \label{eq:ps_categorical}
+  y^\ps_{ij} \sim \text{OrderedLogistic}(\eta^\ps_{ij} + \epsilon_{ij}^\ps, \v c)
+\end{equation}
+where
+$\epsilon_{ij}^\ps$ are normally distributed error terms with a standard deviation of $\sigma_\epsilon^\ps$, $\v c$ is a $(K - 1)$-length vector of ordered cut points\footnote{For the purpose of writing Equation~\ref{eq:ordered_logistic} succinctly, we fix $c_0 = -\infty$ and $c_K = +\infty$}, and the PDF of the ordered logistic distribution is given by
+\begin{equation}
+  \label{eq:ordered_logistic}
+  f(k \ | \ \eta, \v c) =  \text{Logistic}(\eta - c_{k - 1})  - \text{Logistic}(\eta - c_k)
+\end{equation}
+
+\subsection{Patient-level effects}\label{model-patient_level}
+
+The patient-level effects, $\v u_i$, represent unmeasured sources of variation in outcomes.
+In this sense, they account for unknown confounders in the true data generating model.
+As described in the above subsections, each patient has multiple patient-level effect parameters.
+
+To deal with the overwhelmingly large number of degrees of freedom this introduces into the model, we propose an informative prior distributions over these effects.
+In particular, we assume that the patient-level effects, have a multivariate normal distribution such that
+\begin{equation}
+  \label{eq:patient_effects_prior}
+  \v{u}_i \sim \norm(\v 0, \Sigma_u)
+\end{equation}
+where $\Sigma_u$ is a $5 \times 5$ matrix representing the covariance between all patient-level random effects, 
+\begin{equation}
+  \label{eq:patient_effects}
+  \v u_i = (u_{0i}^\tl, u_{1i}^\tl, u_{0i}^\ps, u_{1i}^\ps, u_{i}^\sae) \ .
+\end{equation}
+In practice we decompose $\Sigma_u$ as
+\begin{equation}
+  \label{eq:patient_effects_decomposition}
+  \Sigma_u = D_u \Omega_u = D_u L_u L_u^T
+\end{equation}
+where
+\begin{equation}
+  \label{eq:patient_effects_diagonal}
+  D_u = \text{Diag}(\sigma^2_{u_0^\tl}, \sigma^2_{u_1^\tl}, \sigma^2_{u_0^\ps}, \sigma^2_{u_1^\ps}, \sigma^2_{u^\sae})
+\end{equation}
+is the diagonal matrix of patient-level variance terms, $\Omega_u$ is the patient-level correlation matrix, and $L_u$ is the Cholesky decomposition of the correlation matrix, $\Omega_u$.
+
+\section{Experiments}
+
+1. I want to discuss an approach for dealing with missing patient
+feauteres and outcomes in the model. General case for dealing with
+missing data features and outcomes.
+
+2. Specify exactly what I'm modeling instantiate the domkain what tx
+and bx are we talking about how are we assuming tx map the patients,
+etc.
+
+Issue: Suppose that model was conditioned on, say, 10 txs, but we only
+want to predict for a subset (e.g., 3) of them (for whatever reason,
+see below). It seems to me that there are 3 possible ways to do this
+(approx. in order of sanity->insanity): 1. Just predict for
+everything, and only look at the predictions for the desired
+subset. 2. Recondition the model from scratch, only providing the data
+relevant to the subset. 3. Somehow spread the missing ``mass'' (from
+the complement of the target subset) around to the other options.
+
+3. Implement this approach for dealing with missing data to the
+specific case of using the model to make inferences from clinical
+trial summary stats.
+
+(Loop for prior-dataset in prior-datasets
+  do
+
+4. Use the method described in 1-3 to define a prior dist. 
+
+   (loop for noise-assumption in noise-assumptions (per set of priors per parameter)
+      do
+
+     (loop for npts from 1 to 1000 by 10
+        do
+
+5. Setup an application where we assume some true model parameters and
+look at how well do we converge on that set of model parameters as in
+when we do the ingference how close are those posteriors to the true
+value asa function of the number of patient that we look at: by
+
+a. using the true model parameter we gen. data for 1000 pts
+b. inference on subsets of those data (80/20) log spaced from 1-1000
+c. might have to make noise assumptions (prob. get noise est. from onc data and musella data)
+
+How many patients do we need to see under the above assumptions to see
+interesting things like the true generating model has a positive
+interaction effect, other interesting things could be missing model
+structure (discussed in a separate section and set of experiments)
+
+     (loop for param in params
+           do 
+           (plot convergence param (vs. true) as a function of npts and noise)
+
+           ))))
+
+Model mis-spec test would be the same as above but adversarially use a
+``bad'' model.
+
+\section{Discussion}\label{sec:discussion}
+
+In creating this model we have had to make many choices and
+simplifications. The reasoning behind every one of these is not easily
+summarized, but there are some that are worthy at least of mention.
+
+\subsubsection{Strokes from Tumor or Treatment?}\label{sec:model-issue-parallel-saes}
+
+Jeff: I believe that the disease processes in some brain cancers can
+can lead to events like stroke, confusion, and seisuze that also may
+be adverse events resulting from the treatment. Is that correct?
+
+Al Musella: Yes. It is not possible to tell if these things are coming
+from the tumor growth, increased intracranial pressure (which comes
+from tumor growth and blocking the drains in the brain), or from side
+effects of the treatments.
+
+Notes on an approach to this: $(TL and T-DP) \leftarrow TL \rightarrow Disease-side SAE \rightarrow PS \leftarrow Tx-Side SAE \rightarrow T-SAE$
+
+\subsubsection{Primary vs. Secondary Outcomes}\label{sec:model-struct-issues-pso}
+
+The current model separates what might be called the ``primary
+outcome'' of Time-to-Progression (including death) from what might be
+called the ``secondary'' or ``adverse outcomes', which we call
+Time-to-Adverse-Event. These are separate parallel cumulative hazard
+models. By distinguishing these in this way we are able to
+parameterize the primary and secondary event models differently,
+including separate patient-level parameterizations. The idea behind
+this choice is that whereas ``primary outcomes'' result from the
+disease process, ``secondary (adverse) events'' result from the
+treatment, and that different people may be differntially susecptable
+to the disease process vs. treatment toxicities, and that these should
+be modelled separately.
+
+Yet there are many subtlties surrounding not captured in the current
+model information. First, note that the self same symptom may result
+from the tumor or from the treatment, esp. in the case of CNS
+neoplasms, events like stroke, confusion, and seisuze may result from
+either the tumor or from its treatment.
+
+\subsubsection{Actute vs. Chronic ``Events''}\label{sec:model-struct-issues-b}
+
+Another issue related to the modeling primary outcomes and adverse
+events relates to the distinction between what might be called
+``chronic'' vs. ``acute'' outcomes or adversities. The term ``event''
+doesn't make sense when referring to a ``chronic'' state, so we will
+use the term ``aversities'' hereafter. Chronic states (adversities)
+can have a clear onset, and so one could simply model them as either
+an event taking place at their point of onset, or using a step
+function (such as some continuous approximation to a Heaviside
+function), and so could well be handled with in the current
+model. However, some chronic adversities potentiate other
+adversities. A very common example of this is that the direct outcome
+of the preparation for a stem cell transplant is the ablation of the
+patient's immune system, which puts them into a state of reduced
+immune protection, which state can result in serious, often life
+threatening infections. A given infection can be modeled in terms of
+expected time to event hazard function, but the potentiation of these
+by the ablative step of a stem cell transplant, cannot be captured 
+in our current model.
+
+\subsubsection{The Complexity of Tumor Loads and Performance Scores}\label{sec:model-struct-issues-tlps}
+
+In addition to the two time-to-event outputs, the model produces two
+continuous outputs, intended to be interpreted as real values (as
+opposed to hazard ratios, as the event models are interpreted). These
+``real'' terms are interpreted as ``Tumor Load'' (TL) and
+``Performance Score'' (PS). Each of these presents special interpetive
+issues.
+
+Combined into the Tumor Load (TL) submodel is a term
+$x_{\text{loc}_i}$, which indicates whether or not the tumor is in an
+impactful location. The idea here is that, regardless of whether the
+tumor is in CNS or another part of the body, whether or not it has
+invaded an anatomical or neural location that significantly impacts
+one's performance, is (almost definitionally) the only sense in which
+there is going to be an appreciable effect on a performance score. Put
+a little more plainly, tumor on the liver is more lead to more of a
+performance score change than tumor in an arm muscle of similar size,
+and similarly, tumor in the brain stem, or in frontal cortex, is going
+to lead to more of a performance score change than a ventricular tumor
+of similar size. This interaction between size and location is what
+led us to include this simplistic location importance indicator, which
+works the same regardless of the type of cancer. (E.g., liver is an
+important location for a non-CNS cancer, and brain stem is one for a
+CNS cancer.)
+
+(Jeff notes: I spoke to Al about this, and he concurred that it makes
+sense. In fact, in brain cancer, there is a specific term for the
+impactful locations; they are called ``eloquent''. (For example, the
+language or visual systems is ``eloquent'' ... I don't know whether
+this work in the body as well (CHECK), and don't know whether things
+like the brainstem are considered ``eloquent'' (CHECK). I like the
+term ``impactful'') \cite{DAgata2013} (Seems only to apply to cortext:
+https://radiopaedia.org/articles/eloquent-cortex)
+
+\section{Conclusions}\label{sec:conclusions}
+
+\subsection{Future Work}\label{sec:futurework}
+
+\subsubsection{Dynamics Model Restructuring}\label{sec:tests-misspecification}
+
+\subsubsection{Misspecification tests}\label{sec:tests-misspecification}
+
+\subsubsection{Restruturing based upon mentions of missing biomarkers}\label{sec:TR-restructuring}
+
+\subsubsection{Restruturing based upon treatment rationales}\label{sec:TR-restructuring}
+
+\subsubsection{Adding novel treatments, and retiring outdated ones}\label{sec:TR-restructuring}
+
+\subsection{Model Macro Language}\label{sec:macro-model}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%                                          %%
+%% Backmatter begins here                   %%
+%%                                          %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{backmatter}
+
+
+\section*{Competing interests}
+  The authors declare that they have no competing interests. LOL!
+
+\section*{Author's contributions}
+    Text for this section \ldots
+
+\section*{Acknowledgements}
+
+We thank Willy Hoos, Glenn Kramer, Al Musella, Marty Tenenbaum, and
+many others who we'll name here when we remember who they are, for
+their efforts and input either to the modeling effort, or to improving
+the paper.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%                  The Bibliography                       %%
+%%                                                         %%
+%%  Bmc_mathpys.bst  will be used to                       %%
+%%  create a .BBL file for submission.                     %%
+%%  After submission of the .TEX file,                     %%
+%%  you will be prompted to submit your .BBL file.         %%
+%%                                                         %%
+%%                                                         %%
+%%  Note that the displayed Bibliography will not          %%
+%%  necessarily be rendered by Latex exactly as specified  %%
+%%  in the online Instructions for Authors.                %%
+%%                                                         %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% if your bibliography is in bibtex format, use those commands:
+\bibliographystyle{bmc-mathphys} % Style BST file (bmc-mathphys, vancouver, spbasic).
+\bibliography{gcta_clean}      % Bibliography file (usually '*.bib' )
+% for author-year bibliography (bmc-mathphys or spbasic)
+% a) write to bib file (bmc-mathphys only)
+% @settings{label, options="nameyear"}
+% b) uncomment next line
+\nocite{label}
+
+% or include bibliography directly:
+% \begin{thebibliography}
+% \bibitem{b1}
+% \end{thebibliography}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%                               %%
+%% Figures                       %%
+%%                               %%
+%% NB: this is for captions and  %%
+%% Titles. All graphics must be  %%
+%% submitted separately and NOT  %%
+%% included in the Tex document  %%
+%%                               %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%
+%% Do not use \listoffigures as most will included as separate files
+
+% \section*{Figures}
+%   \begin{figure}[h!]
+%   \caption{\csentence{Sample figure title.}
+%       A short description of the figure content
+%       should go here.}
+%       \end{figure}
+
+% \begin{figure}[h!]
+%   \caption{\csentence{Sample figure title.}
+%       Figure legend text.}
+%       \end{figure}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%                               %%
+%% Tables                        %%
+%%                               %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%% Use of \listoftables is discouraged.
+%%
+% \section*{Tables}
+% \begin{table}[h!]
+% \caption{Sample table title. This is where the description of the table should go.}
+%       \begin{tabular}{cccc}
+%         \hline
+%            & B1  &B2   & B3\\ \hline
+%         A1 & 0.1 & 0.2 & 0.3\\
+%         A2 & ... & ..  & .\\
+%         A3 & ..  & .   & .\\ \hline
+%       \end{tabular}
+% \end{table}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%                               %%
+%% Additional Files              %%
+%%                               %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% \section*{Additional Files}
+%   \subsection*{Additional file 1 --- Sample additional file title}
+%     Additional file descriptions text (including details of how to
+%     view the file, if it is in a non-standard format or the file extension).  This might
+%     refer to a multi-page table or a figure.
+
+%   \subsection*{Additional file 2 --- Sample additional file title}
+%     Additional file descriptions text.
+
+
+\end{backmatter}
+\end{document}
+
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: t
+%%% End:
+
+%% In a perfect world, we would be filling in the entire biomarker vector
+%% for every patient treated across the whole medical system, and then
+%% monitoring for outcomes in exactly the terms that fit our model. This is,
+%% of course, too much to expect. We use the term ``Found Data'' to refer
+%% to data from whatever source, which, in a sense, ``shows up at the
+%% door'', and which would not expect to come to us with all the useful
+%% fields filled in, in the appropriate units, etc. Therefore, we need to
+%% have an approach to deal with other sorts of data.
+
+%% The general case (imputing patient features):
+
+%% The general approach to found data is to simulate the per-patient data
+%% that we would like to have had in the perfect world described above,
+%% and then run inference just as though we actually saw those patients.
+
+%% Where the actual per-patient data is avaialble, we would sample,
+%% either from reported data, or our own priors in order to fill
+%% in missing data, and then run these as though they were the perfect
+%% cases above.
+
+%% Imputing patient features is a set of giant joint distribution across
+%% the feature set which can be summarized with relevant
+%% covariances. From that we do the simulated c.t. sample a set of
+%% patients from this j.d. consistent with the in/ex crit of the trial
+%% and then trun the forward model, and calculate summ. stats, and then
+%% iterate that across lots of samples (of patients) then you have a
+%% distribution from which you can calc. the l.h. of observing that
+%% hazard ration given your model.
+
+%% The time to s.a.e., if not given, must be imputed. 
+
+%% Found Priors Translation:
+
+%% Where a trial reports only summary statistics, such as effect sizes,
+%% confidence intervals, and hazard ratios, we can similarly simulate the
+%% hidden patients. That is, we would create patients by sampling in
+%% accord with the description of the studied population, and
+%% from the observed range of outcomes, and then feed these into our
+%% model as though they were observed patients.
+
+%% This approach enables us to do a sort of cross-trials meta-analysis
+%% akin to bootstrapping, where the different trials, and other sorts of
+%% data, are unified by servicing the task of creating simulated sample
+%% patients.
+
+%% There are some subtlties involved in this approach. Since there is
+%% likely to be a great deal of missing data that we will have to fill in
+%% by sampling from our priors, \todo[...what to say here? what to do?]
+

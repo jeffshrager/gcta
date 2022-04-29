@@ -1,0 +1,112 @@
+{
+    "run_label": "test",
+    "sim_output": "sim-mrhlog",
+    "p_mutational_escape": 0.25,
+    "p_each_mutation": 0.1667,
+    "num_drugs_to_give_initial": 2,
+    "num_drugs_to_give": 2,
+    "num_additional_markers": 0,
+    "num_targets_per_drug": 2,
+    "target_shift_per_drug": 2,
+    "num_initial_patients": 500,
+    "num_months_initial": 60,
+    "num_months_run": 120,
+    "belief_update_value": 0.05,
+    "use_sigmoid": 0,
+    "always_do_best_thing": 0,
+    "comments": {
+                    "use_sigmoid": "0 for false, 1 for true", 
+                    "num_targets_per_drug": "try 2 by default, some values will cause it to fail due to wraparound",
+                    "target_shift_per_drug": "shift in the markers array for targets per drug",
+                    "p_each_mutation": "probability of each mutation occurring in a tumor",
+                    "num_months_initial": "how long the burn in should run",
+                    "num_months_run": "how many months to run the actual thing",
+                    "drugs": "the markers here get overwritten by the actual sim... ignore them",
+                    "always_do_best_thing": "If 0, sample from prob distribution on treatments. If 1, do thing with highest prob"
+                },
+    "h_global": 1,
+    "markers": {
+        "MGMT-PROMOTER": {
+            "index": 0,
+            "exponent": 5
+        },
+        "HLA-A2": {
+            "index": 1,
+            "exponent": 4
+        },
+        "HLA-A1": {
+            "index": 2,
+            "exponent": 3
+        },
+        "IDH2": {
+            "index": 3,
+            "exponent": 2
+        },
+        "IDH1": {
+            "index": 4,
+            "exponent": 1
+        },
+        "EGFR": {
+            "index": 5,
+            "exponent": 0
+        }
+    },
+    "drugs": {
+        "BEVACIZUMAB": {
+            "markers": ["EGFR", "IDH1"], 
+            "adversity": 1, 
+            "index": 0
+        },
+        "TEMOZOLOMIDE": {
+            "markers": ["EGFR", "IDH2"], 
+            "adversity": 1, 
+            "index": 1
+        },
+        "CABAZITAXEL": {
+            "markers": ["EGFR", "HLA-A1"], 
+            "adversity": 1, 
+            "index": 2
+        },
+        "TCAR": {
+            "markers": ["EGFR",  "HLA-A2"], 
+            "adversity": 1, 
+            "index": 3
+        },
+        "DISATINIB": {
+            "markers": ["EGFR", "MGMT-PROMOTER"], 
+            "adversity": 1, 
+            "index": 4
+        },
+        "NIVOLUMAB": {
+            "markers": ["IDH1", "HLA-A1"], 
+            "adversity": 1, 
+            "index": 5
+        },
+        "DOXORUBICIN": {
+            "markers": ["IDH1", "HLA-A2"], 
+            "adversity": 1, 
+            "index": 6
+        },
+        "DURVALUMAB": {
+            "markers": ["IDH1", "MGMT-PROMOTER"], 
+            "adversity": 1, 
+            "index": 7
+        },
+        "PEMBROLIZUMAB": {
+            "markers": ["IDH2", "HLA-A1"], 
+            "adversity": 1, 
+            "index": 8
+        },
+        "VARLILUMAB": {
+            "markers": ["IDH2", "MGMT-PROMOTER"], 
+            "adversity": 1, 
+            "index": 9
+        },
+        "SORAFENIB": {
+            "markers": ["HLA-A1", "MGMT-PROMOTER"], 
+            "adversity": 1, 
+            "index": 10
+        }
+    }
+}
+

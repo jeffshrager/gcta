@@ -1,0 +1,93 @@
+strict digraph Model {
+	
+        node[colorscheme=pastel19, style=filled, shape=ellipse];
+	
+	subgraph clusterTL {
+		label="Tumor load";
+		color=lightgrey;
+		labelloc="b";
+		beta_tl[texlbl="$\beta^\mathrm{TL}$", fillcolor=3];
+		sigma_tl[texlbl="$\sigma_\epsilon^\mathrm{TL}$", fillcolor=6];
+		eta_tl[texlbl="$\eta^\mathrm{TL}$", shape=box];
+		y_tl[texlbl="$y^\mathrm{TL}$", fillcolor=2];
+
+		beta_tl -> eta_tl;
+		{eta_tl, sigma_tl} -> y_tl;
+        }
+
+	subgraph clusterDP {
+		label="Disease progression";
+		color=lightgrey;
+		labelloc="b";
+		alpha_dp[texlbl="$\alpha^\mathrm{DP}$", fillcolor=3];
+		lambda_dp[texlbl="$\lambda^\mathrm{DP}(t)$", shape=box];
+		T_dp[texlbl="$T^\mathrm{DP}$", fillcolor=2];
+		alpha_dp -> lambda_dp;
+		lambda_dp -> T_dp;
+	}
+	
+	subgraph clusterSAE {
+		label="Serious adverse events";
+		color=lightgrey;
+		labelloc="b";
+		alpha_sae[texlbl="$\alpha^\mathrm{SAE}$", fillcolor=3];
+		beta_sae[texlbl="$\beta^\mathrm{SAE}$", fillcolor=3];
+		eta_sae[texlbl="$\eta^\mathrm{SAE}$", shape=box];
+		lambda_sae[texlbl="$\lambda^\mathrm{SAE}(t)$", shape=box];
+		T_sae[texlbl="$T^\mathrm{SAE}$", fillcolor=2];
+		
+		beta_sae -> eta_sae;
+		{eta_sae, alpha_sae} -> lambda_sae;
+		lambda_sae -> T_sae;
+	}
+
+	subgraph clusterPS {
+		label="Performance status";
+		color=lightgrey;
+		labelloc="b";
+		beta_ps[texlbl="$\mathbf{\beta}^\mathrm{PS}$", fillcolor=3];
+		sigma_ps[texlbl="$\sigma_\epsilon^\mathrm{PS}$", fillcolor=6];
+		eta_ps[texlbl="$\eta^\mathrm{PS}$", shape=box];
+		y_ps[texlbl="$y^\mathrm{PS}$", fillcolor=2];
+		
+		beta_ps -> eta_ps;
+		{eta_ps, sigma_ps} -> y_ps;
+	}
+	
+	subgraph clusterPatient {
+		label="Patient-level random effects";
+		color=lightgrey;
+		// labelloc="b";
+		sigma_u[texlbl="$\Sigma_u$", fillcolor=6];
+		u_tl[texlbl="$u^\mathrm{TL}$", fillcolor=6];
+		u_ps[texlbl="$u^\mathrm{PS}$", fillcolor=6];
+		u_sae[texlbl="$u^\mathrm{SAE}$", fillcolor=6];
+		sigma_u -> {u_tl, u_ps, u_sae};
+	}
+	
+	subgraph clusterFeatures {
+		label="Patient features";
+		color=lightgrey;
+		// labelloc="b";
+		x_bm[shape=parallelogram, texlbl="$x_{\mathrm{bm}}$", fillcolor=2];
+		x_tx[shape=parallelogram, texlbl="$x_{\mathrm{tx}}$", fillcolor=2];
+		x[shape=box, texlbl="$x$"];
+		
+		{x_bm, x_tx} -> x;
+	}
+
+	// linear predictors
+	x -> {eta_tl, eta_ps, eta_sae};
+	
+	// random effects
+	u_tl -> eta_tl;
+	u_ps -> eta_ps;
+	u_sae -> eta_sae;
+	
+	// assumed causal links
+	eta_tl -> lambda_dp [penwidth=2, color=red];
+	{eta_tl, T_sae} -> eta_ps [penwidth=2, color=red];
+	
+	// layout tweaks
+	// y_tl -> lambda_dp [style=invis];
+}

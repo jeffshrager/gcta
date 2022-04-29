@@ -1,0 +1,352 @@
+#############################################################################################################
+# Script to tun simulations using an exponential model for analysis                                        ##
+#                                                                                                          ##
+# Main function - adaptive()                                                                               ##
+#                                                                                                          ##
+# Author:         Gheorghe Doros                                                                           ##
+# Last Modified: April 18, 2011                                                                            ##
+#############################################################################################################
+#
+### Set the working Directory #
+  # This folder will #
+      # contain the model file if OpenBUGS is to be used#
+      # will be used to store the data and initial values files if OpenBUGS will be used#
+      # will store the results file#
+      #
+setwd('Y:/Projects/Bayesian Clinical Trials/Adaptive Designs/Results/Expo')#
+#
+#
+# Function to Sample from Inverse GAMMA distribution. #
+  # n - number of samples#
+  # alphax - shape (precision)#
+  # betax - scale parameter#
+  # mean = betax/(alphax-1); var = betax^2/[(alphax-2)(alphax-1)^2] = mean^2/(alphax-2) - alphax>2 to be defined#
+                                                                                       #
+rig<-function(n,alphax,betax) 1/rgamma(n,shape=alphax,scale=1/betax)                   #
+#
+#
+###########################################################
+###                                                    ####
+###   Analysis functions                               ####
+###                                                    ####
+###########################################################
+#
+#####  Function 'cmm' USES conjugacy to analyse data#
+######
+##### ARGUMENTS: Most of the arguments are fathered in from the main function (see below) #
+#
+cmm<-function(DAT1=dat1,A1=aA0,B1=bA0,A2=aB0,B2=bB0,NLast=NLast,iSim=iSim){#
+#the next 6 statements can be replaced by BUGS code if exponential assumption is dropped#
+    e<-tapply(DAT1[1:NLast,3],DAT1[1:NLast,1],sum)                      # calculate number of events for updating the parameter A   #
+    T<-tapply(DAT1[1:NLast,2],DAT1[1:NLast,1],sum)          # calculate total follow-up for updating the parameter B    #
+    #
+    # The posterior distribution of the parameters will have an Inverse Gamma (A,B)#
+    aA<-A1+e[1]; bA<-B1+T[1]*log(2)                                   # Calculate posterior probability parameter A               #
+    aB<-A2+e[2]; bB<-B2+T[2]*log(2)                                   # Calculate posterior probability parameter B               #
+#
+    pE<-sum(rig(iSim,aA,bA)<rig(iSim,aB,bB))/iSim                      # Calculate the posterior probability of A being better than A#
+  return(pE)#
+}#
+#
+#
+#####  Function 'bmm' USES conjugacy to analyse data#
+######
+##### ARGUMENTS: Most of the arguments are fathered in from the main function (see below) #
+#####            - model.file is the BUGS model file #
+#####            - The inits.txt and data file should be inbdependent of what model is used as long as #
+#####              features as main parameter the median time to event #
+options(scipen=1000)#
+#
+bmm<-function(DAT1=dat1,A1=aA0,B1=bA0,A2=aB0,B2=bB0,NLast = NLast, iSim = iSim,model.file="ModelExp.bug"){#
+### DAT1=dat1;A1=aA0;B1=bA0;A2=aB0;B2=bB0;NLast = NLast;iSim = iSim#
+### Prepare data for arm A#
+library(BRugs)#
+  g1<-(DAT1[,1]==1)            # Select Group A                                        #
+  y1<-c1<-DAT1[g1,2]           # Initialize the time and the censoring variable        #
+  y1[DAT1[g1,3]==0]<-NA        # set the time for the censored to NA                   #
+  c1[DAT1[g1,3]==1]<-0         # Set the censored for events to 0                      #
+  in1<-c1;                     # Initialize the missing times with the censored times  #
+  in1[!is.na(y1)]<-NA          # set the initial values for existing times to NA       #
+  n1<-sum(g1)                  # Size of group A                                       #
+#
+  g2<-DAT1[,1]==2              # Select Group B                                        #
+  y2<-c2<-DAT1[g2,2]           # Initialize the time and the censoring variable        #
+  y2[DAT1[g2,3]==0]<-NA        # set the time for the censored to NA                   #
+  c2[DAT1[g2,3]==1]<-0         # Set the censored for events to 0                      #
+  in2<-c2;                     # Initialize the missing times with the censored times  #
+  in2[!is.na(y2)]<-NA          # set the initial values for existing times to NA       #
+  n2<-sum(g2)                  # Size of group B                                       #
+    #
+  # Use dput() to write the data and initial values out to be read in OpenBUGS#
+  # This way - this will solve the issue in OpenBUGS and Linux where bugsData() and bugsInits() functions do not work   #
+  dput(pairlist(t1= y1,t2=y2,c1=c1,c2=c2,n1=n1,n2=n2,a1=A1,b1=B1,a2=A2,b2=B2),'data.txt',control ="showAttributes")  # Write Data#
+  dput(pairlist(L01=1,L02=1,t1=in1,t2=in2),'inits.txt',control ="showAttributes")                                    # Write Inits#
+#
+  modelCheck(model.file)     # Check the model#
+  modelData("data.txt")          # Read in the data#
+  modelCompile()                 # Compile the model#
+  modelInits("inits.txt",1)      # Load initial values#
+  # modelGenInits()              # Would generate initial values if not all initialized - not needed here#
+  #modelSetSeed(7500)             # set the seed#
+  modelUpdate(1000)              # Update for a burn-in period#
+  samplesSet(c("pA"))            # Set the parameter to monitor - the indicator A better than B#
+  #currentValues('lambda1')      # Get current values - needed for compiling reasons#
+  #currentValues('lambda2')#
+  #currentValues('pA')#
+  modelUpdate(10000)             # Update to get samples for stats - 10000#
+  #modelGetSeed()                # Display the seed#
+  #samplesAutoC('*',1,thin=20)   # Check convergence#
+  S<-samplesStats("*",1)         # Collect summaries#
+  pEA<-S$mean                    # Estimate the probability that A is better than B by the posterior mean of indicator#
+  #file.remove('data.txt')       # Remove the data file#
+  #
+  return(pEA)#
+}#
+  #
+###########################################################
+###                                                    ####
+###   Main Function                                    ####
+###                                                    ####
+##########################################################                                                                                 #
+       #
+# Example Call: adaptive(tA=5,tB=5,b,eta,pack,alpha=3,update=4, CensorL=30, nSim=3000,iSim=1000,rate.ac=5,Nl=5000,Fun=bmm)       #
+#
+ # Input                                                                         #
+   # tA        ---   true median in group A --- low is good                              #
+   # tB        ---   true median in group B --- low is good                              #
+   # b         ---   cutpoint or boundary value - judge stopping of trial                #
+   # eta       ---   Calibrartion parameter                                              #
+   # pack      ---   batch size   - at this point Nmax need be multiple of batch size - can be fixed                         #
+   # alpha     ---   precision of prior - beta is chosen so that the mean of the prior is the same as the null value#
+   # CensorL   ---   Censoring time - Here=30 - after 30 days data is cesored#
+   # update    ---   Amount of batch not used in updatefor the update - here=4 - 1/4 of batch (last part) not used in updating (update <= pack)#
+   # nSim      ---   number of simulations                                               #
+   # iSim      ---   Number of simulations used in calculating P(thetaA<thetaB|DATA)     #
+   # Nl        ---   maximum number of subjects to enrol - at this point Nl need be multiple of batch size ( to be fixed in the next version )  #
+   # rate.ac   ---   acrual rate#
+   # Fun       ---   a fucntion to analyze the data, choices: #
+   #         cmm  - for conjugate analysis (fast) or #
+   #         bmm  - MCMC using OpenBUGS - one needs BRugs package (quite slow) (default)                       #
+ # Output                                                                              #
+   #  cutpoint    --- used#
+   #  packSize    --- used#
+   #  calibration --- parameter used    #
+   #  exitA       --- overall probability of exit declaring A as better#
+   #  exitA(k)    --- exit probability at time k with A superior#
+   #  exitB       --- overall probability of exit declaring B as better#
+   #  exitB(k)    --- exit probability at time k with B superior#
+   #  medianTime  --- Median study length#
+   #  EN          --- mean sample size#
+   #  medianNA    --- median sample size in group A#
+   #  medianNB    --- median sample size in group B#
+   #  EndExit     --- probability of reaching the end without a decision#
+              #
+#
+# Example: Set ofarameter values: tA=5;tB=5;b=.95;eta=.5;update=4;CensorL=30;pack=50;alpha=3;nSim=10;iSim=1000;Nl=1000;Fun=bmm#
+#
+adaptive <-function (tA=5,tB=5,b,eta,pack,alpha=3,update=4, CensorL=30, nSim=3000,iSim=1000,  rate.ac=5 ,  Nl=5000,Fun=bmm) {#
+#
+  # Initiate output data#
+   A=matrix(-1,nSim,round(Nl/pack)+1);   # number in A    #
+   B=matrix(-1,nSim,round(Nl/pack)+1);   # number in B    #
+   W<-NN<-TE<-rep(0,nSim);                # record winner A or B parameters  #
+   #
+for (sim in 1:nSim){#
+   #Get vector of enrollment times distributed as Poisson - for all Nmax subjects                      #
+    et <- cumsum(rgamma(Nl,1)/rate.ac)#
+    #
+    nA<-nB<-0; pEA<-0.5; r1<-0.5     #Initiate the number enrolled prob of assignment and prob of a being a winner  #
+    aA0<-alpha; bA0<-tB*(aA0-1)      #Prior parameters for A - mean=tA and variance ~ 1/alpha                                                       #
+    aB0<-alpha; bB0<-tB*(aB0-1)      #Prior parameters for B                                                        #
+    #
+    dat<-NULL                        # Initialieze data for updating                                                             #
+                                                                                                                              #
+   #
+    nA<-nB<-0;                       # Update the number of subjects                                #
+                                                                                                                              #
+#
+    a<-c(c(1,2),sample(c(1,2),2*pack-2,prob=c(r1,1-r1),replace=TRUE))     # Enroll first 2 subjects in A and B  - needed to ensure #
+                                                                          # there is at least on subject enrolled in each group    #
+                                                                          # Enroll the remaining 2*pack-2 subjects with p=0.5      #
+                                                                          #
+    nA<-nA+sum(2-a); nB<-nB+sum(a-1); N<-nA+nB                            # update the number of subjects in each group                #
+    A[sim,1]<-nA; B[sim,1]<-nB;                                           # record the number of subjects in A and B at the first step #
+    #
+    x<-et[1:N]+rexp(N,log(2)/tA*(2-a)+log(2)/tB*(a-1))        # Generate their survival time                      #
+    dat<-rbind(dat,cbind(a,x,pEA))                            # Add their data to group data                      #
+#
+    # Prepare the data to analyse for updationg the prior - the conjugacy helps, however, this step can be replaced #
+    # by MCMC step to get samples from the posterior distribution of the parameters#
+    NLast<-N-round(pack/update)+1            # only use this much data for updating #
+    Tc<-et[NLast]                            # Censor at the entry of NLast patient #
+    T30<-et[1:NLast]+CensorL                 # Censor at 30 days after enrolment (this should be a parameter in future version)#
+    CenT<-pmin(T30,Tc)#
+    #
+    dat1<-cbind(dat[1:NLast,1],pmin(dat[1:NLast,2],CenT)-et[1:NLast],(pmin(dat[1:NLast,2],CenT)==dat[1:NLast,2])*1) #data used in updating #
+    #
+    pEA0<-Fun(DAT1=dat1,A1=aA0,B1=bA0,A2=aB0,B2=bB0,NLast=NLast,iSim=iSim)                   #Analyze data#
+    #
+    pEA<-pEA0#
+    #
+    r1<-pEA^eta/(pEA^eta+(1-pEA)^eta)                                   # Updated randomization probability           #
+                                                                        # eta=0 -> r1=0.5                             #
+                                                                        # eta=1 -> r1=pEA                             #
+#
+while(pEA<b & pEA>1-b & N<Nl){                                     # keep enrolling untill either the boundary condition is met or #
+                                                                    # the sample size limit has been met                            #
+    a<-sample(c(1,2),pack,prob=c(r1,1-r1),replace=TRUE)             # randomize according to r1                                     #
+    nA<-nA+sum(2-a); nB<-nB+sum(a-1); N<-nA+nB                      # update counts in A, B and overall                             #
+    x<-et[(N-pack+1):N]+rexp(pack,log(2)/tA*(2-a)+log(2)/tB*(a-1))  # Generate a new survival and add enrollment                    #
+    dat<-rbind(dat,cbind(a,x,pEA))                                  # update the data                                               #
+    #
+    # Prepare the data to analyse for updationg the prior - the conjugacy helps, however, this step can be replaced by MCMC step to get #
+    #  samples from the posterior distribution of the parameters        #
+    NLast<-ifelse(N==Nl,N,N-round(pack/update)+1)                                   # Only use this much data for updating #
+                                                                               #  - if at the end use everybody#
+    Tc<-ifelse(N==Nl,et[NLast]+CensorL,et[NLast])                                   # Censor at the entry of NLast patient #
+                                                                               #  - if at the end wait 30 days after the last patient enrolled#
+    T30<-et[1:NLast]+CensorL                                                        # Censor everybody at 30 days after enrollment#
+    CenT<-pmin(T30,Tc)                                                         # Censor at 30 days after enrollment or at the enrollemnt of NLast patient#
+    #
+    dat1<-cbind(dat[1:NLast,1],pmin(dat[1:NLast,2],CenT)-et[1:NLast],(pmin(dat[1:NLast,2],CenT)==dat[1:NLast,2])*1) #data used in updating #
+  #
+    pEA0<-Fun(DAT1=dat1,A1=aA0,B1=bA0,A2=aB0,B2=bB0,NLast=NLast,iSim=iSim)                   #Analyze data#
+    #
+    pEA<-pEA0#
+    #
+    r1<-pEA^eta/(pEA^eta+(1-pEA)^eta)                                   # Updated randomization probability                         #
+                                                                        # eta=0 -> r1=0.5                                           #
+                                                                        # eta=1 -> r1=pEA                                           #
+    A[sim,round(N/pack)-1]<-nA; B[sim,round(N/pack)-1]<-nB;#
+}#
+#
+W[sim]<-pEA;#
+NN[sim]<-N#
+TE[sim]<-et[N]#
+}#
+#
+#
+na<-apply(A,1,function(x) max(x[x!=-1])); # Number enrolled in group A#
+nb<-apply(B,1,function(x) max(x[x!=-1])); # Number enrolled in group B#
+exit.t<-apply(A,1,function(x) sum(x!=-1));# Exit times#
+ExitA<-(W>=b);                            # Exit and Group A superior indicator#
+ExitB<-(W<1-b);                           # Exit and Group B superior indicator#
+ExitEnd<-(W<b)&(W>=1-b);                  # Study goes to the end indicator#
+ExitI<-ExitA-ExitB                        # =-1 if Exit B, +1 if Exit A and 0 if Exit Gets to the end#
+#
+#
+ExitBA<-matrix(unlist(lapply(1:((Nl/pack)-1),function(x) c(sum(exit.t==x&ExitI==-1),sum(exit.t==x&ExitI==+1)))),Nl/pack-1,2,byrow=TRUE)/nSim # Exit probabilities#
+Exit<-apply(ExitBA,1,sum) #
+                   #
+EN<-sum(pack*(2:(Nl/pack))*Exit)+Nl*sum(ExitEnd)/nSim  # Expected Sample size - first term for terminations with a decisions #
+                                                             #second term - for cases where no decion reached          #
+#
+#
+#
+return(c(cutpoint=b,packSize=pack,calibration=eta,exitA=sum(W>=b)/nSim,exitB=sum(W<=1-b)/nSim,medianTime=median(TE),EN=EN,#
+medianNA=median(na),medianNB=median(nb),ThetaA=tA,alpha=alpha,Nl=Nl,EndExit=sum(ExitEnd)/nSim,ExitA=ExitBA[,2],ExitB=ExitBA[,1]))#
+}#
+#
+# Example call: (1) Analysis based on conjugacy#
+#system.time()#
+# ptm <- proc.time()#
+# adaptive(tA=5,tB=5,b=.99,eta=2,pack=200,alpha=3,update=4,nSim=1000,iSim=1000,Nl=2000,Fun=cmm)#
+# proc.time() - ptm#
+# Example call: (2) Analysis using OpenBUGS#
+# ptm <- proc.time()#
+# adaptive(tA=5,tB=5,b=.9,eta=2,pack=20,alpha=3,update=4,nSim=1000,iSim=10,Nl=500)#
+# proc.time() - ptm
+adaptive(tA=5,tB=5,b,eta,pack,alpha=3,update=4, CensorL=30, nSim=300,iSim=100,rate.ac=5,Nl=500,Fun=bmm)
+adaptive(tA=5,tB=5,alpha=3,update=4, CensorL=30, nSim=300,iSim=100,rate.ac=5,Nl=500,Fun=bmm,b=.95,eta=.5,pack=50)
+install.packages("BRugs")
+hclust()
+help('hclust')
+sample(1:6,10,replace=T)
+matrix(sample(1:6,10,replace=T),ncol=3,byrow=TRUE)
+matrix(sample(1:6,9,replace=T),ncol=3,byrow=TRUE)
+matrix(sample(1:4,90,replace=T),ncol=3,byrow=TRUE)
+dist(matrix(sample(1:4,90,replace=T),ncol=3,byrow=TRUE))
+hclust(dist(matrix(sample(1:4,90,replace=T),ncol=3,byrow=TRUE)))
+plot(hclust(dist(matrix(sample(1:4,90,replace=T),ncol=3,byrow=TRUE))))
+m <- matrix(sample(1:4,90,replace=T),ncol=3,byrow=TRUE)
+m
+dist(m)
+plot(hclust(dist(m)))
+m <- matrix(sample(1:4,9,replace=T),ncol=3,byrow=TRUE)
+m
+l<-c("a","b","c")
+d<-dist(m,labels=l)
+help('data matrix')
+??data matrix
+url <- "http://www.sr.bham.ac.uk/~ajrs"#
+file <- "R/datasets/a85_extended_NEDsearch.txt"#
+A <- read.table(paste(url, file, sep="/"), sep="|", skip=20, header=TRUE)#
+close(url(paste(url, file, sep="/")))     # close connection after use#
+dim(A)          # Show dimensions of data frame: rows columns
+A[0:10,]
+colnames(A)[c(2, 3, 4, 5)] <- c("name", "ra", "dec", "type")
+plot(A$type, log="y")     # Log the Y axis, as there are many galaxies
+plot(Redshift ~ type, data=A, log="y")
+abline(h=0.055, col="red")
+rug(A$Redshift[A$type=="GClstr"], col="blue", side=4)
+plot(dec ~ ra, data=A, pch=".")
+plot(dec ~ ra, data=A, pch=".", xlim=c(10, 11), ylim=c(-10, -9))
+A <- subset(A, ra > 9.5 & ra < 11.5 & dec > -10.3 & dec < -8.5)
+plot(dec ~ ra, data=A, pch=".")
+G <- subset(A, type=="G")
+G <- subset(G, !is.na(Redshift) & Redshift < 0.2)
+plot(density(G$Redshift))
+rug(G$Redshift)
+G$cols <- as.character(ifelse(G$Redshift > 0.1, "red", "blue"))
+plot(dec ~ ra, data=G, col=cols)
+remap <- function(x) ( x - min(x) ) / max( x - min(x) )    # map x onto [0, 1]#
+fun.col <- function(x) rgb(colorRamp(c("blue", "red"))(remap(x)), #
+                        maxColorValue = 255)#
+G$cols <- with(G, fun.col(Redshift) )#
+head(G$cols)  # colours defined by hexadecimal code, rather than predefined names#
+plot(dec ~ ra, data=G, col=cols)
+require(KernSmooth)
+est <- bkde2D(G[c("ra", "dec")], bandwidth=c(0.07, 0.07), gridsize=c(101, 101))
+with(est, contour(x1, x2, fhat, drawlabels=FALSE, add=TRUE))
+library(lattice)
+cloud(Velocity ~ ra + dec, data=G, cex=0.2)
+source("/Users/jeffshrager/Google Drive/GlobalAdaptiveTrial/CaiandJohnson/BAS/BAS.R")
+run()
+run()
+run(2)
+source("/Users/jeffshrager/Google Drive/GlobalAdaptiveTrial/CaiandJohnson/BAS/BAS.R")
+run()
+run()
+mmpp
+nnnn
+xx<-function(a=1,b=2,c=3){a^b*c}
+xx()
+xx(4)
+xx(,4)
+xx(,,4)
+source("/Users/jeffshrager/Google Drive/GlobalAdaptiveTrial/CaiandJohnson/BAS/BAS.R")
+run()
+run()
+source("/Users/jeffshrager/Google Drive/GlobalAdaptiveTrial/CaiandJohnson/BAS/BAS.R")
+run()
+run()
+source("/Users/jeffshrager/Google Drive/GlobalAdaptiveTrial/CaiandJohnson/BAS/BAS.R")
+run()
+source("/Users/jeffshrager/Google Drive/GlobalAdaptiveTrial/CaiandJohnson/BAS/BAS.R")
+run()
+source("/Users/jeffshrager/Google Drive/GlobalAdaptiveTrial/CaiandJohnson/BAS/BAS.R")
+run()
+TraceLevel
+run(0)
+source("/Users/jeffshrager/Google Drive/GlobalAdaptiveTrial/CaiandJohnson/BAS/BAS.R")
+run(0)
+source("/Users/jeffshrager/Google Drive/GlobalAdaptiveTrial/CaiandJohnson/BAS/BAS.R")
+run(0)
+source("/Users/jeffshrager/Google Drive/GlobalAdaptiveTrial/CaiandJohnson/BAS/BAS.R")
+run(0)
+source("/Users/jeffshrager/Google Drive/GlobalAdaptiveTrial/CaiandJohnson/BAS/BAS.R")
+run(0)
+run(-1)
+source("/Users/jeffshrager/Google Drive/GlobalAdaptiveTrial/CaiandJohnson/BAS/BAS.R")
+run(-1)
+run(1)

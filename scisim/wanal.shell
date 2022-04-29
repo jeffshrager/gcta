@@ -1,0 +1,380 @@
+julia> using DataFrames, CSV, Pingouin
+julia> d=Pingouin.DataFrame(CSV.File("results/vtb-3855747491.xls"))
+julia> d0 = d[d.p .== 0,:]
+50×11 DataFrame
+ Row │ p      ptfn       i      p/c     tn     score  txn    cat     tfn        name       alg
+     │ Int64  Int64      Int64  String  Int64  Int64  Int64  String  Int64      String     String
+─────┼──────────────────────────────────────────────────────────────────────────────────────────────────────────────
+   1 │     0  836604631      0  PRO         1     22      2  IMUNO   418932835  F2lamamim  REC-COMBINE-AS-PROS+CONS
+   2 │     0  836604631      0  PRO         2     20      3  IMUNO   891235047  F5qrkamim  REC-COMBINE-AS-PROS+CONS
+   3 │     0  836604631      0  PRO         3     19      4  IMUNO   969970961  E9betamim  REC-COMBINE-AS-PROS+CONS
+   4 │     0  836604631      0  CON         1      9     16  IMUNO   702680360  B9ummamim  REC-COMBINE-AS-PROS+CONS
+   5 │     0  836604631      0  CON         2      8     11  IMUNO   746745227  N3ummamim  REC-COMBINE-AS-PROS+CONS
+   6 │     0  836604631      1  PRO         1     22      2  IMUNO   418932835  F2lamamim  REC-ONE-PRO-PER-CAT+CONS
+   7 │     0  836604631      1  PRO         2     19     21  TRGTD   111776857  H9qrkatar  REC-ONE-PRO-PER-CAT+CONS
+   8 │     0  836604631      1  PRO         3     19     41  CHEMO   516942320  N9velokem  REC-ONE-PRO-PER-CAT+CONS
+   9 │     0  836604631      1  CON         1      8     11  IMUNO   746745227  N3ummamim  REC-ONE-PRO-PER-CAT+CONS
+  10 │     0  836604631      1  CON         2      7     16  IMUNO   702680360  B9ummamim  REC-ONE-PRO-PER-CAT+CONS
+  11 │     0  836604631      2  PRO         1     22      2  IMUNO   418932835  F2lamamim  REC-N-PROS
+  12 │     0  836604631      2  PRO         2     20      3  IMUNO   891235047  F5qrkamim  REC-N-PROS
+  13 │     0  836604631      2  PRO         3     20      4  IMUNO   969970961  E9betamim  REC-N-PROS
+  14 │     0  836604631      2  PRO         4     19     41  CHEMO   516942320  N9velokem  REC-N-PROS
+  15 │     0  836604631      2  PRO         5     19     21  TRGTD   111776857  H9qrkatar  REC-N-PROS
+  16 │     0  836604631      3  PRO         1     22      2  IMUNO   418932835  F2lamamim  REC-ONE-PRO-PER-CAT+CONS
+  ⋮  │   ⋮        ⋮        ⋮      ⋮       ⋮      ⋮      ⋮      ⋮         ⋮          ⋮                 ⋮
+  35 │     0  836604631      6  CON         2      8     11  IMUNO   746745227  N3ummamim  REC-ONE-PRO-PER-CAT+CONS
+  36 │     0  836604631      7  PRO         1     22      2  IMUNO   418932835  F2lamamim  REC-ONE-PRO-PER-CAT+CONS
+  37 │     0  836604631      7  PRO         2     19     31  TRGTD   429427001  D6htrotar  REC-ONE-PRO-PER-CAT+CONS
+  38 │     0  836604631      7  PRO         3     19     41  CHEMO   516942320  N9velokem  REC-ONE-PRO-PER-CAT+CONS
+  39 │     0  836604631      7  CON         1      8     11  IMUNO   746745227  N3ummamim  REC-ONE-PRO-PER-CAT+CONS
+  40 │     0  836604631      7  CON         2      8     16  IMUNO   702680360  B9ummamim  REC-ONE-PRO-PER-CAT+CONS
+  41 │     0  836604631      8  PRO         1     22      2  IMUNO   418932835  F2lamamim  REC-ONE-PRO-PER-CAT+CONS
+  42 │     0  836604631      8  PRO         2     19     31  TRGTD   429427001  D6htrotar  REC-ONE-PRO-PER-CAT+CONS
+  43 │     0  836604631      8  PRO         3     19     41  CHEMO   516942320  N9velokem  REC-ONE-PRO-PER-CAT+CONS
+  44 │     0  836604631      8  CON         1      8     16  IMUNO   702680360  B9ummamim  REC-ONE-PRO-PER-CAT+CONS
+  45 │     0  836604631      8  CON         2      8     11  IMUNO   746745227  N3ummamim  REC-ONE-PRO-PER-CAT+CONS
+  46 │     0  836604631      9  PRO         1     22      2  IMUNO   418932835  F2lamamim  REC-ONE-PRO-PER-CAT+CONS
+  47 │     0  836604631      9  PRO         2     19     31  TRGTD   429427001  D6htrotar  REC-ONE-PRO-PER-CAT+CONS
+  48 │     0  836604631      9  PRO         3     19     41  CHEMO   516942320  N9velokem  REC-ONE-PRO-PER-CAT+CONS
+  49 │     0  836604631      9  CON         1      8     11  IMUNO   746745227  N3ummamim  REC-ONE-PRO-PER-CAT+CONS
+  50 │     0  836604631      9  CON         2      8     16  IMUNO   702680360  B9ummamim  REC-ONE-PRO-PER-CAT+CONS
+
+function kw(data)
+    m = length(data[1]) # Number of annotators
+    n = length(data) # Number of items
+    sums = [sum(x) for x in data] # Sum of each item ranks
+    Rbar = sum(sums) / n # Mean of ranking sums
+    # Sum of squared deviations from the mean
+    S = sum([(sums[x] - Rbar)^2 for x in 1:n])
+    W = (12 * S) / (m^2 * (n^3 - n))
+    return W
+end
+
+println(kw([[1, 1, 1, 2], [2, 2, 2, 3], [3, 3, 3, 1]]))
+
+julia> d=Pingouin.DataFrame(CSV.File("results/vtb-3855747491.xls"))
+5000×11 DataFrame
+  Row │ p      ptfn       i      p/c     tn     score  txn    cat     tfn        name       alg
+      │ Int64  Int64      Int64  String  Int64  Int64  Int64  String  Int64      String     String
+──────┼──────────────────────────────────────────────────────────────────────────────────────────────────────────────
+    1 │     0  836604631      0  PRO         1     22      2  IMUNO   418932835  F2lamamim  REC-COMBINE-AS-PROS+CONS
+    2 │     0  836604631      0  PRO         2     20      3  IMUNO   891235047  F5qrkamim  REC-COMBINE-AS-PROS+CONS
+    3 │     0  836604631      0  PRO         3     19      4  IMUNO   969970961  E9betamim  REC-COMBINE-AS-PROS+CONS
+    4 │     0  836604631      0  CON         1      9     16  IMUNO   702680360  B9ummamim  REC-COMBINE-AS-PROS+CONS
+    5 │     0  836604631      0  CON         2      8     11  IMUNO   746745227  N3ummamim  REC-COMBINE-AS-PROS+CONS
+    6 │     0  836604631      1  PRO         1     22      2  IMUNO   418932835  F2lamamim  REC-ONE-PRO-PER-CAT+CONS
+    7 │     0  836604631      1  PRO         2     19     21  TRGTD   111776857  H9qrkatar  REC-ONE-PRO-PER-CAT+CONS
+    8 │     0  836604631      1  PRO         3     19     41  CHEMO   516942320  N9velokem  REC-ONE-PRO-PER-CAT+CONS
+    9 │     0  836604631      1  CON         1      8     11  IMUNO   746745227  N3ummamim  REC-ONE-PRO-PER-CAT+CONS
+   10 │     0  836604631      1  CON         2      7     16  IMUNO   702680360  B9ummamim  REC-ONE-PRO-PER-CAT+CONS
+   11 │     0  836604631      2  PRO         1     22      2  IMUNO   418932835  F2lamamim  REC-N-PROS
+   12 │     0  836604631      2  PRO         2     20      3  IMUNO   891235047  F5qrkamim  REC-N-PROS
+   13 │     0  836604631      2  PRO         3     20      4  IMUNO   969970961  E9betamim  REC-N-PROS
+   14 │     0  836604631      2  PRO         4     19     41  CHEMO   516942320  N9velokem  REC-N-PROS
+   15 │     0  836604631      2  PRO         5     19     21  TRGTD   111776857  H9qrkatar  REC-N-PROS
+   16 │     0  836604631      3  PRO         1     22      2  IMUNO   418932835  F2lamamim  REC-ONE-PRO-PER-CAT+CONS
+  ⋮   │   ⋮        ⋮        ⋮      ⋮       ⋮      ⋮      ⋮      ⋮         ⋮          ⋮                 ⋮
+ 4985 │    99   40197957      6  PRO         5     16     15  IMUNO    59055854  B8tatamim  REC-N-PROS
+ 4986 │    99   40197957      7  PRO         1     19     26  TRGTD   304258851  T4faratar  REC-N-PROS
+ 4987 │    99   40197957      7  PRO         2     18      9  IMUNO   910208076  Q1faramim  REC-N-PROS
+ 4988 │    99   40197957      7  PRO         3     17     43  CHEMO   928145480  B5catokem  REC-N-PROS
+ 4989 │    99   40197957      7  PRO         4     17     28  TRGTD   202789172  X2ketotar  REC-N-PROS
+ 4990 │    99   40197957      7  PRO         5     17     46  CHEMO   164679494  M3htrokem  REC-N-PROS
+ 4991 │    99   40197957      8  PRO         1     19     26  TRGTD   304258851  T4faratar  REC-N-PROS
+ 4992 │    99   40197957      8  PRO         2     18      9  IMUNO   910208076  Q1faramim  REC-N-PROS
+ 4993 │    99   40197957      8  PRO         3     17     46  CHEMO   164679494  M3htrokem  REC-N-PROS
+ 4994 │    99   40197957      8  PRO         4     17     28  TRGTD   202789172  X2ketotar  REC-N-PROS
+ 4995 │    99   40197957      8  PRO         5     17     43  CHEMO   928145480  B5catokem  REC-N-PROS
+ 4996 │    99   40197957      9  PRO         1     19     26  TRGTD   304258851  T4faratar  REC-ONE-PRO-PER-CAT+CONS
+ 4997 │    99   40197957      9  PRO         2     18      9  IMUNO   910208076  Q1faramim  REC-ONE-PRO-PER-CAT+CONS
+ 4998 │    99   40197957      9  PRO         3     17     43  CHEMO   928145480  B5catokem  REC-ONE-PRO-PER-CAT+CONS
+ 4999 │    99   40197957      9  CON         1      7     16  IMUNO   702680360  B9ummamim  REC-ONE-PRO-PER-CAT+CONS
+ 5000 │    99   40197957      9  CON         2      7     29  TRGTD   256557933  P3ethotar  REC-ONE-PRO-PER-CAT+CONS
+                                                                                                    4968 rows omitted
+
+julia> d0 = d[d.p .== 0,:]
+50×11 DataFrame
+ Row │ p      ptfn       i      p/c     tn     score  txn    cat     tfn        name       alg
+     │ Int64  Int64      Int64  String  Int64  Int64  Int64  String  Int64      String     String
+─────┼──────────────────────────────────────────────────────────────────────────────────────────────────────────────
+   1 │     0  836604631      0  PRO         1     22      2  IMUNO   418932835  F2lamamim  REC-COMBINE-AS-PROS+CONS
+   2 │     0  836604631      0  PRO         2     20      3  IMUNO   891235047  F5qrkamim  REC-COMBINE-AS-PROS+CONS
+   3 │     0  836604631      0  PRO         3     19      4  IMUNO   969970961  E9betamim  REC-COMBINE-AS-PROS+CONS
+   4 │     0  836604631      0  CON         1      9     16  IMUNO   702680360  B9ummamim  REC-COMBINE-AS-PROS+CONS
+   5 │     0  836604631      0  CON         2      8     11  IMUNO   746745227  N3ummamim  REC-COMBINE-AS-PROS+CONS
+   6 │     0  836604631      1  PRO         1     22      2  IMUNO   418932835  F2lamamim  REC-ONE-PRO-PER-CAT+CONS
+   7 │     0  836604631      1  PRO         2     19     21  TRGTD   111776857  H9qrkatar  REC-ONE-PRO-PER-CAT+CONS
+   8 │     0  836604631      1  PRO         3     19     41  CHEMO   516942320  N9velokem  REC-ONE-PRO-PER-CAT+CONS
+   9 │     0  836604631      1  CON         1      8     11  IMUNO   746745227  N3ummamim  REC-ONE-PRO-PER-CAT+CONS
+  10 │     0  836604631      1  CON         2      7     16  IMUNO   702680360  B9ummamim  REC-ONE-PRO-PER-CAT+CONS
+  11 │     0  836604631      2  PRO         1     22      2  IMUNO   418932835  F2lamamim  REC-N-PROS
+  12 │     0  836604631      2  PRO         2     20      3  IMUNO   891235047  F5qrkamim  REC-N-PROS
+  13 │     0  836604631      2  PRO         3     20      4  IMUNO   969970961  E9betamim  REC-N-PROS
+  14 │     0  836604631      2  PRO         4     19     41  CHEMO   516942320  N9velokem  REC-N-PROS
+  15 │     0  836604631      2  PRO         5     19     21  TRGTD   111776857  H9qrkatar  REC-N-PROS
+  16 │     0  836604631      3  PRO         1     22      2  IMUNO   418932835  F2lamamim  REC-ONE-PRO-PER-CAT+CONS
+  ⋮  │   ⋮        ⋮        ⋮      ⋮       ⋮      ⋮      ⋮      ⋮         ⋮          ⋮                 ⋮
+  35 │     0  836604631      6  CON         2      8     11  IMUNO   746745227  N3ummamim  REC-ONE-PRO-PER-CAT+CONS
+  36 │     0  836604631      7  PRO         1     22      2  IMUNO   418932835  F2lamamim  REC-ONE-PRO-PER-CAT+CONS
+  37 │     0  836604631      7  PRO         2     19     31  TRGTD   429427001  D6htrotar  REC-ONE-PRO-PER-CAT+CONS
+  38 │     0  836604631      7  PRO         3     19     41  CHEMO   516942320  N9velokem  REC-ONE-PRO-PER-CAT+CONS
+  39 │     0  836604631      7  CON         1      8     11  IMUNO   746745227  N3ummamim  REC-ONE-PRO-PER-CAT+CONS
+  40 │     0  836604631      7  CON         2      8     16  IMUNO   702680360  B9ummamim  REC-ONE-PRO-PER-CAT+CONS
+  41 │     0  836604631      8  PRO         1     22      2  IMUNO   418932835  F2lamamim  REC-ONE-PRO-PER-CAT+CONS
+  42 │     0  836604631      8  PRO         2     19     31  TRGTD   429427001  D6htrotar  REC-ONE-PRO-PER-CAT+CONS
+  43 │     0  836604631      8  PRO         3     19     41  CHEMO   516942320  N9velokem  REC-ONE-PRO-PER-CAT+CONS
+  44 │     0  836604631      8  CON         1      8     16  IMUNO   702680360  B9ummamim  REC-ONE-PRO-PER-CAT+CONS
+  45 │     0  836604631      8  CON         2      8     11  IMUNO   746745227  N3ummamim  REC-ONE-PRO-PER-CAT+CONS
+  46 │     0  836604631      9  PRO         1     22      2  IMUNO   418932835  F2lamamim  REC-ONE-PRO-PER-CAT+CONS
+  47 │     0  836604631      9  PRO         2     19     31  TRGTD   429427001  D6htrotar  REC-ONE-PRO-PER-CAT+CONS
+  48 │     0  836604631      9  PRO         3     19     41  CHEMO   516942320  N9velokem  REC-ONE-PRO-PER-CAT+CONS
+  49 │     0  836604631      9  CON         1      8     11  IMUNO   746745227  N3ummamim  REC-ONE-PRO-PER-CAT+CONS
+  50 │     0  836604631      9  CON         2      8     16  IMUNO   702680360  B9ummamim  REC-ONE-PRO-PER-CAT+CONS
+                                                                                                     18 rows omitted
+
+julia> dr=reshape(d0[:,:txn],(5,10))
+reshape(d0[:,:txn],(5,10))
+5×10 Matrix{Int64}:
+  2   2   2   2   2   2   2   2   2   2
+  3  21   3  28   3   3  21  31  31  31
+  4  41   4  41  21   1  41  41  41  41
+ 16  11  41  11   1   4  16  11  16  11
+ 11  16  21  42   4  41  11  16  11  16
+
+julia> dr=reshape(d0[:,:txn],(5,10))
+5×10 Matrix{Int64}:
+  2   2   2   2   2   2   2   2   2   2
+  3  21   3  28   3   3  21  31  31  31
+  4  41   4  41  21   1  41  41  41  41
+ 16  11  41  11   1   4  16  11  16  11
+ 11  16  21  42   4  41  11  16  11  16
+
+julia> kw(dr)
+1.0018650660264106
+
+julia> println(dr)
+
+
+julia> dr[1]
+2
+
+julia> dr2=[[2,2,2,2,2,2,2,2,2,2],[3,21,3,28,3,3,21,31,31,31],[4,41,4,41,21,1,41,41,41,41],[,16,11,41,11,1,4,16,11,16,11],[,11,16,21,42,4,41,11,16,11,16]]
+
+julia> dr2=[[2,2,2,2,2,2,2,2,2,2],[3,21,3,28,3,3,21,31,31,31],[4,41,4,41,21,1,41,41,41,41],[16,11,41,11,1,4,16,11,16,11],[11,16,21,42,4,41,11,16,11,16]]
+
+julia> dr2=[[2,2,2,2,2,2,2,2,2,2],[3,21,3,28,3,3,21,31,31,31],[4,41,4,41,21,1,41,41,41,41],[16,11,41,11,1,4,16,11,16,11],[11,16,21,42,4,41,11,16,11,16]]
+5-element Vector{Vector{Int64}}:
+ [2, 2, 2, 2, 2, 2, 2, 2, 2, 2]
+ [3, 21, 3, 28, 3, 3, 21, 31, 31, 31]
+ [4, 41, 4, 41, 21, 1, 41, 41, 41, 41]
+ [16, 11, 41, 11, 1, 4, 16, 11, 16, 11]
+ [11, 16, 21, 42, 4, 41, 11, 16, 11, 16]
+
+julia> kw(dr2)
+34.605199999999996
+
+julia> println(kw([[1, 1, 1, 2], [2, 2, 2, 3], [3, 3, 3, 1]]))
+0.4375
+
+julia> kw([[2,2,2,2,2,2,2,2,2,2],[3,3,3,3,3,3,3,3,3,3]])
+2-element Vector{Vector{Int64}}:
+ [2, 2, 2, 2, 2, 2, 2, 2, 2, 2]
+ [3, 21, 3, 28, 3, 3, 21, 31, 31, 31]
+
+julia> kw(dr3)
+240.25
+
+julia> kw([[2,2,2,2,2,2,2,2,2,2],[1,1,1,1,1,1,1,1,1,1]])
+1.0
+
+julia> kw([[2,2,2,2,2,2,2,2,2,2],[3,3,3,3,3,3,3,3,3,3]])
+3.0
+
+julia> kw([[2,2,2,2,2,2,3,2,2,2],[3,3,3,3,3,3,2,3,3,3]])
+1.0
+
+julia> kw([[2,1,2,2,2,2,3,2,2,2],[3,3,3,3,3,3,2,3,3,3]])
+0.64
+
+julia> kw([[2,1,2,2,2,2,3,2,2,2],[3,2,3,3,3,3,2,3,3,3]])
+0.81
+
+julia> kw([[2,3,2,2,2,2,3,2,2,2],[3,2,3,3,3,3,2,3,3,3]])
+0.64
+
+julia> kw([[2,3,2,2,2,2,3,2,2,3],[3,2,3,3,3,3,2,3,3,2]])
+0.36
+
+julia> kw([[2,3,2,2,2,2,3,2,2,3],[3,2,3,3,3,3,2,3,3,2]])
+0.16
+
+julia> kw([[2,2,2,2,2,2,2,2,2,2],[1,1,1,1,1,1,1,1,1,5]])
+1.0
+
+julia> kw([[2,2,2,2,2,2,2,2,2,2],[1,1,1,1,1,1,1,1,1,1],[3,3,3,3,3,3,3,3,3,3]])
+0.36
+
+julia> kw([[2,2,2,2,2,2,2,2,2,2],[1,1,1,1,1,1,1,1,1,1],[13,3,3,3,3,3,3,3,3,3]])
+1.0
+
+julia> kw([[2,2,2,2,2,2,2,2,2,2],[1,1,1,1,1,1,1,1,1,1],[3,3,3,3,3,3,30,3,3,3]])
+2.3333333333333335
+
+julia> kw([[2,2,2,2,2,2,2,2,2,2],[1,1,1,1,1,1,1,1,1,1],[3,3,3,3,3,3,13,3,3,3]])
+6.13
+
+julia> kw([[2,2,2,2,2,2,2,2,2,2],[1,1,1,1,1,1,1,1,1,1],[3,3,3,3,3,3,3,3,3,3]])
+2.3333333333333335
+
+julia> kw([[2,2,2,2,2,2,2,2,2,5],[1,1,1,1,1,1,1,1,1,1],[3,3,3,3,3,3,3,3,3,3]])
+1.0
+
+julia> kw([[2,2,2,2,2,2,2,2,2,500],[1,1,1,1,1,1,1,1,1,1],[3,3,3,3,3,3,3,3,3,3]])
+1.03
+
+julia> kw([[2,2,2,2,2,2,2,2,2,4],[1,1,1,1,1,1,1,1,1,1],[3,3,3,3,3,3,3,3,3,3]])
+
+
+827.68
+
+julia> ()
+jshrager@abacus:~/active_learning/scisim$ julia
+               _
+   _       _ _(_)_     |  Documentation: https://docs.julialang.org
+  (_)     | (_) (_)    |
+   _ _   _| |_  __ _   |  Type "?" for help, "]?" for Pkg help.
+  | | | | | | |/ _` |  |
+  | | |_| | | | (_| |  |  Version 1.6.1 (2021-04-23)
+ _/ |\__'_|_|_|\__'_|  |  Official https://julialang.org/ release
+|__/                   |
+
+┌ Warning: Terminal not fully functional
+└ @ Base client.jl:378
+julia> using DataFrames, CSV, Pingouin
+d=Pingouin.DataFrame(CSV.File("results/vtb-3855747491.xls"))
+d0 = d[d.p .== 0,:]
+
+julia> d0
+5000×11 DataFrame
+  Row │ p      ptfn       i      p/c     tn     score  txn    cat     tfn        name       alg
+      │ Int64  Int64      Int64  String  Int64  Int64  Int64  String  Int64      String     String
+──────┼──────────────────────────────────────────────────────────────────────────────────────────────────────────────
+    1 │     0  836604631      0  PRO         1     22      2  IMUNO   418932835  F2lamamim  REC-COMBINE-AS-PROS+CONS
+    2 │     0  836604631      0  PRO         2     20      3  IMUNO   891235047  F5qrkamim  REC-COMBINE-AS-PROS+CONS
+    3 │     0  836604631      0  PRO         3     19      4  IMUNO   969970961  E9betamim  REC-COMBINE-AS-PROS+CONS
+    4 │     0  836604631      0  CON         1      9     16  IMUNO   702680360  B9ummamim  REC-COMBINE-AS-PROS+CONS
+    5 │     0  836604631      0  CON         2      8     11  IMUNO   746745227  N3ummamim  REC-COMBINE-AS-PROS+CONS
+    6 │     0  836604631      1  PRO         1     22      2  IMUNO   418932835  F2lamamim  REC-ONE-PRO-PER-CAT+CONS
+  ⋮   │   ⋮        ⋮        ⋮      ⋮       ⋮      ⋮      ⋮      ⋮         ⋮          ⋮                 ⋮
+ 4996 │    99   40197957      9  PRO         1     19     26  TRGTD   304258851  T4faratar  REC-ONE-PRO-PER-CAT+CONS
+ 4997 │    99   40197957      9  PRO         2     18      9  IMUNO   910208076  Q1faramim  REC-ONE-PRO-PER-CAT+CONS
+ 4998 │    99   40197957      9  PRO         3     17     43  CHEMO   928145480  B5catokem  REC-ONE-PRO-PER-CAT+CONS
+ 4999 │    99   40197957      9  CON         1      7     16  IMUNO   702680360  B9ummamim  REC-ONE-PRO-PER-CAT+CONS
+ 5000 │    99   40197957      9  CON         2      7     29  TRGTD   256557933  P3ethotar  REC-ONE-PRO-PER-CAT+CONS
+                                                                                                    4989 rows omitted
+
+julia> 50×11 DataFrame
+ Row │ p      ptfn       i      p/c     tn     score  txn    cat     tfn        name       alg
+     │ Int64  Int64      Int64  String  Int64  Int64  Int64  String  Int64      String     String
+─────┼──────────────────────────────────────────────────────────────────────────────────────────────────────────────
+   1 │     0  836604631      0  PRO         1     22      2  IMUNO   418932835  F2lamamim  REC-COMBINE-AS-PROS+CONS
+   2 │     0  836604631      0  PRO         2     20      3  IMUNO   891235047  F5qrkamim  REC-COMBINE-AS-PROS+CONS
+   3 │     0  836604631      0  PRO         3     19      4  IMUNO   969970961  E9betamim  REC-COMBINE-AS-PROS+CONS
+   4 │     0  836604631      0  CON         1      9     16  IMUNO   702680360  B9ummamim  REC-COMBINE-AS-PROS+CONS
+   5 │     0  836604631      0  CON         2      8     11  IMUNO   746745227  N3ummamim  REC-COMBINE-AS-PROS+CONS
+   6 │     0  836604631      1  PRO         1     22      2  IMUNO   418932835  F2lamamim  REC-ONE-PRO-PER-CAT+CONS
+  ⋮  │   ⋮        ⋮        ⋮      ⋮       ⋮      ⋮      ⋮      ⋮         ⋮          ⋮                 ⋮
+  46 │     0  836604631      9  PRO         1     22      2  IMUNO   418932835  F2lamamim  REC-ONE-PRO-PER-CAT+CONS
+  47 │     0  836604631      9  PRO         2     19     31  TRGTD   429427001  D6htrotar  REC-ONE-PRO-PER-CAT+CONS
+  48 │     0  836604631      9  PRO         3     19     41  CHEMO   516942320  N9velokem  REC-ONE-PRO-PER-CAT+CONS
+  49 │     0  836604631      9  CON         1      8     11  IMUNO   746745227  N3ummamim  REC-ONE-PRO-PER-CAT+CONS
+  50 │     0  836604631      9  CON         2      8     16  IMUNO   702680360  B9ummamim  REC-ONE-PRO-PER-CAT+CONS
+                                                                                                     39 rows omitted
+
+julia> 50×11 DataFrame
+ Row │ p      ptfn       i      p/c     tn     score  txn    cat     tfn        name       alg
+     │ Int64  Int64      Int64  String  Int64  Int64  Int64  String  Int64      String     String
+─────┼──────────────────────────────────────────────────────────────────────────────────────────────────────────────
+   1 │     0  836604631      0  PRO         1     22      2  IMUNO   418932835  F2lamamim  REC-COMBINE-AS-PROS+CONS
+   2 │     0  836604631      0  PRO         2     20      3  IMUNO   891235047  F5qrkamim  REC-COMBINE-AS-PROS+CONS
+   3 │     0  836604631      0  PRO         3     19      4  IMUNO   969970961  E9betamim  REC-COMBINE-AS-PROS+CONS
+   4 │     0  836604631      0  CON         1      9     16  IMUNO   702680360  B9ummamim  REC-COMBINE-AS-PROS+CONS
+   5 │     0  836604631      0  CON         2      8     11  IMUNO   746745227  N3ummamim  REC-COMBINE-AS-PROS+CONS
+   6 │     0  836604631      1  PRO         1     22      2  IMUNO   418932835  F2lamamim  REC-ONE-PRO-PER-CAT+CONS
+  ⋮  │   ⋮        ⋮        ⋮      ⋮       ⋮      ⋮      ⋮      ⋮         ⋮          ⋮                 ⋮
+  46 │     0  836604631      9  PRO         1     22      2  IMUNO   418932835  F2lamamim  REC-ONE-PRO-PER-CAT+CONS
+  47 │     0  836604631      9  PRO         2     19     31  TRGTD   429427001  D6htrotar  REC-ONE-PRO-PER-CAT+CONS
+  48 │     0  836604631      9  PRO         3     19     41  CHEMO   516942320  N9velokem  REC-ONE-PRO-PER-CAT+CONS
+  49 │     0  836604631      9  CON         1      8     11  IMUNO   746745227  N3ummamim  REC-ONE-PRO-PER-CAT+CONS
+  50 │     0  836604631      9  CON         2      8     16  IMUNO   702680360  B9ummamim  REC-ONE-PRO-PER-CAT+CONS
+                                                                                                     39 rows omitted
+
+julia> dr=reshape(d0[:,:txn],(5,10))
+5×10 Matrix{Int64}:
+  2   2   2   2   2   2   2   2   2   2
+  3  21   3  28   3   3  21  31  31  31
+  4  41   4  41  21   1  41  41  41  41
+ 16  11  41  11   1   4  16  11  16  11
+ 11  16  21  42   4  41  11  16  11  16
+
+julia> u=reduce(union,dr)
+11-element Vector{Int64}:
+  2
+  3
+  4
+ 16
+ 11
+ 21
+ 41
+ 28
+ 42
+  1
+ 31
+
+
+julia> map((x)->findall((y)->x==y,u)[1],dr)
+5×10 Matrix{Vector{Int64}}:
+ [1]  [1]  [1]  [1]  [1]   [1]   [1]  [1]   [1]   [1]
+ [2]  [6]  [2]  [8]  [2]   [2]   [6]  [11]  [11]  [11]
+ [3]  [7]  [3]  [7]  [6]   [10]  [7]  [7]   [7]   [7]
+ [4]  [5]  [7]  [5]  [10]  [3]   [4]  [5]   [4]   [5]
+ [5]  [4]  [6]  [9]  [3]   [7]   [5]  [4]   [5]   [4]
+
+julia> map((x)->findall((y)->x==y,u)[1],dr)
+5×10 Matrix{Int64}:
+ 1  1  1  1   1   1  1   1   1   1
+ 2  6  2  8   2   2  6  11  11  11
+ 3  7  3  7   6  10  7   7   7   7
+ 4  5  7  5  10   3  4   5   4   5
+ 5  4  6  9   3   7  5   4   5   4
+
+julia> using CSV, DataFrames
+
+function kw(data)
+    m = length(data[1]) # Number of annotators
+    n = length(data) # Number of items
+    sums = [sum(x) for x in data] # Sum of each item ranks
+    Rbar = sum(sums) / n # Mean of ranking sums
+    # Sum of squared deviations from the mean
+    S = sum([(sums[x] - Rbar)^2 for x in 1:n])
+    W = (12 * S) / (m^2 * (n^3 - n))
+    return W
+end
+
+
+julia> 
+julia> map((x)->findall((y)->x==y,u)[1],transpose(dr))
+10×5 Matrix{Int64}:
+ 1   2   3   4  5
+ 1   6   7   5  4
+ 1   2   3   7  6
+ 1   8   7   5  9
+ 1   2   6  10  3
+ 1   2  10   3  7
+ 1   6   7   4  5
+ 1  11   7   5  4
+ 1  11   7   4  5
+ 1  11   7   5  4
+
+julia> kw(map((x)->findall((y)->x==y,u)[1],transpose(dr)))
+0.041736374549819925

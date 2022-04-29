@@ -1,0 +1,5 @@
+In this experiment, we demonstrate that the learner is successfully learning when fed the data from our simulator instead of random noise. We also demonstrate that our learner is successfully picking out data with a delta k outside of a band determined in the experiment settings.
+
+As shown in the results in results.dbl and data.csv, there is a significant difference in the mean_results value between trials run with training_mode = constant (i.e. learning, where the average is ~0.4-0.5) and training_mode = true_random (i.e. random noise for the drugs that should be chosen for each given tumor type, where the average is ~0.13).
+
+Additionally, there is not a worrisome difference in the mean_results values given between run_label real_data and handpicked_data, particularly of interest when training_mode = constant (0.41 for handpicked vs 0.50 when the script picks out the data itself).

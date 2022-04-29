@@ -1,0 +1,9 @@
+{
+	"drugs-in-cocktail": 2,
+	"num-months": 30,
+	"targets": {"CABAZITAXEL": ["HLA-A1", "MGMT-PROMOTER"], "BEVACIZUMAB": ["MGMT-PROMOTER", "HLA-A2"], "TEMOZOLOMIDE": ["HLA-A1", "HLA-A2"]},
+	"drugs": ["BEVACIZUMAB", "TEMOZOLOMIDE", "CABAZITAXEL"],
+	"num-patients": 500,
+	"markers": ["MGMT-PROMOTER", "HLA-A2", "HLA-A1"],
+	"p-mutational-escape": 0.25
+}
