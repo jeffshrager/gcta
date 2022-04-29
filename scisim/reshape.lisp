@@ -1,4 +1,7 @@
+;;; ********* WARNING: UPDATE FOR NEW FORMAT OF MUTICON XLS FILES********
+
 ;;; (load (compile-file "reshape.lisp"))
+
 ;;; (loop for k being the hash-keys of *t* using (hash-value v) do (print (list k v)))
 ;;; Just a hack to reshuffle results
 
@@ -188,6 +191,7 @@
   )
 
 (defun texify-multicons ()
+  (error "********* WARNING: UPDATE FOR NEW FORMAT OF MUTICON XLS FILES********")
   (clrhash *t*)
   (loop for file in (mapcar #'pathname-name (directory "results/*multicon*.xls"))
 	as (a b c d e f g h i j) = (string-split file :delimiter #\_)
