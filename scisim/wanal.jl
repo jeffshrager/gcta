@@ -3,7 +3,7 @@
 
 # Reads from vtb file created by vtb.lisp
 
-using Random, Distributions, Printf, StatsBase, Distances, Dates, SciPy
+using Random, Distributions, Printf, StatsBase, Distances, Dates #, SciPy
 using CSV, DataFrames, Pingouin, Combinatorics
 
 include("footrules.jl") # Asher's code
@@ -65,14 +65,14 @@ function multivtb_concordance(fileid="vtb-3855747491";timestamp,xid="xid",njudge
         ace=algorithm_concordance_estimate(con,drt;pwsfn=pwsfn,metric=metric)
         push!(results,[mjc,pt,drt,ace,con])
     end
-    open(string("results/",timestamp,"_",xid,"_multicon_",fileid,"_",pwsfn,"_",metric,".xls"), "w") do io
-        @printf(io,"PatintNo\tConcordancet\tAlgDistMean[vsJ1]\tAlgDistStD\tConcensus\tJudges\n")
+    open(string("results/",timestamp,"_",xid,"_multicon_",fileid,"_",pwsfn,"_",metric,".lisp"), "w") do io
+        @printf(io,";;; PtNo Concordance AlgDistMeanVSConsensus AlgDistStDev Consensus Judges\n")
         for e in sort!(results,by=x->x[1],rev=true)
-            @printf(io,"%s\t%s\t%s\t%s\t%s",e[2],e[1],e[4][1],e[4][2],e[5])
+            @printf(io,"(%s %.3f %.3f %.3f \"%s\" (",e[2],e[1],e[4][1],e[4][2],e[5])
             for j in 1:njudges
-                @printf(io,"\t%s",e[3][j,:])
+	       @printf(io," \"%s\"",jr = e[3][j,:])
             end
-            @printf(io,"\n")
+            @printf(io,"))\n")
         end
     end
 end
@@ -280,14 +280,14 @@ function randpws(a,b,abplus)
 end
 
 # Exploring how the symmetric scales up with the length of the record
-function explore1()
+function exploremain(expid)
     timestamp=Dates.format(now(),"yyyymmdd_HHMM_SSssss")
     for pwsfn in [tailharmpws, all1pws, randpws]
         for metric in [ssfr ltgt]
             for l in 3:5
-                mvtbcdistest(l;timestamp=timestamp,pwsfn=pwsfn,metric=metric,xid=string(l,"ex1a"))
+                mvtbcdistest(l;timestamp=timestamp,pwsfn=pwsfn,metric=metric,xid=string(l,expid))
             end
-            multivtb_concordance("vtb-3855747491";timestamp=timestamp,pwsfn=pwsfn,metric=metric,xid="ex1vtbs")
+            multivtb_concordance("vtb-3855747491";timestamp=timestamp,pwsfn=pwsfn,metric=metric,xid=expid)
         end
     end
 end
@@ -329,7 +329,8 @@ function explore4()
     multivtb_concordance("vtb-3855747491";timestamp=timestamp,pwsfn=tailharmpws,metric=ssfr,xid="ex4")
 end
 
-#explore1()
+
+exploremain("Apr29")
 #explore2()
 #explore3()
-explore4()
+#explore4()
