@@ -1,3 +1,5 @@
+%% https://bmcmedinformdecismak.biomedcentral.com/submission-guidelines
+
 \documentclass{article}
 
 % Language setting
@@ -23,15 +25,24 @@
 \usepackage[colorlinks=true, allcolors=blue]{hyperref}
 
 \title{Rank like a Doc: Distance metrics for concordance and consensus among partially-overlapping judgment sets that include ranked pro- and potentially unranked con- lists}
-\author{Jeff Shrager and Amy Langville}
+
+
+\author{Jeff Shrager\\ 
+Commerce Net \\ and \\Stanford University\\ Symbolic Systems Program (Adjunct) \\Palo Alto, CA \\jshrager@stanford.edu
+\and Amy N. Langville \\ Department of Mathematics\\ College of Charleston \\Charleston, SC \\ langvillea@cofc.edu.}
+
+
+
+%\author{Jeff Shrager and Amy Langville}
 
 \begin{document}
 \maketitle
 
 \begin{abstract}
-Your abstract.
+\textcolor{red}{Your abstract.}
 \end{abstract}
 
+\newpage
 \section{Introduction}
 
 Because of the enormous uncertainties inherent in most of medicine, physicians with expertise in a particular area (hereafter "specialists") will often produce a short ranked list of recommended or ``indicated'' treatments (``pros''), and sometimes also a short list of ``contra-indications'' (``cons''), that is, treatments that the specialist recommends \textit{against} choosing. We call either such a list an ``$n$-rank'', where $n$ is the number of indicated or contra-indicated treatments. In the present work $n$ will usually be $3$, thus, a ``3-rank''. When the $n$-rank contains only pros it is also referred to as a top-$n$ ranking in the literature. Patients also commonly obtain multiple $n$-ranks from different specialists and must decide whether to believe one over the other, form a consensus, or get yet more opinions.\footnote{Sometimes multiple specialists will confer among themselves in what is sometime called a ``tumor board'', and report a consensus. In the present work we do not distinguish this from the $n$-rank coming from a single specialist.} 
@@ -42,9 +53,16 @@ One use of $d$ is to estimate the ``\emph{difficulty}'' of a particular case, re
 
 The typical way that one would go about estimating the performance of such an algorithm is cross validation: We provide the algorithm a subset of the training data set (say 80\%), holding the rest (20\%) as a ``test set'', comparing the algorithmically-produced top indicated treatment with the ones actually chosen in the test set, and employing a statistic, such as ``Area Under the Curve'', to estimate how well the algorithm is doing.   
 
-There are several problems that make this approach untenable in many areas of medicine. First, obtaining the training data may take years of collecting very noisy outcome measures. Second, because medicine is an ever-changing field, the data collected at one point in time is very likely to be outdated and irrelevant, or worse, confusingly wrong by the time enough data is collected to obtain useful statistics. For example, the``pharmacopeia" (the set of plausible treatments) may change often for important diagnoses that are being actively addressed by pharmaceutical companies. Therefore, it it will often be the case that entirely new treatments have been approved, or are coming into common usage, and older ones going out of favor (sometimes being completely withdrawn from the market, or no longer commonly manufactured). Furthermore, the way existing drugs are used in clinical practice, i.e., the ``regimens", can change quite rapidly in active areas. For example, between 2020 and 2022 hundreds, perhaps thousands, of changes were made in best practices for treating patients with Covid-19, and dozens of new drugs and vaccines produced. Much of the data gathered in 2020 became nearly irrelevant in 2021 when vaccines became widely available, and again in 2022 when many new non-vaccine treatments were widely applied. In sum, training data collected over a long period (even sometimes a period of just a few months) will not only fail reflect these changes rapidly enough to be useful, but may actually lead to dangerously wrong predictions. 
+There are several problems that make this approach untenable in many areas of medicine. First, obtaining the training data may take years of collecting very noisy outcome measures. Second, because medicine is an ever-changing field, the data collected at one point in time is very likely to be outdated and irrelevant, or worse, confusingly wrong by the time enough data is collected to obtain useful statistics. For example, the ``pharmacopeia" (the set of plausible treatments) may change often for important diagnoses that are being actively addressed by pharmaceutical companies. Therefore, it it will often be the case that entirely new treatments have been approved, or are coming into common usage, and older ones going out of favor (sometimes being completely withdrawn from the market, or no longer commonly manufactured). Furthermore, the way existing drugs are used in clinical practice, i.e., the ``regimens", can change quite rapidly in active areas. For example, between 2020 and 2022 hundreds, perhaps thousands, of changes were made in best practices for treating patients with Covid-19, and dozens of new drugs and vaccines produced. Much of the data gathered in 2020 became nearly irrelevant in 2021 when vaccines became widely available, and again in 2022 when many new non-vaccine treatments were widely applied. In sum, training data collected over a long period (even sometimes a period of just a few months) will not only fail reflect these changes rapidly enough to be useful, but may actually lead to dangerously wrong predictions. 
 
 Although specialist recommendations do not have the ground-truth validity of outcomes, they have significant advantage: Specialists can give opinions at any time while the patient is alive, so that one need not wait until a patient's death to realize an outcome. Specialist opinions can even be obtained for a non-existant pseudo-patient, providing a wide range of experimental opportunities. The specialist can, and often do, report multiple potential indicated treatments, and sometimes also one or more \emph{contra-indicated} treatments. On the other hand, outcomes data tells you only about the single treatment that was used. For all these reasons it is useful to augment cross-validation with continuous specialist validation by comparing the $n$-ranks produced with those produced for the same case by specialists. Thus motivating the present goal of comparing $n$-ranks with one another. 
+
+\newpage
+\section{Background}
+
+Fagin, et al. \cite{fagin_comparing_2004}, noting that ``there is no well-studied and well-understood method for comparing two top k lists for similarity/dissimilarity'', set out to define ``reasonable and meaningful distance measures between top k lists?'' As Fagin et al. have conducted a detailed analysis of the problem studying a wide range of measures, with citation, we will not extract and re-discuss all of those in the present work, but rather refer the reader to \cite{fagin_comparing_2004} for this background. Fagin, et al. begin by studying the special case of permutations of all of the objects in the domain, for this standard methods, such as Kendall’s tau and Spearman’s footrule apply.\footnote{Fagin et al. also look at Goodman and Kruskal’s gamma. However, if there are no ties, as is the case in the present work, gamma is equivalent to tau.} Fagin et al. consider these methods as one of several classes of distance measures, but modify these to apply to partial lists. These researchers reject the straightforward approach of ``symmetric difference (union minus the intersection), appropriately scaled'' (e.g., \cite{lee_combining_1998}) as ``not adequate'' because ``two top 10 lists that are reverses of each other would be declared to be `very close'.''. 
+
+In the present context, the problem declared as ``not adequate'' by Fagin et al. is actually precisely what we want: Two $n$-ranks containing the same elements, but in a different order are, indeed, considered to be closer to one another than ranks that contains some non-common elements. For example, we want [a,b,c] to be closer to [c,b,a] that it is to [d,e,f]. At the same time, we would like [a,b,c] to be sensibly closer to [a,d,e] than is it to [d,e,f].
 
 \section{Data and Notation}
 
@@ -56,7 +74,7 @@ To simulate the specialist indications described above, we generated a static ph
 
 We want our algorithmic quality metric to compare how well the algorithm's 3-rank compares with 3-ranks produced by multiple specialist specialists. We compare the algorithm with multiple specialists because, as will be seen shortly below, specialists have several different ways that they can produce the result, whereas the algorithm, in principle, has only one.\footnote{Of course, like a tumor board, there may be variability or other factors that lead the algorithm to internally produce multiple 3-ranks. For example, it might run thousands of internal simulations before reporting a result. However, again like a tumor board, at the end of the day it has to produce a single 3-rank.} In the present work, and without loss of generality, we hereafter assume that the algorithm always produces the 3-rank: $[1,2,3]$. For each of the 100 simulated cases (i.e., their ``genomes'') we produce ten 3-ranks, as though ten separate specialists were asked to individually consider each of the 100 cases. 
 
-Each specialists can choose among any of the 60 treatments across the three categories: Cx, Tx, Ix. A given specialist's 3-rank for a given case is created as follows. First, all treatments (regardless of category) are scored against the case by the bit-matching algorithm described above, producing a 60-rank of all treatments. Next we introduce ``individuality'' into the judgments through two perturbation processes that we call ``tweaking'' and ``twiddling''. Tweaking slightly changes the score by $-1$, $0$, or $+1$ in two stages. Stage 1 determines if any tweaking will be done (with probability p=0.5. If tweaking was chosen, then in Stage 2, we add or subtract 1. This is repeated for each treatment in the 60-rank. Next these are grouped into equi-score groups. \textcolor{red}{Equi-scores might need explanation.} Twiddling randomly permutes these groups, which are then aggregated into a new 60-rank where there has been tweaking, and then the order within equi-score sets is random. (The final sorting algorithm retains order within equi-score sets, thereby retaining the result of the twiddling.) To create indicateations, one of two algorithms is employed\footnote{This is a slight simplification of what actually happens, but this detail is only relevant later when we consider contra-indications.}: two-thirds of the time the top 3 treatments from the 60-rank are selected to create the 3-rank, and in the remaining third of cases, the top treatment is selected from each of the three categories of immunotherapies, targeted therapies, and chemotherapies. The $100 \times 10$ resulting unordered judgment sets is displayed in full in Appendix A: Judgment Sets.
+Each specialists can choose among any of the 60 treatments across the three categories: Cx, Tx, Ix. A given specialist's 3-rank for a given case is created as follows. First, all treatments (regardless of category) are scored against the case by the bit-matching algorithm described above, producing a 60-rank of all treatments. Next we introduce ``individuality'' into the judgments through two perturbation processes that we call ``tweaking'' and ``twiddling''. Tweaking slightly changes the score by $-1$, $0$, or $+1$ in two stages. Stage 1 determines if any tweaking will be done (with probability p=0.5. If tweaking was chosen, then in Stage 2, we add or subtract 1. This is repeated for each treatment in the 60-rank. Next these are grouped into equi-score groups -- that is, groups of items whose scores are numerically indistinguishable, so that within such a group there is no rationale for ranking items above one another. Twiddling randomly permutes these groups, which are then aggregated into a new 60-rank where there has been tweaking, and then the order within equi-score sets is random. (The final sorting algorithm retains order within equi-score sets, thereby retaining the result of the twiddling.) To create indicateations, one of two algorithms is employed\footnote{This is a slight simplification of what actually happens, but this detail is only relevant later when we consider contra-indications.}: two-thirds of the time the top 3 treatments from the 60-rank are selected to create the 3-rank, and in the remaining third of cases, the top treatment is selected from each of the three categories of immunotherapies, targeted therapies, and chemotherapies. The $100 \times 10$ resulting unordered judgment sets is displayed in full in Appendix A: Judgment Sets.
 
 \begin{algorithm}
 	\caption{Generate 100x10 judgment Sets} 
@@ -103,6 +121,7 @@ Each specialists can choose among any of the 60 treatments across the three cate
 	\end{algorithmic} 
 \end{algorithm} 
 
+\newpage
 \section{Distance metrics}
 
 We consider six distance metrics, created by combining one of two counting algorithms with one of three position weighting functions.  
@@ -143,6 +162,7 @@ Because the basic scoring algorithms described above require lists with identica
 
 Consider the example where the treatments are $a$ through $e$, and one specialist reports: $R1=[a,b,c]$ and the other reports: $R2=[b,d,e]$. $I=\{b\}$, $U=\{a,b,c,d,e\}$. $D1=[d,e]$ and $D2=[a,c]$. The entire comparison set is the permutations of $D1$ ($[d, e]$ and $[e, d]$ appended to $r1$, creating $[a,b,c,d,e]$ and $[a,b,c,e,d]$, and the permutations of $D2$ $[a, c]$ and $[c, a]$ appended to $r2$, creating  $[b,d,e,a,c]$, and $[b,d,e,c,a]$. Now the four ranked lists contain the same five elements and, as a result, a distance can be computed by any of the six distance functions described in the previous section. The resulting judgment score is then the mean of the scores on the complete (one way) set of combinations of these, that is, the mean of ${4 \choose 2}=6$ scores. There is one additional minor adjustment for the \emph{Harmonic} (\texttt{harm}) position weighting function: the position weights given to the appended elements (the last two in the above above) are equal to $1/(2^{(l+2)})$, where $l$ is the last position of the original base set, 3 in this case. For the above example, the harmonic position weights for $[a,b,c,d,e]$ are: $[0.5, 0.25,0.125,0.03125,0.03125]$.    
 
+\newpage
 \section{Judgment Concordance} 
 
 Finally, given that we can create a distance between specialists that have non-identical elements, the concordance over the 10 judgments for the case is simply the mean of all possible judgments scored against one another. The results of this computation are reported below each set in Appendix A: Judgment Sets. Note the legend indicating which cell in the scores arises from which combination of counting algorithm and position weight function. For example, \texttt{tailharmpws.ssfr}, the upper-left score, which has a value of 0.49 for judgment set 0 (the first set), is the \emph{Symmetric Spearman Footrule} with the \texttt{tailharm} position weight function.
@@ -153,17 +173,16 @@ The judgment sets with the lowest concordance score, called ``Near'', vs. the hi
 
 The reason for computing a concordance score over multiple specialists is to get a sense of the extent to which specialists agree about the case. This, then, can be used to modulate our assessment of the degree to which the ranking algorithm should be penalized when it disagrees with a given judgment (or a consensus judgment which a tumor board of specialists typically produces). If the specialists cannot agree with one another, then we should not expect our algorithm to agree with any one of them, nor should we give strong credence to a consensus ranking that was reported from a team that cannot agree. In this latter sense, the concordance score is akin to the $\sigma$ in a Normal distribution which gives us a sense of how much weight we should attach to the mean. In the next section we examine the application of these methods to this problem, and in a later section, fold in the concordance score developed above. 
 
+\newpage
 \section{Assessing Algorithmic Ranking Agreement with judgment Consensus}
 
 Recall that we asserted that, without loss of generality, we could assume the algorithm always returned the 3-rank: $[1,2,3]$. We assume further, that in order to assess how well the algorithm is doing in agreeing with specialist rankings, we compare the algorithm's 3-rank with a single specialist-derived 3-rank, which may have been reported by a single specialist, yet more likely is the work of multiple specialists (e.g., a tumor board). Thus, we compute a concordance score, from the previous section, between the algorithm's 3-rank and the one specialist's 3-rank. Since we are only comparing two 3-ranks at a time, we assume, again without loss of generality as the actual numbers are treatment IDs and have no information content in-and-of themselves, that the specialist 3-rank is selected randomly without replacement from the set: $[1,2,3,4,5,6]$. Indeed, in order to get a visual sense of the difference between the algorithm's 3-rank and the specialist's 3-rank, we create a ``exchange icon'' (hereafter ``xcon'') telling us which element from one 3-rank went to which position in the other. For example, the \emph{xcon} describing the comparison between $[a,b,c]$ and itself is just ``x123'', and the xcon describing the comparison between $[a,b,c]$ and $[c,b,a]$ is ``x321''. When an element is missing (or, conversely, a new one is added on the opposite 3-rank) we use a dash (\texttt{-}), so that the xcon describing the comparison between $[a,b,c]$ and $[c,e,d]$ is \texttt{x3--}, and if all three elements differ: \texttt{x---}. 
 
-There are a finite and not very large set of possible xcons for a given $n$-rank, and, indeed, for 3-ranks there are 34. These 34 xcons are depicted along with the score given head-to-head comparison by the six methods described in detail above, are listed in Appendix B: Permutation Rankings. In this case, each pair of columns is sorted from lowest (nearest) to highest (farthest) score. A quick scan of this table shows that the distance between a 3-rank and itself is 0.0. This data comes not from enumerating the permutations and scoring each once, but instead from choosing 10,000 random permutations and reporting the mean of the scores for each xcon. We use 10,000 random permutations because in the random position weight case, the computation is not deterministic. Indeed, one can easily see in Fig. 1 that the number of equi-score sets, sorted by score, is not evenly distributed between the cases.\footnote{For display purposed, Fig. 1 is down-sampled by a fifth 1/5 to plot a more manageable number of points.}
-
-\textcolor{red}{Add and describe x- and y-axis}
+There are a finite and not very large set of possible xcons for a given $n$-rank, and, indeed, for 3-ranks there are 34. Appendix B: Permutation Rankings despicts these 34 xcons as well as the head-to-head comparison score for the six methods described in detail above. In this case, each pair of columns is sorted from lowest (nearest) to highest (farthest) score. A quick scan of this table shows that the distance between a 3-rank and itself is 0.0. This data comes not from enumerating the permutations and scoring each once, but instead from choosing 10,000 random permutations and reporting the mean of the scores for each xcon. We use 10,000 random permutations because in the random position weight case, the computation is not deterministic. Indeed, one can easily see in Fig. 1 that the number of equi-score sets, sorted by score, is not evenly distributed between the cases.\footnote{For display purposed, Fig. 1 is down-sampled by a fifth 1/5 to plot a more manageable number of points.}
 
 \begin{figure}[h!]
   \includegraphics[scale=0.5]{"3x10000_subsampled_at_fifth"}
-  \caption{Sorted Concordances for 100 specialist Sets at 3-,4-, and 5-Ranks.}
+  \caption{Sorted Concordances for 100 specialist Sets at 3-,4-, and 5-Ranks. Dependent axis is un-normalized score by each algorithm (colors, details of algorithms in text). As points are sorted per Y min-to-max, the X axis simply denotes final ordinal position, and is labeled for reference value only.}
 \end{figure}
 
 
@@ -173,9 +192,9 @@ The \texttt{random pws} weighting function, the red line of Fig.~1, provides a r
 \centering
 \begin{longtable}{| l | l | l | }
 \hline
-method & no. equi-score sets & size of largest set
-\hline
-\hline
+\textbf{method} & \textbf{no. equi-score sets} & \textbf{size of largest set} \\
+\hline 
+\hline 
 tailharmpws.ssfr & 26 & 2 \\
 \hline
 all1pws.ssfr & 8 & 10 \\
@@ -192,61 +211,58 @@ The method to obtain the best distinction among xcons is one of the random metho
 
 \subsection{Ordering of the ``Far'' 3-Rank Contrasts}
 
-We now discuss the ordering of the ``far'' cases. We have the intuition that \texttt{x---} should be the worst case, after all, the concensus ranking disagreed with the algorithm entirely, choosing a completely different set of treatments. Unfortunately, the distances delivered by our preferred method, \texttt{tailharm.ssfr}, places \texttt{x---} 4th from the end, rating \texttt{x-31}, \texttt{x3-2}, and \texttt{x-32} worse than complete disagreement (i.e., \texttt{x---}). What is \texttt{tailharm.ssfr} capturing (or not capturing) here? Digging deeper reveals that for \texttt{tailharm.ssfr}, the cases that scored worse than \texttt{x---} are cases where the last (i.e., 3rd) option was brought to the front, and/or above the top-ranked (first) item. Contrast this with the top of the \texttt{tailharm.ssfr} list: \texttt{x123}, \texttt{x120}, \texttt{x132}, \texttt{x13-}, \texttt{x1-2}, \texttt{x1-3}, \texttt{x1--}. In all these cases the top-ranked treatment matches. The \texttt{tailharm.ssfr} weighting emphasizes the top of the ranked list. It is less concerned with the bottom of the lists (in this 3-rank case, rank positions third and beyond).  Are there applications for which ``breaking rank'' (i.e., putting the top-ranked treatment in some place other than the top rank) is considered worse than choosing a completely different set of treatments?  
+We now discuss the ordering of the ``far'' cases. We have the intuition that \texttt{x---} should be the worst case, after all, the consensus ranking disagreed with the algorithm entirely, choosing a completely different set of treatments. Unfortunately, the distances delivered by our preferred method, \texttt{tailharm.ssfr}, places \texttt{x---} fourth from the end, rating \texttt{x-31}, \texttt{x3-2}, and \texttt{x-32} worse than complete disagreement (i.e., \texttt{x---}). What is \texttt{tailharm.ssfr} capturing (or not capturing) here? Digging deeper reveals that for \texttt{tailharm.ssfr}, the cases that scored worse than \texttt{x---} are cases where the last (i.e., third) option was brought to the front, and/or above the top-ranked (first) item. Contrast this with the top of the \texttt{tailharm.ssfr} list: \texttt{x123}, \texttt{x120}, \texttt{x132}, \texttt{x13-}, \texttt{x1-2}, \texttt{x1-3}, \texttt{x1--}. In all these cases the top-ranked treatment matches. The \texttt{tailharm.ssfr} weighting emphasizes the top of the ranked list. It is less concerned with the bottom of the lists (in this 3-rank case, rank positions third and beyond).  Are there applications for which ``breaking rank'' (i.e., putting the top-ranked treatment in some place other than the top rank) is considered worse than choosing a completely different set of treatments?  
 
 \section{Consensus vs. Concordance}
 
 In the introduction we described an application of this measure to the problem of estimating how good an AI-based treatment ranking algorithm is. To reiterate, such an algorithm might be given an input describing the case, a list of plausible treatments, and training data in the form of a list of prior cases including what treatments were utilized in prior cases and the outcomes, if available. The algorithm will use the training data to produce a 3-rank for the patient case. 
 
-To simulate this situation, we created Algorithm 3, which is a heuristic consensus 3-rank from 100 3-rank judgment sets from ten specialists.
+To simulate this situation, we created Algorithm 3, which creates is a heuristic consensus 3-rank from 100 3-rank judgment sets from ten specialists. 
 
 \begin{algorithm}
-	\caption{$Consensus(judgmentSet)$}
+	\caption{$Consensus(JudgmentSet)$}
 	\begin{algorithmic}[1]
-\State function concensus(drt)
-    \State d=Dict()
-    \State rl = size(drt[1,:])[1]
-    \State for i in 1:size(drt)[1]
-        \State r = drt[i,:]
-        \State for j in 1:rl
-            \State tx = r[j]
-            \State if haskey(d,tx)
-                \State d[tx]=d[tx]+1+(rl-j) # Decrement by position
-            \State else
-            \State     d[tx]=1+(rl-j)
-            \State end
-        \State end
-    \State end
-    \State return(map(x->x[1],sort(collect(d),by=x->x[2],rev=true))[1:rl])
+\State function consensus(jset)
+    \State dict=Empty Dictionary
+    \State n = length(jset[1]) \# Number of elements in each judgement (i.e., n-rank)
+    \For {ranking in jset}
+        \For {i in 1...n}
+            \State tx = ranking[i] \# ith treatment in this ranking
+            \State inc=(n-i) \# Position-adjusted increment for this tx
+            \State dict[tx]++=1+inc \# (dict[tx]=0 if not yet encountered)
+        \EndFor
+    \EndFor
+    \State Return dict (i.e., tx's) sorted by sum of position adjusted inc's
 	\end{algorithmic} 
 \end{algorithm} 
 
 Figure 2 depicts the mean (and standard error) of the \texttt{tailharmpws.ssfr} distance between this consensus and each of the ten judgments. Unsurprisingly, the mean consensus distance is highly correlated with the internal concordance distance ($R^2=0.964$). 
 
-\begin{figure}[h!]
+\begin{figure}[ht!]
   \includegraphics[scale=0.5]{"20220504_ConsensusComparison"}
   \caption{Comparison of Internal Concordance Score vs Mean and Standard Error of Consensus Distance for each of the 100 ten-specialist 3-rank judgment sets.}
 \end{figure}
 
-\section{Summary and Contra(Indication) Considerations)}
+\newpage
+\section{Summary and Contra(Indication) Considerations}
 
-Non-parametric rank correlation measures, such as the Kendall-Tau or Spearman coefficients are commonly used to compare two ranked lists, but in many area, such as medicine, the rankings often will not contain all the same elements. There are several ways that one could deal with this. One is to assign unshared items to the $n+1^{st}$ rank, another is to assign such items to the bottom of all possibilities. Neither of these options seems right for our application of treatment ranking. The former applies a very minimal cost to non-appearance, and the latter is impracticable because the list of possible, or even plausible, treatments is vague, and potentially very long. 
+Non-parametric rank correlation measures, such as the Kendall-Tau or Spearman coefficients are commonly used to compare two ranked lists, but in many areas, such as medicine, the rankings often will not contain all the same elements. There are several ways that one could deal with this. One is to assign unshared items to the $n+1^{st}$ rank, another is to assign such items to the bottom of all possibilities. Neither of these options seems right for our application of treatment ranking. The former applies a very minimal cost to non-appearance, and the latter is impracticable because the list of possible, or even plausible, treatments is vague, and potentially very long. 
 
 Another complexity is that treatments can be understood in a multi-dimensional space. The simplest form of this multi-dimensionality arises in terms of different sorts of treatments, for example, in cancer there are chemotherapies, immunotherapies, radiotherapies, targeted therapies, and combinations of these.\footnote{We have assumed throughout that combinations are simply another separate treatment regimen, although this is clearly not a fully satisfactory way to understand and treat combinations.} A specialist might use these categorizations in various ways. For example, a specialist might first rank the appropriateness of a category for a given patient at the high level, e.g.,``For this patient we would consider chemotherapy, then immunotherapy, then targeted therapy, in that order of preference." The specialist then ranks the specific treatments within those categories
 
-If we assume for the same of clarity that there are 100 plausible treatment regimens for a given diagnosis, then we can think of many ways to create a list of 3 pros and 2 cons. The list below contains some of the most common, although it is certainly not exhaustive.
+Assume for ease of exposition that there are 100 plausible treatment regimens for a given diagnosis. From this 100, there are many ways to create a list of 3 pros and 2 cons. The list below contains some common ways, although it is certainly not exhaustive.
 
 \singlespacing
 \begin{enumerate}
 \item Rank all 100; Report the top 3 and the bottom 2 as a single ranking.
-\item Rank all 100; Report the top 3 and the bottom 2 as separate as a pro and con lists.
-\item Rank all 100; Select the top N (e.g., 20); then apply methods 1 or 2, as above
-\item Filter to N (20) unranked, for example based on a rule, then apply methods 1 or 2.
-\item As above but with ``categorical confluxity", e.g., ``don't do any chemo".
-\item Rank for pros, and then re-rank the whole set for cons (report 3 of each as 1 or 2).
+\item Rank all 100; Report the top 3 and the bottom 2 as separate pro and con lists.
+\item Rank all 100; Select the top $n$ (e.g., 20); then apply methods 1 or 2, as above.
+\item Filter, based on rule(s) to $n$ (e.g., $n=20$) creating an unranked subset of treatments. Then apply methods 1 or 2.
+\item As above but consider ``categorical confluxity", e.g., ``don't do any chemo".
+\item Rank the pros, and then re-rank the whole set for cons (report 3 of each as 1 or 2).
 \item As any of the above, but the con list is not reported as ranked (regardless of how it is selected). 
-\item As above but also produce a ``middle ground'' list containing all (or some of) the items that are neither good enough to go into the pro list, nor bad enough to go into the con list. This middle ground list may contain all remaining (95) items, or, more reasonably, a set of plausible treatments that are not good enough to be in the ``top'' 3, nor bad enough to be considered contra-indicated. 
-\item Applying any of the above methods to all  treatments \emph{in a category}, reporting out 3pros and 2 cons for each cateogry.
+\item As above but also produce a ``middle ground'' list containing all (or some of) the items that are neither good enough to go into the pro list, nor bad enough to go into the con list. This middle ground list may contain all remaining (95) items, or, more reasonably, a set of plausible treatments that are not good enough to be in the top-3, nor bad enough to be considered contra-indicated. 
+\item Applying any of the above methods to all  treatments \emph{in a category}, reporting out 3 pros and 2 cons for each cateogry.
 \end{enumerate}
 \doublespacing
 
@@ -256,19 +272,31 @@ Another even more complex difficulty arises from how the con list is actually cr
 
 However, it is unlikely, due to the cognitive load and time requirement, that specialists rank all 100 options. In a different, more reasonable process, the specialist first approximately ranks all 100 options, and excludes from further consideration all but, say, 20 reasonable ones. The specialist then undertakes the process described in the previous paragraph, but only on the 20  reasonable options. In this case, the list of 3 pros plus 2 cons has a narrower invisible, unknown quality gap. A further complication is that same specialist might just report 5 pro options and no con options. 
 
-There is an additional problem when considering the presentation of cons. Whereas the sense of what ``pro" means is relatively consistent across different decision processes, the meaning of con can vary. This does not matter so much in practice because, as mentioned above, the patient presumably ends up doing something that is pro for them, not something that is bad (con) for them (leaving aside complexities introduced by combination treatments). However, in the example goal given at the very beginning of this long run-on paragraph of validating that an algorithm gives rankings that are comparable to that of a specialist, even assuming that the algorithm uses a comparable decision process, the validation statistic must be designed to score ``correct" rankings better than "incorrect" ones, and retain appropriate properties. 
+There is an additional problem when considering the presentation of cons. Whereas the sense of what ``pro" means is relatively consistent across different decision processes, the meaning of con can vary. This does not matter so much in practice because, as mentioned above, the patient presumably ends up doing something that is pro for them, not something that is bad (con) for them (leaving aside complexities introduced by combination treatments). However, in the example goal given at the very beginning of this long run-on paragraph of validating that an algorithm gives rankings that are comparable to that of a specialist, even assuming that the algorithm uses a comparable decision process, the validation statistic must be designed to score ``correct" rankings better than ``incorrect" ones, and retain appropriate properties. 
 
 As a result of this complexity, we have chosen above, and here to treat the con list as a completely separate and unranked set of contra-indicated treatments. In other words, we assume that in determining appropriate treatments for a patient, a specialist has a process for creating the pro list and a separate process for creating the con list. Since cons are, by assumption, unranked, we use the \texttt{all1} versions of our distance metric to compare them, because this does not deferentially consider the position of elements in the ranking.
 
+There may be applications which require the evaluation of \emph{one} AI model that creates both a pro list of indicated treatments \emph{and} a con list of contra-indicated treatments. The two scalar measures, one that measures how far the AI's pro list is from the expert recommendations and one that measures how far the AI's con list is from the expert recommendations, must be combined. A few basic methods for combining the pro score and the con score follow. Method 1: ask the application user for convex weights $\lambda_1$ and $\lambda_2$ such that $\lambda_1 + \lambda_2 = 1$, where $\lambda_1$ is the weight associated with the score for the pro list and $\lambda_2$ is the weight associated with the score for the pro list. For example, $\lambda_1=.5$ and $\lambda_2=.5$ means the pro and con scores are given equal weight. Whereas $\lambda_1=.75$ and $\lambda_2=.25$ means the AI system places three times as much priority on getting the pro list correct as it does on the con list.  Method 2: weight each score (pro, con) by the number of items in the list. For example, since the pro list from our running examples contains 3 items while the con list contains only 2, weight $\lambda_1=\frac{3}{3+2}=\frac{3}{5}$ and $\lambda_2=\frac{2}{3+2}=\frac{2}{5}$.
 
+Finally, we note that the types of errors made by the AI system might carry different penalties that can be differentiated by more sophisticated weighting schemes. There are at least six different types of errors that an AI system might make when comparing its rankings to the ``correct" rankings provided by the expert lists. 
+\begin{itemize}
+    \item A \emph{pro inclusion error} occurs when the AI's Pro-3 list contains an item, i.e, a treatment, that does not appear on the expert's Pro-3 list.
+    \item A \emph{con inclusion error} occurs when the AI's Con-2 list contains an item that does not appear on the experts Con-2 list.
+    \item A \emph{pro exclusion error} occurs when the AI's Pro-3 list does not contain an item that does appears on the expert's Pro-3 list.
+    \item A \emph{con exclusion error} occurs when the AI's Con-2 list does not contain an item that appears on the expert's Con-2 list.
+    \item An \emph{above-the-fold positional error} occurs when the AI Pro-3 list contains an item from the expert Pro-3 list, but it is in an incorrect rank position.
+    \item A \emph{below-the-fold positional error} occurs when the AI Pro list contains an item from the expert Pro-3 list, but it does not appear in the top 3 rank positions.
+\end{itemize}
 
 \newpage
 \section{Acknowledgements}
-Mark, Asher, Glenn, Jameson
+
+We acknowledge ideas and feedback from our xCures colleagues Mark Shapiro, Asher Wasserman, Glenn Kramer, and Jameson Quinn.
+
 
 \newpage
 \bibliographystyle{alpha}
-\bibliography{sample}
+\bibliography{RankLikeaDocJeffandAMY}
 
 \newpage
 \appendix
@@ -298,9 +326,9 @@ Note that some of the metrics are "fine grained", others have many equi-score se
 
 \section{A Bayesian Approach (Jameson's Comments)}
 
-In the Bayesian way of thinking, models, priors, and likelihoods are the core entities upon which all else rests. In this way of thinking, distance metric is epi-phenomenal, or, more generously, a computed measure which must be computed from the core entities. One way to do this might be to compute the distance measure from the likelihood. More precisely: We design (or assume) a model that is comprised of a generating function for judgments (i.e., n-ranks for particular cases), and appropriate hyper-parameters. This model can generate the 100x10 example specialistment sets, and the hyper-parameters would start from some priors, and can learn from real examples to generate n-ranks like the cases+specialistment sets that is has learned from. For each new case, the distance could be thought of as, for example, the log, of the difference between the priors (hyper-parameter values) of the model before seeing a particular case (i.e., $log(|NewParamVals-OldParamVals|)$), and where you end up after updating the parameters in accord with that new case. If the hyper-parameters don't have to move very far in order to encompass the new case-x-ranking(s) then the ranking that would be created by the current parameters are very close. (Jeff want's to use something like $tanh(1/|NewParamVals-OldParamVals|)$. Regardless, neither this, nor the log will have a true zero, and so isn't a true distance metric, but it can come arbitrarily close to zero.) One way to think of this is as maximizing the joint likelihood of the latent variables in such a way that they are a compro,ise between latent values that best explain each of the rankings that are being compared. This metric will correlate with the desired distance, insofar as that compromise latent value is very far away from the priors, which is what you want. 
+In the Bayesian way of thinking, models, priors, and likelihoods are the core entities upon which all else rests. In this way of thinking, distance metric is epi-phenomenal, or, more generously, a computed measure which must be computed from the core entities. One way to do this might be to compute the distance measure from the likelihood. More precisely: We design (or assume) a model that is comprised of a generating function for judgments (i.e., n-ranks for particular cases), and appropriate hyper-parameters. This model can generate the 100x10 example specialistment sets, and the hyper-parameters would start from some priors, and can learn from real examples to generate n-ranks like the cases+specialistment sets that is has learned from. For each new case, the distance could be thought of as, for example, the log, of the difference between the priors (hyper-parameter values) of the model before seeing a particular case (i.e., $log(|NewParamVals-OldParamVals|)$), and where you end up after updating the parameters in accord with that new case. If the hyper-parameters don't have to move very far in order to encompass the new case-x-ranking(s) then the ranking that would be created by the current parameters are very close. (Jeff want's to use something like $tanh(1/|NewParamVals-OldParamVals|)$. Regardless, neither this, nor the log will have a true zero, and so isn't a true distance metric, but it can come arbitrarily close to zero.) One way to think of this is as maximizing the joint likelihood of the latent variables in such a way that they are a compromise between latent values that best explain each of the rankings that are being compared. This metric will correlate with the desired distance, insofar as that compromise latent value is very far away from the priors, which is what you want. 
 
-The advantage of the Bayesian approach is that there are fewer parameters than our current algorithmic approach, and thus fewer things to get wrong. Of course, the disadvantage is that there are fewer parameters than our current algorithmic approach, and thus fewer things to can get right. For instance if you know, for instance, that specialists won't indicate the same treatment twice, or won't indicate a similar treatment to a one they've already indicateed (as in the categorical strategy), you can put that into the likelihood and and it naturally folds into the computation, whereas trying to tweak the foot rule could be arbitrarily complex, and can create unintended consequences that ruin the consistency of the metric.
+The advantage of the Bayesian approach is that there are fewer parameters than our current algorithmic approach, and thus fewer things to get wrong. Of course, the disadvantage is that there are fewer parameters than our current algorithmic approach, and thus fewer things to can get right. For instance if you know, for instance, that specialists won't indicate the same treatment twice, or won't indicate a similar treatment to a one they've already indicated (as in the categorical strategy), you can put that into the likelihood and and it naturally folds into the computation, whereas trying to tweak the foot rule could be arbitrarily complex, and can create unintended consequences that ruin the consistency of the metric.
 
 
 
