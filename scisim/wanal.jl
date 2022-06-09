@@ -3,7 +3,7 @@
 
 # Reads from vtb file created by vtb.lisp
 
-using Random, Distributions, Printf, StatsBase, Distances, Dates #, SciPy
+using Random, Distributions, Printf, StatsBase, Distances, Dates, SciPy
 using CSV, DataFrames, Pingouin, Combinatorics
 
 include("footrules.jl") # Asher's code
@@ -60,55 +60,19 @@ function multivtb_concordance(fileid="vtb-3855747491";timestamp,xid="xid",njudge
         # make rows = raters (=rankings) in correct order, top n (3:
         # ignoring cons, and excess pros)) 
         drt=transpose(dr[1:ntoprankings,:])
-        mjc=multijudge_concordance(drt;pwsfn=pwsfn,metric=metric)
-        con=concensus(drt)
-        ace=algorithm_concordance_estimate(con,drt;pwsfn=pwsfn,metric=metric)
-        push!(results,[mjc,pt,drt,ace,con])
+        frr=multijudge_concordance(drt;pwsfn=pwsfn,metric=metric)
+        push!(results,[frr,pt,drt])
     end
-    open(string("results/",timestamp,"_",xid,"_multicon_",fileid,"_",pwsfn,"_",metric,".lisp"), "w") do io
-        @printf(io,";;; PtNo Concordance AlgDistMeanVSConsensus AlgDistStDev Consensus Judges\n")
+    open(string("results/",timestamp,"_",xid,"_multicon_",fileid,"_",pwsfn,"_",metric,".xls"), "w") do io
         for e in sort!(results,by=x->x[1],rev=true)
-            @printf(io,"(%s %.3f %.3f %.3f \"%s\" (",e[2],e[1],e[4][1],e[4][2],e[5])
+            @printf(io,"%s\t%s",e[2],e[1])
             for j in 1:njudges
-	       @printf(io," \"%s\"",jr = e[3][j,:])
+                @printf(io,"\t%s",e[3][j,:])
             end
-            @printf(io,"))\n")
+            @printf(io,"\n")
         end
     end
 end
-
-# Creates a concensus and then finds the distance between that and all
-# the rest and take the mean and deviation.
-
-function algorithm_concordance_estimate(con,drt;pwsfn=pwsfn,metric=metric)
-    dsts=[]
-    for i in 1:size(drt)[1]
-        c = open_concordance(con,drt[i,:];pwsfn=pwsfn,metric=metric)
-        push!(dsts,c)
-    end
-    return([mean(dsts),std(dsts)])
-end
-
-# Finds the concensus of a bunch of judgements. We use a sligtly
-# tricky was of scoring for position so that thing that are in the
-# first position a lot end up first.
-
-function concensus(drt)
-    d=Dict()
-    rl = size(drt[1,:])[1]
-    for i in 1:size(drt)[1]
-        r = drt[i,:]
-        for j in 1:rl
-            tx = r[j]
-            if haskey(d,tx)
-                d[tx]=d[tx]+1+(rl-j) # Decrement by position 
-            else
-                d[tx]=1+(rl-j)
-            end
-        end
-    end
-    return(map(x->x[1],sort(collect(d),by=x->x[2],rev=true))[1:rl])
-end    
 
 # This requires an array where each row is the rankings of n items
 # from one judge. All judges must report the same n (number of items),
@@ -144,9 +108,6 @@ function open_concordance(a,b;pwsfn=tailharm,metric=ssfr)
                    [append!(copy(b),more) for more in collect(permutations(setdiff(u,b)))])
     lenabplus = length(abplus)
     pws=pwsfn(a,b,abplus)
-    # @printf("a=%s, b=%s\n",a,b)
-    # @printf("abplus=%s\n",abplus)
-    # @printf("pws=%s\n",pws)
     sum=0;n=0
     for i in 1:lenabplus
         for j in (i+1):lenabplus
@@ -271,23 +232,19 @@ function tailharmpws(a,b,abplus)
     return(append!([1.0/(2^i) for i in 1:length(a)],[1/(2^(2+length(a))) for i in 1:(1+length(abplus[1])-length(a))]))
 end
 
-function tailharmpwswithleadning1(a,b,abplus) 
-    return(append!([1.0],append!([1.0/(2^i) for i in 1:(length(a)-1)],[1/(2^(2+length(a))) for i in 1:(1+length(abplus[1])-(length(a)+1))])))
-end
-
 function randpws(a,b,abplus)
     return([rand(1)[1] for i in 1:length(abplus[1])])
 end
 
 # Exploring how the symmetric scales up with the length of the record
-function exploremain(expid)
+function explore1()
     timestamp=Dates.format(now(),"yyyymmdd_HHMM_SSssss")
-    for pwsfn in [tailharmpws, all1pws, randpws]
+    for pwsfn in [tailharmpws all1pws randpws]
         for metric in [ssfr ltgt]
             for l in 3:5
-                mvtbcdistest(l;timestamp=timestamp,pwsfn=pwsfn,metric=metric,xid=string(l,expid))
+                mvtbcdistest(l;timestamp=timestamp,pwsfn=pwsfn,metric=metric,xid=string(l,"ex1a"))
             end
-            multivtb_concordance("vtb-3855747491";timestamp=timestamp,pwsfn=pwsfn,metric=metric,xid=expid)
+            multivtb_concordance("vtb-3855747491";timestamp=timestamp,pwsfn=pwsfn,metric=metric,xid="ex1vtbs")
         end
     end
 end
@@ -295,42 +252,63 @@ end
 # Exploring different versions of the position weights
 function explore2()
     timestamp=Dates.format(now(),"yyyymmdd_HHMM_SSssss")
-    for pwsfn in [all1pws, tailharmpws, randpws]
+    for pwsfn in [all1pws tailharmpws randpws]
         for l in 3:5
             mvtbcdistest(l;timestamp=timestamp,pwsfn=pwsfn,metric=ssfr,xid=string(l,"ex2"))
         end
     end
 end
 
-# Focus on tailharm to make sure that the algorithm isn't wrong
-function explore3()
-    timestamp=Dates.format(now(),"yyyymmdd_HHMM_SSssss")
-    for pwsfn in [tailharmpws, tailharmpwswithleadning1]
-        for l in 3:5
-            mvtbcdistest(l;timestamp=timestamp,pwsfn=pwsfn,metric=ssfr,xid=string(l,"ex3"))
-        end
-    end
+# Based upon open_concordance, this tries to decide whther the given
+# method is metric by trying many cases. To be a metric it has to have
+# three properties: a. d(x,x) = 0, d(x,y)=d(y,x), and it has to obey
+# the triangle inequality, that is: d(x,y)+d(y,z)>=d(x,z)
+
+function randrank(n)
+    # UUU Doing non-redundancy the hard way UUU
+    r=[rand(1:n*2) for j=1:n]
+    if (length(unique!(r))<n)
+      return(randrank(n))
+    else
+     return(r)
+   end
 end
 
+function metric_test(n=3,r=100,pwsfn=tailharmpws,metric=ssfr)
+    fails=0; maxtrifail = 0.0
+    for i in 1:r
+        x = randrank(n)
+        y = randrank(n)
+        z = randrank(n)
 
-# Focus on tailharm to make sure that the algorithm isn't wrong
-function explore3()
-    timestamp=Dates.format(now(),"yyyymmdd_HHMM_SSssss")
-    for pwsfn in [tailharmpws, tailharmpwswithleadning1]
-        for l in 3:5
-            mvtbcdistest(l;timestamp=timestamp,pwsfn=pwsfn,metric=ssfr,xid=string(l,"ex3"))
-        end
-    end
+        xx=open_concordance(x,x;pwsfn=pwsfn,metric=metric)
+        yy=open_concordance(y,y;pwsfn=pwsfn,metric=metric)
+        zz=open_concordance(z,z;pwsfn=pwsfn,metric=metric)
+
+        xy=open_concordance(x,y;pwsfn=pwsfn,metric=metric)
+        yx=open_concordance(y,x;pwsfn=pwsfn,metric=metric)
+
+        yz=open_concordance(y,z;pwsfn=pwsfn,metric=metric)
+        zy=open_concordance(z,y;pwsfn=pwsfn,metric=metric)
+
+        xz=open_concordance(x,z;pwsfn=pwsfn,metric=metric)
+        zx=open_concordance(z,x;pwsfn=pwsfn,metric=metric)
+
+        if ((xx==0)&&(yy==0)&&(zz==0));zeros=true;else;zeros=false;end
+        if ((xy==yx)&&(yz==zy)&&(xz==zx));swaps=true;else;swaps=false;end
+        xzplusyz = xy+yz
+        if (xzplusyz>=xz);tri=true;else;tri=false;end
+        if !(zeros && swaps && tri)
+           del = xz-xzplusyz
+           @printf("%s %s %s :: 0s:%s, <>:%s, Tri:%s (%.2f+%.2f(=%.2f)>=%.2f[%.2f])\n",x,y,z,zeros,swaps,tri,xy,yz,xzplusyz,xz,del)
+           if del>maxtrifail; maxtrifail=del; println(maxtrifail); end
+           fails = fails + 1
+        end   
+   end
+   @printf("%s fails in %s = %s%%\n", fails, r, 100*(fails/r))
 end
 
-# Using tailharmpws.ssfr, compute hold-1-out algorithm contrasts for each judgement
-function explore4()
-    timestamp=Dates.format(now(),"yyyymmdd_HHMM_SSssss")
-    multivtb_concordance("vtb-3855747491";timestamp=timestamp,pwsfn=tailharmpws,metric=ssfr,xid="ex4")
-end
-
-
-exploremain("Apr29")
+#explore1()
 #explore2()
-#explore3()
-#explore4()
+metric_test(3,10000)
+metric_test(5,100000)
